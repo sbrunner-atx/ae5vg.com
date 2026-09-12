@@ -8,13 +8,13 @@ Radio amateurs, most of them 50 and older, who run fldigi, WSJT-X or N3FJP and a
 
 ## Brand and design system
 
-Reuse the look of the existing Operating Field Guide, which the audience already knows:
+Plain, print-friendly, the look of a well-kept open-source manual. Think GitHub's documentation, not a poster. No dark pages anywhere: the site and the PDF must print on a home printer without solid fills.
 
-- Colours: ink `#14181D` (dark surfaces), paper `#FBFAF6` (page background), cream `#ECE7DA` (text on dark), amber `#E8A33D` (accent, rules, buttons), amber-dark `#B07617` (links, labels on light), card `#F5EEDA`, muted `#6b665a`, line `#d9d3c3`, text `#23211c`.
-- Type: a condensed bold sans for headings in uppercase (DejaVu Sans Condensed or a web equivalent such as Barlow Condensed), a humanist sans for body (DejaVu Sans or Source Sans), a monospaced face for labels, callsigns, commands and version strings (DejaVu Sans Mono or JetBrains Mono). Small uppercase mono labels with 2.5 px letter-spacing are the signature: "SKILL 03 · SHIPS WITH FLDIGI-MCP".
-- Motifs: a short amber rule under every heading; an amber callsign badge "AE5VG" as the site mark; a Morse dit-dah strip as a decorative divider; callout boxes with a left amber bar, a mono uppercase caption, and one paragraph; warning callouts in rust `#C05B2E` on `#F3E3DC` for things that can key a transmitter.
-- Dark hero on every page (ink background, cream text), light body. Generous whitespace, 17 px body text, max content width about 1040 px. Tables with a thin rule under the header, no zebra stripes.
-- Responsive down to 360 px. No animation beyond hover states. No stock photos; use one real screenshot per software page (placeholders are fine; note where they go).
+- Colours: paper `#ffffff` (every page background), text `#1f2328`, secondary text `#57606a`, accent blue `#0969da` (rules, buttons, the callsign badge, list markers), link and label blue `#0550ae`, panel grey `#f6f8fa` (code, cards, transcript blocks), border `#d0d7de`, callout blue `#ddf4ff` with a `#0969da` left bar, warning `#fff8c5` with a `#9a6700` left bar for anything that can key a transmitter, success green `#1a7f37` for received lines and passed checks, danger red `#cf222e` used only for a failed check.
+- Type: a condensed bold sans for headings in sentence case, never uppercase (Barlow Condensed or DejaVu Sans Condensed); a humanist sans for body (Source Sans 3 or DejaVu Sans); a monospaced face for labels, callsigns, commands and version strings (JetBrains Mono or DejaVu Sans Mono). Small uppercase mono labels with 2 px letter-spacing remain the one signature: "SKILL 03 · SHIPS WITH FLDIGI-MCP".
+- Motifs: a short blue rule under every heading; a blue callsign badge "AE5VG" with white text as the site mark; a thin blue Morse dit-dah strip as a divider; callout boxes with a left bar, a mono uppercase caption, and one paragraph.
+- Layout: light header bar on a grey panel with a bottom border, white hero with the blue rule, white body. Generous whitespace, 17 px body text, content width about 1040 px. Tables with a thin rule under the header, no zebra stripes. Cards are grey panels with a border and a blue left edge.
+- Responsive down to 360 px. No animation beyond hover states. No stock photos; one real screenshot per software page (placeholders are fine; note where they go). A print stylesheet that hides the navigation and keeps everything else as is.
 
 ## Site map and navigation
 
