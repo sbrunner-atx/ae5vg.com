@@ -116,7 +116,8 @@ function render(st) {
     ${kv("Pairs", l.pairs ?? 0, `${l.pairs_exact ?? 0} exact`)}
     ${kv("Quiet segments skipped", d.quiet_segments_skipped_24h ?? 0, "nothing above the floor; every 4th still decoded")}
   </div>
-  <p class="small">Pairs by mode: ${Object.keys(l.pairs_by_mode||{}).length ? esc(JSON.stringify(l.pairs_by_mode)) : "none yet"} · by band: ${Object.keys(l.pairs_by_band||{}).length ? esc(JSON.stringify(l.pairs_by_band)) : "none yet"}</p>`;
+  <p class="small">Pairs by kind: ${Object.keys(l.pairs_by_kind||{}).length ? esc(Object.entries(l.pairs_by_kind).map(([k,v])=>`${k} ${v}`).join(", ")) : "none yet"} · by mode: ${Object.keys(l.pairs_by_mode||{}).length ? esc(JSON.stringify(l.pairs_by_mode)) : "none yet"} · by band: ${Object.keys(l.pairs_by_band||{}).length ? esc(JSON.stringify(l.pairs_by_band)) : "none yet"}</p>
+  <p class="small">"repeat" is the station sending the same thing again; "browser-neighbour" is two Signal Browser channels copying one transmission, a second demodulator's copy rather than a repeat. Both are counted, never mixed.</p>`;
   const rs = st.recent_segments || [];
   $("recent-body").innerHTML = rs.length ? `<div style="overflow-x:auto"><table><tr><th>Decoded</th><th>Band</th><th>Mode</th><th>Receiver</th><th>Lines</th><th>Stations</th><th>Pairs</th></tr>
     ${rs.map(r => `<tr><td>${esc(r.utc.slice(5,16))}Z</td><td>${esc(r.band)}</td><td>${esc(r.mode)}</td><td>${esc(r.receiver)}</td><td class="num">${r.lines}</td><td class="num">${r.stations}</td><td class="num">${r.pairs}</td></tr>`).join("")}</table></div>` : "<p class='small'>No segments decoded yet.</p>";
