@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Decoded · AE5VG</title>
+<meta name="description" content="What the AE5VG capture rig decoded from the public amateur bands over the last three days, segment by segment, garble included. Own recordings via public KiwiSDR receivers.">
+<link rel="stylesheet" href="style.css">
+<style>
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.tabs button,.filters select,.filters input{font-family:"DejaVu Sans Mono",Menlo,monospace;font-size:13px;padding:7px 12px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:4px}
+.tabs button.on{background:var(--amber);color:#fff;border-color:var(--amber)}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px;align-items:center}
+.seg{border:1px solid var(--line);border-left:6px solid var(--amber);background:#fff;margin:0 0 14px;padding:12px 16px}
+.seg .h{display:flex;flex-wrap:wrap;gap:14px;align-items:baseline;font-family:"DejaVu Sans Mono",Menlo,monospace;font-size:13px;color:var(--muted);margin-bottom:8px}
+.seg .h b{color:var(--ink);font-size:15px}
+.seg.skipped{border-left-color:var(--line);color:var(--muted)}
+.ln{font-family:"DejaVu Sans Mono",Menlo,monospace;font-size:13px;line-height:1.55;white-space:pre-wrap;word-break:break-word;padding:2px 0;border-bottom:1px dotted var(--line)}
+.ln .src{color:var(--muted);font-size:11px;margin-right:8px}
+.ln .call{background:#ddf4ff;color:#0550ae;padding:0 3px;border-radius:3px}
+.count{font-size:14px;color:var(--muted);margin:0 0 14px}
+.small{font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="badge" href="index.html">AE5VG</a>
+    <nav><a href="index.html#software">Software</a><a href="index.html#guide">Field Guide</a><a href="live.html">Live</a><a href="decoded.html">Decoded</a><a href="index.html#model">The model</a><a href="index.html#about">About</a></nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Capture rig · decoded text</div>
+    <h1>What came off the air, the last three days</h1>
+    <div class="rule"></div>
+    <p>Every usable line the rig decoded, segment by segment, garble included and nothing edited. These are our own recordings of the public amateur bands through public KiwiSDR receivers; amateur transmissions carry no expectation of privacy. Lines shown are the ones the pairing considers usable (mostly printable, or carrying a callsign); pure noise is left out. Text longer than 240 characters is cut, which only ever happens to a browser channel full of garble.</p>
+    <p id="stamp" class="small">Loading…</p>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="tabs" id="tabs"></div>
+    <div class="filters">
+      <select id="band"><option value="">all bands</option></select>
+      <select id="mode"><option value="">all modes</option></select>
+      <input id="q" placeholder="callsign or text" size="22">
+      <label class="small"><input type="checkbox" id="callsonly"> callsign lines only</label>
+    </div>
+    <p class="count" id="count"></p>
+    <div id="list"></div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="mono">AE5VG · Austin, TX</div>
+    <p>Source: the rig's status gist, day files <span class="mono">decoded-YYYYMMDD.json</span>, rewritten every two minutes. Republished through a cache, so a line can be up to five minutes behind the Live page.</p>
+  </div>
+</footer>
+
+<script>
+const GIST = "0f7aaf406781706fee444a9ad8e94103";
+const RAW = d => `https://gist.githubusercontent.com/sbrunner-atx/${GIST}/raw/decoded-${d}.json`;
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const days = [0,1,2].map(k => { const t = new Date(Date.now() - k*86400000); return t.toISOString().slice(0,10).replace(/-/g,""); });
+const cache = {};
+let cur = days[0];
+
+function mark(text, calls) {
+  let h = esc(text);
+  for (const c of (calls||[])) h = h.split(esc(c)).join(`<span class="call">${esc(c)}</span>`);
+  return h;
+}
+function render() {
+  const doc = cache[cur];
+  if (!doc) { $("list").innerHTML = "<p class='small'>Loading…</p>"; return; }
+  const band = $("band").value, mode = $("mode").value, q = $("q").value.trim().toUpperCase(), co = $("callsonly").checked;
+  let segs = doc.segments.slice().reverse();
+  if (band) segs = segs.filter(s => s.band === band);
+  if (mode) segs = segs.filter(s => s.mode === mode);
+  let nl = 0, ns = 0;
+  const html = segs.map(s => {
+    let lines = s.lines || [];
+    if (co) lines = lines.filter(l => l.calls && l.calls.length);
+    if (q) lines = lines.filter(l => l.text.toUpperCase().includes(q));
+    if ((q || co) && !lines.length) return "";
+    ns++; nl += lines.length;
+    const t = `${s.segment_utc.slice(9,11)}:${s.segment_utc.slice(11,13)}Z`;
+    if (s.skipped) return `<div class="seg skipped"><div class="h"><b>${t}</b><span>${esc(s.band)} ${esc(s.mode)}</span><span>${esc(s.receiver)}</span><span>skipped: nothing above the floor</span></div></div>`;
+    const y = (s.stations !== undefined) ? `<span>${s.stations} station(s), ${s.pairs} pair(s)</span>` : "";
+    return `<div class="seg"><div class="h"><b>${t}</b><span>${esc(s.band)} ${esc(s.mode)}</span><span>${esc(s.receiver)}</span><span>modem ${esc(s.modem)}</span>${y}<span>${lines.length} line(s)</span></div>
+      ${lines.map(l => `<div class="ln"><span class="src">${esc(l.src)}${l.q !== null && l.q !== undefined ? " q" + Math.round(l.q) : ""}</span>${mark(l.text, l.calls)}</div>`).join("")}</div>`;
+  }).join("");
+  $("list").innerHTML = html || "<p class='small'>Nothing matches.</p>";
+  $("count").textContent = `${ns} segment(s), ${nl} line(s)` + (doc.trimmed ? ` · ${doc.trimmed}` : "");
+  $("stamp").textContent = `Day file generated ${doc.generated_utc}.`;
+}
+function fillFilters() {
+  const bands = new Set(), modes = new Set();
+  for (const d of Object.values(cache)) for (const s of (d.segments||[])) { if (s.band) bands.add(s.band); if (s.mode) modes.add(s.mode); }
+  const keep = (sel, vals) => { const v = sel.value; sel.innerHTML = `<option value="">${sel.id === "band" ? "all bands" : "all modes"}</option>` + [...vals].sort().map(x => `<option>${esc(x)}</option>`).join(""); sel.value = v; };
+  keep($("band"), bands); keep($("mode"), modes);
+}
+async function load(d) {
+  try { const r = await fetch(RAW(d) + "?t=" + Math.floor(Date.now()/120000)); cache[d] = r.ok ? await r.json() : {segments: [], generated_utc: "n/a", note: "no file for this day"}; }
+  catch (e) { cache[d] = {segments: [], generated_utc: "n/a"}; }
+  fillFilters(); if (d === cur) render();
+}
+$("tabs").innerHTML = days.map(d => `<button data-d="${d}" class="${d===cur?"on":""}">${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}${d===days[0]?" (today)":""}</button>`).join("");
+$("tabs").addEventListener("click", e => { if (e.target.dataset.d) { cur = e.target.dataset.d; for (const b of $("tabs").children) b.classList.toggle("on", b.dataset.d === cur); render(); } });
+for (const id of ["band","mode","q","callsonly"]) $(id).addEventListener("input", render);
+days.forEach(load);
+</script>
+</body>
+</html>

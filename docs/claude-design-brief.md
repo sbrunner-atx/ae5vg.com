@@ -1,6 +1,6 @@
 # Claude Design brief: ae5vg.com
 
-Build a multi-page website for an amateur radio hobbyist who writes open-source software that lets an AI assistant operate a ham station. Thirteen pages, one shared design system, no build tooling beyond static HTML, CSS and a little client-side JavaScript. The site is served by GitHub Pages from the repository `sbrunner-atx/ae5vg.com`; a `CNAME` file already holds the domain.
+Build a multi-page website for an amateur radio hobbyist who writes open-source software that lets an AI assistant operate a ham station. Fourteen pages, one shared design system, no build tooling beyond static HTML, CSS and a little client-side JavaScript. The site is served by GitHub Pages from the repository `sbrunner-atx/ae5vg.com`; a `CNAME` file already holds the domain.
 
 ## Who this is for
 
@@ -18,7 +18,7 @@ Plain, print-friendly, the look of a well-kept open-source manual. Think GitHub'
 
 ## Site map and navigation
 
-Top bar on every page: AE5VG badge left, links right: Software (dropdown or landing: fldigi-mcp, wsjtx-mcp, n3fjp-mcp), Connect, Downloads, Reference (dropdown: Watering holes, Mode ID), Live, The Model, Log, About. Station is linked from About and from the footer. Footer: "AE5VG · Austin, TX", licence note ("Site text CC BY 4.0; software under the licence named in each repository"), "GL es 73 de AE5VG sk".
+Top bar on every page: AE5VG badge left, links right: Software (dropdown or landing: fldigi-mcp, wsjtx-mcp, n3fjp-mcp), Connect, Downloads, Reference (dropdown: Watering holes, Mode ID), Live, Decoded, The Model, Log, About. Station is linked from About and from the footer. Footer: "AE5VG · Austin, TX", licence note ("Site text CC BY 4.0; software under the licence named in each repository"), "GL es 73 de AE5VG sk".
 
 ### 1. Home (`index.html`)
 
@@ -157,6 +157,22 @@ fallback: https://gist.githubusercontent.com/sbrunner-atx/0f7aaf406781706fee444a
 Fields: `generated_utc`, `state` (listening, starting, stopped), `current` {band, mode, mhz, receiver, segment_s, segment_into_s, segment_progress 0..1, segments_closed, started_utc, stall_relaunches}, `decoder` {segments_pending, lag_minutes, backlog_flag, quiet_segments_skipped_24h}, `last_24h` {listening_hours, streams_decoded, lines, lines_with_callsign, repeated_clusters, distinct_stations, pairs, pairs_exact, pairs_by_mode, pairs_by_band}, `recent_segments` (list of {utc, band, mode, receiver, lines, stations, pairs}), `stays` (list of {utc, why}), `gaps_24h` (kind -> count), `restarts_24h`, `loop_up_since_utc`, `w1aw_recent` (list of {run, pairs, wav_files, stall_relaunches}), `disk_free_gb`, `runs_gb`, `processes`, `rig_commit`.
 
 Layout: a status pill (green listening, yellow starting, red stopped) and the generation time with "n min ago"; a "Now" block with frequency and band/mode, receiver, a progress bar for the current segment, and how far behind the decoder is; a "Last 24 hours" block of counts (listening hours, lines, lines with callsign, stations, pairs, quiet segments skipped); a table of recent segments; a "Health" block with gaps by kind, restarts, disk, and the last W1AW slot results. Say in one sentence that no decoded text leaves the rig, only counts, frequencies and receivers. Handle rate limiting (60 requests an hour per visitor on the API) by falling back to the raw URL and by showing the last successful data with its age. A working reference implementation is in the repository as `live.html`; keep its behaviour and restyle it.
+
+### 14. Decoded (`decoded.html`)
+
+Browse what the rig decoded over the last three UTC days, segment by segment, nothing edited. The rig publishes one JSON per day to the same gist as the Live page:
+
+```
+https://gist.githubusercontent.com/sbrunner-atx/0f7aaf406781706fee444a9ad8e94103/raw/decoded-YYYYMMDD.json
+```
+
+(the raw URL, not the API: the day files can exceed the API's 1 MB content limit; the raw URL is cached about five minutes). Schema: `{day, generated_utc, note, trimmed?, segments: [{stream, band, mode, receiver, segment_utc (YYYYMMDDTHHMMSSZ), modem, stations?, pairs?, pairs_by_kind?, skipped?, lines: [{t, text, src ("main" or "chN@hz"), q, calls: [...]}]}]}`. Lines are the usable ones (printable fraction at least 0.85 or a callsign present); text longer than 240 characters is cut.
+
+Layout: three day tabs (today first), filters for band and mode, a text/callsign search box and a "callsign lines only" checkbox; then one card per segment, newest first, with time, band, mode, receiver, modem, the yield (stations, pairs) and the lines in a monospaced block with the source (main decoder or browser channel and frequency) in small grey and callsigns highlighted. Skipped segments appear as a thin grey card saying "nothing above the floor". One paragraph at the top states the provenance: own recordings of the public amateur bands via public KiwiSDR receivers, no expectation of privacy on amateur transmissions, nothing edited, noise left out. A working reference implementation is in the repository as `decoded.html`; keep its behaviour and restyle it.
+
+## Wording edits made in Claude Design
+
+This brief is the source of facts, links and rules. Wording is allowed to change in Design. After an interactive editing session, export the pages and hand the export back; the wording changes are reconciled into this brief so that the next regeneration starts from the edited text, and any factual drift is caught. Keep facts (versions, counts, method names, licences, dates) as written here unless the brief is updated first.
 
 ## Contact rules
 
