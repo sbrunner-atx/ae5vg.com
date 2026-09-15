@@ -95,7 +95,7 @@ function render(st) {
     const mm = String(Math.floor((c.segment_into_s||0)/60)).padStart(2,"0"), ss = String((c.segment_into_s||0)%60).padStart(2,"0");
     now += `<div class="kv">
       ${kv("Frequency", `${c.mhz.toFixed(4)} MHz`, `${esc(c.band)} · ${esc(c.mode)}`)}
-      ${kv("Receiver", esc(c.receiver), `stream open since ${c.started_utc.slice(11,16)}Z`)}
+      ${kv("KiwiSDR", esc(c.receiver), `stream open since ${c.started_utc.slice(11,16)}Z`)}
       ${kv("Segment", `${mm}:${ss} / ${Math.round(c.segment_s/60)}:00`, `${c.segments_closed} closed in this stream`)}
       ${kv("Decoder", `${d.lag_minutes ?? 0} min behind`, `${d.segments_pending ?? 0} segment(s) pending${d.backlog_flag ? ", backlog" : ""}`)}
     </div>
@@ -111,7 +111,7 @@ function render(st) {
   const l = st.last_24h || {};
   $("day-body").innerHTML = `<div class="kv">
     ${kv("Listening", `${l.listening_hours ?? 0} h`, `${l.streams_decoded ?? 0} streams decoded`)}
-    ${kv("Lines", l.lines ?? 0, `${l.lines_with_callsign ?? 0} with a callsign`)}
+    ${kv("Lines", l.lines ?? 0, `${l.lines_traffic ?? 0} read as traffic, ${l.lines_with_callsign ?? 0} with a callsign`)}
     ${kv("Stations", l.distinct_stations ?? 0, `${l.repeated_clusters ?? 0} repeated clusters`)}
     ${kv("Pairs", l.pairs ?? 0, `${l.pairs_exact ?? 0} exact`)}
     ${kv("Quiet segments skipped", d.quiet_segments_skipped_24h ?? 0, "nothing above the floor; every 4th still decoded")}
@@ -119,7 +119,7 @@ function render(st) {
   <p class="small">Pairs by kind: ${Object.keys(l.pairs_by_kind||{}).length ? esc(Object.entries(l.pairs_by_kind).map(([k,v])=>`${k} ${v}`).join(", ")) : "none yet"} · by mode: ${Object.keys(l.pairs_by_mode||{}).length ? esc(JSON.stringify(l.pairs_by_mode)) : "none yet"} · by band: ${Object.keys(l.pairs_by_band||{}).length ? esc(JSON.stringify(l.pairs_by_band)) : "none yet"}</p>
   <p class="small">"repeat" is the station sending the same thing again; "browser-neighbour" is two Signal Browser channels copying one transmission, a second demodulator's copy rather than a repeat. Both are counted, never mixed.</p>`;
   const rs = st.recent_segments || [];
-  $("recent-body").innerHTML = rs.length ? `<div style="overflow-x:auto"><table><tr><th>Decoded</th><th>Band</th><th>Mode</th><th>Receiver</th><th>Lines</th><th>Stations</th><th>Pairs</th></tr>
+  $("recent-body").innerHTML = rs.length ? `<div style="overflow-x:auto"><table><tr><th>Decoded</th><th>Band</th><th>Mode</th><th>KiwiSDR</th><th>Lines</th><th>Stations</th><th>Pairs</th></tr>
     ${rs.map(r => `<tr><td>${esc(r.utc.slice(5,16))}Z</td><td>${esc(r.band)}</td><td>${esc(r.mode)}</td><td>${esc(r.receiver)}</td><td class="num">${r.lines}</td><td class="num">${r.stations}</td><td class="num">${r.pairs}</td></tr>`).join("")}</table></div>` : "<p class='small'>No segments decoded yet.</p>";
   const g = st.gaps_24h || {};
   const w = st.w1aw_recent || [];

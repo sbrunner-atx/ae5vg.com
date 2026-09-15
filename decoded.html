@@ -35,7 +35,7 @@
     <div class="eyebrow">Capture rig · decoded text</div>
     <h1>What came off the air, the last three days</h1>
     <div class="rule"></div>
-    <p>Every usable line the rig decoded, segment by segment, garble included and nothing edited. These are our own recordings of the public amateur bands through public KiwiSDR receivers; amateur transmissions carry no expectation of privacy. Lines shown are the ones the pairing considers usable (mostly printable, or carrying a callsign); pure noise is left out. Text longer than 240 characters is cut, which only ever happens to a browser channel full of garble.</p>
+    <p>Every line the rig decoded that reads as traffic, segment by segment, garble included and nothing edited. These are our own recordings of the public amateur bands through public KiwiSDR receivers; amateur transmissions carry no expectation of privacy. A line counts as traffic when it holds several recognisable words or ham shorthand in sequence, or a callsign with an allocated prefix next to DE or CQ or repeated, in a line that is mostly not junk. A decoder on an empty channel prints single letters with a callsign-shaped token now and then; that is left out, so a quiet segment shows nothing. Each card names the KiwiSDR and the dial frequency; the slice is the 3 kHz above it, which is where the watering hole sits.</p>
     <p id="stamp" class="small">Loading…</p>
   </div>
 </div>
@@ -92,7 +92,8 @@ function render() {
     const t = `${s.segment_utc.slice(9,11)}:${s.segment_utc.slice(11,13)}Z`;
     if (s.skipped) return `<div class="seg skipped"><div class="h"><b>${t}</b><span>${esc(s.band)} ${esc(s.mode)}</span><span>${esc(s.receiver)}</span><span>skipped: nothing above the floor</span></div></div>`;
     const y = (s.stations !== undefined) ? `<span>${s.stations} station(s), ${s.pairs} pair(s)</span>` : "";
-    return `<div class="seg"><div class="h"><b>${t}</b><span>${esc(s.band)} ${esc(s.mode)}</span><span>${esc(s.receiver)}</span><span>modem ${esc(s.modem)}</span>${y}<span>${lines.length} line(s)</span></div>
+    const dial = s.dial_khz ? `<span>dial ${(s.dial_khz/1000).toFixed(4)} MHz USB, audio ${s.passband_hz ? s.passband_hz[0]+"–"+s.passband_hz[1] : "300–3400"} Hz</span>` : "";
+    return `<div class="seg"><div class="h"><b>${t}</b><span>${esc(s.band)} ${esc(s.mode)}</span><span>KiwiSDR ${esc(s.receiver)}</span>${dial}<span>modem ${esc(s.modem)}</span>${y}<span>${lines.length} line(s)</span></div>
       ${lines.map(l => `<div class="ln"><span class="src">${esc(l.src)}${l.q !== null && l.q !== undefined ? " q" + Math.round(l.q) : ""}</span>${mark(l.text, l.calls)}</div>`).join("")}</div>`;
   }).join("");
   $("list").innerHTML = html || "<p class='small'>Nothing matches.</p>";
