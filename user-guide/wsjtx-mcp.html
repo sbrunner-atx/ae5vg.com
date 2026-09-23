@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The wsjtx-mcp guide · AE5VG</title>
+<meta name="description" content="The wsjtx-mcp guide: installing, the first session, how the UDP model works, the transmit gate, the tools, coexisting with other UDP consumers, and the remote host.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="badge" href="../index.html">AE5VG</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site" id="site-nav" aria-label="Site">
+      <a href="../index.html">Home</a>
+      <a href="../products/index.html">Products</a>
+      <a href="../downloads.html">Downloads</a>
+      <a href="../getting-started.html">Getting Started</a>
+      <a href="index.html" aria-current="page">User Guide</a>
+      <a href="../development.html">Development</a>
+      <a href="../references/index.html">References</a>
+      <a href="../about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="label">Guide · built from the project documents</p>
+    <h1>The wsjtx-mcp guide</h1>
+    <p class="lead">The weak-signal leg of the operate-then-log trio: what the UDP protocol can and cannot do, installing, the first session, and reaching a WSJT-X on another computer. The wire-level message reference is <a href="https://github.com/sbrunner-atx/wsjtx-mcp/raw/main/docs/WSJTX-API.md">WSJTX-API.md</a>.</p>
+    <div class="strip" data-release="wsjtx-mcp">
+      <div><span class="label">Version</span><strong class="fill-version">…</strong></div>
+      <div><span class="label">Modes</span><strong>FT8 FT4 JT65 MSK144 Q65 WSPR</strong></div>
+      <div><span class="label">Protocol</span><strong>UDP schema 3 · port 2237</strong></div>
+      <div><span class="label">Verified against</span><strong>WSJT-X 3.0.2</strong></div>
+    </div>
+  </div>
+</section>
+
+<main id="main">
+  <div class="wrap">
+    <div class="layout">
+      <nav aria-label="On this page"><ul class="toc">
+        <li><span class="label">Chapters</span></li>
+        <li><a href="#glance">At a glance</a></li>
+        <li><a href="#install">Installing</a></li>
+        <li><a href="#first">Your first session</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#gate">The transmit gate</a></li>
+        <li><a href="#tools">The tools</a></li>
+        <li><a href="#coexist">Running alongside other UDP tools</a></li>
+        <li><a href="#remote">The remote host</a></li>
+      </ul></nav>
+      <div>
+        <h2 id="glance" style="margin-top:0">At a glance</h2>
+        <p>WSJT-X does not offer a request-and-response API. It broadcasts state over UDP (Status, Decode, QSOLogged, Heartbeat) and honors a small set of inbound control messages. wsjtx-mcp runs a background UDP listener that continuously parses datagrams and keeps the latest status, a buffer of decodes and the completed QSOs; you read those, and nudge WSJT-X with control messages.</p>
+        <p>Four consequences worth knowing up front:</p>
+        <ul>
+          <li><strong>No dial-frequency control over UDP.</strong> You can read the dial from Status and set mode, sub-mode, Rx DF and T/R period via configure, but QSY is a rig-control concern (Hamlib, CAT or the UI), not this server.</li>
+          <li><strong>You can start and halt Tx, but cannot toggle Enable Tx.</strong> Transmission is started by answering a CQ (reply) or by free text with send, and stopped by halt. The Enable Tx, Auto Seq, Call 1st and Hold Tx Freq checkboxes stay UI settings.</li>
+          <li><strong>reply gives hands-free QSOs only when Auto Seq is on.</strong> A reply is equivalent to double-clicking a CQ; with Auto Seq enabled (the usual FT8 and FT4 default) WSJT-X sequences the whole exchange to QSOLogged with no further calls. With Auto Seq off, reply starts only the first transmission.</li>
+          <li><strong>Best for search and pounce, weak for RUN.</strong> The API is built to answer CQ and QRZ decodes, so search and pounce is fully automatable. It has no clean way to drive a repeating call-CQ cycle; that needs WSJT-X's own Enable Tx, or a free-text CQ re-sent each period.</li>
+        </ul>
+        <p>The protocol is schema 3 / Qt_5_4, stable across WSJT-X 2.1 through 3.x, verified live against WSJT-X 3.0.2.</p>
+
+        <h2 id="install">Installing</h2>
+        <h3>1 · Enable WSJT-X's UDP Server</h3>
+        <p>In WSJT-X: <strong>Settings → Reporting → UDP Server</strong>. UDP Server: the host running wsjtx-mcp; for a local setup leave it at <code>127.0.0.1</code>. Port: 2237, the default. <strong>Accept UDP requests: tick this</strong> if you want wsjtx-mcp to control WSJT-X (answer CQs, set free text, configure); it is off by default. Observing decodes and status works without it; commanding does not.</p>
+        <h3>2a · As a Claude Desktop extension</h3>
+        <ol class="steps">
+          <li>Download <code>wsjtx-mcp.mcpb</code> from <a href="../downloads.html#wsjtx-mcp">Downloads</a>.</li>
+          <li>If you previously installed an older build, remove it first (Settings → Extensions → uninstall, and wait for its tile to disappear) so the swap takes effect.</li>
+          <li>Double-click the <code>.mcpb</code>, or drag it onto Claude Desktop → Settings → Extensions.</li>
+          <li>Fill in the settings form: your operator callsign (blank for receive-only; set it to enable transmit), and the listen host and port, usually <code>127.0.0.1</code> and 2237.</li>
+          <li>Quit and reopen Claude Desktop (⌘Q) so the new tools load.</li>
+        </ol>
+        <div class="callout warn">
+          <span class="label">Enables transmit</span>
+          <p>Entering your callsign, together with Accept UDP requests in WSJT-X, lets wsjtx-mcp key the transmitter through <code>reply</code> and <code>free_text</code> with <code>send=true</code>. Leave the callsign blank until you have read the transmit gate chapter.</p>
+        </div>
+        <h3>2b · From PyPI, any MCP client</h3>
+        <pre><code>uvx wsjtx-mcp        # or: pipx run wsjtx-mcp</code></pre>
+        <p>Add it to your client's MCP config with the environment variables from the configuration table in How it works, for example:</p>
+        <pre><code>{
+  "mcpServers": {
+    "wsjtx-mcp": {
+      "command": "uvx",
+      "args": ["wsjtx-mcp"],
+      "env": { "WSJTX_CALLSIGN": "", "WSJTX_HOST": "127.0.0.1", "WSJTX_PORT": "2237" }
+    }
+  }
+}</code></pre>
+        <h3>3 · Verify</h3>
+        <p>Ask your client to run the status tool. You should see the current dial frequency, mode and the discovered instance within about 15 seconds (WSJT-X sends a Heartbeat every 15 s plus a Status on each state change). If nothing appears, run diagnostics; it reports whether the UDP listener bound and how many datagrams have arrived.</p>
+
+        <h2 id="first">Your first session</h2>
+        <div class="exchange" role="figure" aria-label="Example requests and what happens">
+<span class="tx">What is WSJT-X doing right now?</span>
+    <span class="note">status: dial frequency, mode, DX call, transmit state, instance health</span>
+<span class="tx">Show me the last few decodes on this band.</span>
+    <span class="note">decodes read: the buffered Band Activity</span>
+<span class="tx">Answer the strongest CQ on this band.</span>
+    <span class="note">reply; with Auto Seq on, WSJT-X runs the whole exchange to QSOLogged</span>
+<span class="tx">Log that contact to N3FJP.</span>
+    <span class="note">the log tool returns the buffered QSO; the assistant passes it to n3fjp-mcp</span>
+<span class="tx">stop</span>
+    <span class="note">transmit halt; always allowed</span>
+        </div>
+        <div class="callout warn">
+          <span class="label">Keys the transmitter</span>
+          <p>Answering a CQ puts the station on the air. With <code>WSJTX_CALLSIGN</code> blank the request is refused. You remain the control operator under Part 97: stay where you can intervene, and say "stop" to halt.</p>
+        </div>
+
+        <h2 id="how">How it works</h2>
+        <p>WSJT-X is mostly a broadcaster. It pushes Status, Decode, QSOLogged, LoggedADIF, WSPRDecode, Clear, Close and a Heartbeat every 15 seconds. There is no "get frequency" or "get mode" query; you learn state from Status.</p>
+        <p>The listener keeps three things current. The first is the latest Status snapshot. The second is a decode buffer you can read, drain, clear or replay. The third is the completed QSOs from QSOLogged and LoggedADIF messages, ready to feed the logger.</p>
+        <p>Control works only with Accept UDP requests on. Every control message must carry the target instance's Id, which the server learns by first receiving a datagram from it. Control replies go back to the address each datagram arrived from. Host and port in the settings are where this server listens.</p>
+        <p>Points to design around, from the message reference:</p>
+        <ul>
+          <li><code>reply</code> must exactly match a prior CQ or QRZ decode; it is equivalent to double-clicking that line.</li>
+          <li><code>configure</code> sets mode, sub-mode, Rx DF, T/R period, frequency tolerance, DX call and grid, but not the dial frequency. On WSJT-X 3.0.x a mode change may move the dial to that band and mode's default frequency.</li>
+          <li>Only one process can bind a UDP port. This is a UDP and operating-system fact, not a WSJT-X limit.</li>
+        </ul>
+        <p>The codec is pure standard library and covers all 17 message types. The wire-level details are in <a href="https://github.com/sbrunner-atx/wsjtx-mcp/raw/main/docs/WSJTX-API.pdf">WSJTX-API (PDF)</a>.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Variable</th><th scope="col">Default</th><th scope="col">Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code>WSJTX_HOST</code></td><td><code>127.0.0.1</code></td><td>UDP address to bind and listen on.</td></tr>
+            <tr><td><code>WSJTX_PORT</code></td><td><code>2237</code></td><td>WSJT-X UDP Server port.</td></tr>
+            <tr><td><code>WSJTX_CALLSIGN</code></td><td>empty</td><td>Operator callsign, the single transmit gate. Blank is receive-only.</td></tr>
+            <tr><td><code>WSJTX_MULTICAST</code></td><td>off</td><td>Optional multicast group to join, to coexist with other UDP consumers.</td></tr>
+            <tr><td><code>WSJTX_INSTANCE</code></td><td>auto</td><td>Target a specific WSJT-X Id when several instances broadcast.</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <h2 id="gate">The transmit gate</h2>
+        <div class="callout warn">
+          <span class="label">Can key a transmitter</span>
+          <p>The callsign is the single transmit gate. With <code>WSJTX_CALLSIGN</code> blank the server is receive-only: it refuses every transmit-initiating message, namely <code>reply</code>, <code>free_text</code> with <code>send=true</code>, and any keying message via <code>wsjtx_call</code>. Halt, clear, configure, highlight, location, replay and all reads are always available; they do not put you on the air, and halt takes you off. Per-transmit approval also comes from your client's tool-permission prompt, and WSJT-X's own Tx Watchdog and the Tx Enabled and Transmitting flags in status are extra safety signals. You, the licensed control operator, remain responsible for lawful operation: station identification, the ability to intervene, and the Part 97 automatic and remote-control rules.</p>
+        </div>
+
+        <h2 id="tools">The tools</h2>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Tool</th><th scope="col">Kind</th><th scope="col">What it does</th></tr></thead>
+          <tbody>
+            <tr><td><code>status</code></td><td>observe</td><td>Latest <code>Status</code> snapshot + listener/instance health.</td></tr>
+            <tr><td><code>diagnostics</code></td><td>observe</td><td>Host/network + bind status + datagram counts + gate state.</td></tr>
+            <tr><td><code>decodes</code></td><td>observe/nudge</td><td><code>read</code> / <code>drain</code> (poll new) / <code>clear_local</code> / <code>replay</code>. The RX plane.</td></tr>
+            <tr><td><code>log</code></td><td>observe</td><td>Buffered completed QSOs (<code>QSOLogged</code> + <code>LoggedADIF</code>) → feed N3FJP.</td></tr>
+            <tr><td><code>reply</code></td><td><strong>transmit</strong></td><td>Answer a buffered CQ/QRZ decode (auto-sequences the QSO when WSJT-X "Auto Seq" is on).</td></tr>
+            <tr><td><code>free_text</code></td><td><strong>transmit</strong> if <code>send</code></td><td>Set the Tx5 free-text message; <code>send=true</code> keys the radio.</td></tr>
+            <tr><td><code>transmit</code></td><td>control</td><td><code>halt</code> / <code>halt_auto</code>, stop transmitting (UDP cannot <em>enable</em> Tx).</td></tr>
+            <tr><td><code>configure</code></td><td>control</td><td>Mode/sub-mode/Rx DF/T-R period/freq-tol/DX call+grid. <strong>No dial freq.</strong></td></tr>
+            <tr><td><code>clear</code></td><td>control</td><td>Clear the Band Activity / Rx Frequency windows.</td></tr>
+            <tr><td><code>highlight</code></td><td>control</td><td>Color or clear a callsign in Band Activity.</td></tr>
+            <tr><td><code>location</code></td><td>control</td><td>Override the session Maidenhead grid.</td></tr>
+            <tr><td><code>switch_config</code></td><td>control</td><td>Switch to a named WSJT-X configuration.</td></tr>
+            <tr><td><code>annotate</code></td><td>control</td><td>Set a Fox/Hound sort-order annotation for a DX call (niche, DXpedition).</td></tr>
+            <tr><td><code>wsjtx_call</code></td><td>escape hatch</td><td>Build &amp; send any message type by name (gate still applies).</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <h2 id="coexist">Running alongside other UDP tools</h2>
+        <p>Only one process can own UDP 2237 on a host. If JTAlert, GridTracker or N1MM already consume it, three options:</p>
+        <ol class="steps">
+          <li>Point WSJT-X's secondary UDP server at wsjtx-mcp's host and port.</li>
+          <li>Use a multicast group: set the same group in WSJT-X's UDP Server and in <code>WSJTX_MULTICAST</code>, so several listeners coexist.</li>
+          <li>Run wsjtx-mcp on a different host than WSJT-X, bridged by mcp-host-bridge (next section).</li>
+        </ol>
+
+        <h2 id="remote">The remote host</h2>
+        <p>Sandboxed MCP clients, notably Claude Desktop, let their connector reach only <code>127.0.0.1</code>, not LAN addresses, even with macOS Local Network permission on. The fix is a small UDP relay that runs outside the sandbox on the wsjtx-mcp host: <a href="../products/mcp-host-bridge.html">mcp-host-bridge</a>, which routes WSJT-X's broadcasts in and your control replies back out. UDP is connectionless and bidirectional, so the topology inverts versus TCP: the bridge listens on the LAN and delivers to loopback.</p>
+        <p>Get the bridge with Python, or download the single binary for your OS from <a href="../downloads.html#mcp-host-bridge">Downloads</a>; the binary needs no Python.</p>
+        <pre><code>uvx mcp-host-bridge --help          # or: pipx install mcp-host-bridge</code></pre>
+        <p>Then install the persistent <code>wsjtx</code> bridge service on the wsjtx-mcp host. The same commands work on every OS: launchd on macOS, systemd on Linux, a Scheduled Task on Windows. <code>netsh portproxy</code> is TCP-only and is skipped for UDP automatically.</p>
+        <pre><code>mcp-host-bridge install wsjtx --to &lt;remote-wsjtx-host&gt;
+# listens 0.0.0.0:2237 (LAN) and delivers 127.0.0.1:2238 (loopback);
+# --to is an optional hint; the remote peer is auto-learned from the first datagram
+mcp-host-bridge status wsjtx       # check it
+mcp-host-bridge uninstall wsjtx    # remove it</code></pre>
+        <p>Critical wsjtx-mcp config for the bridged case: <code>WSJTX_HOST=127.0.0.1</code> and <code>WSJTX_PORT=2238</code>, the bridge's deliver port, not the default 2237 (the bridge's own LAN socket occupies 2237 on that host). In the remote WSJT-X, set Settings → Reporting → UDP Server to the bridge host's LAN IP, port 2237, and tick Accept UDP requests for control.</p>
+        <p>Notes: for a local WSJT-X on the same machine you do not need the bridge at all; point wsjtx-mcp straight at <code>127.0.0.1:2237</code>. Multicast is an alternative to the bridge when every consumer is on the same LAN segment: set <code>WSJTX_MULTICAST</code> and WSJT-X's UDP Server to the same group. Full details: <a href="https://github.com/sbrunner-atx/wsjtx-mcp/raw/main/docs/REMOTE-HOST.md">REMOTE-HOST.md</a>.</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <p class="label">AE5VG · Austin, TX</p>
+      <p>Site text CC BY 4.0; software under the license named in each repository.</p>
+      <p class="sk">GL es 73 de AE5VG sk</p>
+    </div>
+    <div>
+      <p class="label">Contact</p>
+      <p>Software: open an issue on the relevant repository at <a href="https://github.com/sbrunner-atx">github.com/sbrunner-atx</a>.</p>
+      <p>Radio matters: the <a href="https://www.qrz.com/db/AE5VG">QRZ page for AE5VG</a>.</p>
+      <p>Email: <span class="email-here">stefan at this domain</span></p>
+    </div>
+  </div>
+</footer>
+<script src="../site.js"></script>
+</body>
+</html>

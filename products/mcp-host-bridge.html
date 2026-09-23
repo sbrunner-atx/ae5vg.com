@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mcp-host-bridge · AE5VG</title>
+<meta name="description" content="A loopback-to-remote TCP/UDP relay so a sandboxed MCP client can reach a service running on another computer.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="badge" href="../index.html">AE5VG</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site" id="site-nav" aria-label="Site">
+      <a href="../index.html">Home</a>
+      <a href="index.html" aria-current="page">Products</a>
+      <a href="../downloads.html">Downloads</a>
+      <a href="../getting-started.html">Getting Started</a>
+      <a href="../user-guide/index.html">User Guide</a>
+      <a href="../development.html">Development</a>
+      <a href="../references/index.html">References</a>
+      <a href="../about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="label">Product · MIT</p>
+    <h1>mcp-host-bridge</h1>
+    <p class="lead">A configurable loopback-to-remote TCP/UDP relay so a sandboxed MCP client can reach a service running on another computer. Standard library only at runtime; binaries for macOS, Windows and Linux need no Python at all.</p>
+    <div class="btn-row">
+      <a class="btn" href="../downloads.html#mcp-host-bridge">Download</a>
+      <a class="btn ghost" href="https://github.com/sbrunner-atx/mcp-host-bridge">GitHub</a>
+    </div>
+    <div class="strip" data-release="mcp-host-bridge">
+      <div><span class="label">Version</span><strong class="fill-version">…</strong></div>
+      <div><span class="label">Released</span><strong class="fill-released">…</strong></div>
+      <div><span class="label">License</span><strong>MIT</strong></div>
+      <div><span class="label">Ships as</span><strong>binaries · PyPI</strong></div>
+    </div>
+  </div>
+</section>
+
+<main id="main">
+  <div class="wrap">
+    <div class="layout">
+      <nav aria-label="On this page"><ul class="toc">
+        <li><span class="label">On this page</span></li>
+        <li><a href="#what">What it does</a></li>
+        <li><a href="#features">Features and benefits</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#ask">Ask it</a></li>
+        <li><a href="#tools">Tools</a></li>
+        <li><a href="#settings">Settings</a></li>
+        <li><a href="#safety">Safety</a></li>
+        <li><a href="#docs">Documents</a></li>
+      </ul></nav>
+      <div>
+        <h2 id="what" style="margin-top:0">What it does</h2>
+        <p>Some MCP clients, Claude Desktop is the notable one, run their connectors sandboxed so the connector can only reach <code>127.0.0.1</code>, not LAN addresses. This holds even with macOS Local Network permission turned on; it is a deliberate security boundary, not a bug. A LAN IP for fldigi or N3FJP therefore times out, even though <code>telnet</code> to the same IP works. The relay runs outside the sandbox on the same machine as the client. It listens on loopback and forwards to the remote service. You point the connector at <code>127.0.0.1</code>, and the bridge does the LAN hop.</p>
+        <p>This is a client-environment workaround, not anything specific to a given MCP server, which is exactly why it lives in its own generic tool instead of inside any one server.</p>
+
+        <h2 id="features">Features and benefits</h2>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Feature</th><th scope="col">What it gives you</th></tr></thead>
+          <tbody>
+            <tr><td>Loopback-to-LAN relay</td><td>TCP and UDP, one command per service. Multiple bridges coexist side by side; the service name is the instance key.</td></tr>
+            <tr><td>Standard library only at runtime</td><td>The relay has no third-party dependencies. It does not modify or inspect traffic.</td></tr>
+            <tr><td>Presets</td><td><code>n3fjp</code> = 1100 (TCP), <code>fldigi</code> = 7362 (TCP), <code>wsjtx</code> = 2237 (UDP). Add your own in <code>~/.mcp-host-bridge/services.ini</code>.</td></tr>
+            <tr><td>Custom services</td><td>A program with no preset needs only a port: <code>mcp-host-bridge install myapp --port 5000 --to 192.168.1.9</code>.</td></tr>
+            <tr><td>Status check</td><td><code>mcp-host-bridge status &lt;service&gt;</code> checks the bridge and tests the connection.</td></tr>
+            <tr><td>UDP listen-and-deliver</td><td>UDP is connectionless and bidirectional, so the topology inverts: the bridge listens on the LAN side and delivers to loopback, and control replies are routed back to the datagram's source, auto-learned.</td></tr>
+            <tr><td>Persistence per OS</td><td>macOS: launchd LaunchAgent, per-user, <code>RunAtLoad</code> and <code>KeepAlive</code>. Windows: <code>netsh interface portproxy</code> for TCP, no Python required; UDP uses a Scheduled Task running the relay, and TCP falls back to one if <code>netsh</code> is unavailable. Linux: systemd <code>--user</code> service with <code>Restart=always</code>. The same commands work on every OS.</td></tr>
+            <tr><td>Binaries with no Python</td><td>One file per OS from the releases; the installed service invokes that binary directly.</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <h2 id="how">How it works</h2>
+        <figure class="diagram">
+          <svg viewBox="0 0 720 210" role="img" aria-label="Diagram: a sandboxed MCP client reaches mcp-host-bridge on loopback, which forwards over the LAN to the remote service. In the UDP variant the bridge listens on the LAN and delivers to loopback." font-family="JetBrains Mono,monospace">
+            <rect x="20" y="30" width="170" height="46" fill="#f6f8fa" stroke="#d0d7de"/>
+            <text x="105" y="50" fill="#1f2328" font-size="12" text-anchor="middle">MCP client</text>
+            <text x="105" y="66" fill="#57606a" font-size="10" text-anchor="middle">sandboxed</text>
+            <rect x="270" y="30" width="180" height="46" fill="#ffffff" stroke="#0969da"/>
+            <text x="360" y="50" fill="#0550ae" font-size="12" text-anchor="middle">mcp-host-bridge</text>
+            <text x="360" y="66" fill="#57606a" font-size="10" text-anchor="middle">127.0.0.1:PORT</text>
+            <rect x="530" y="30" width="170" height="46" fill="#f6f8fa" stroke="#d0d7de"/>
+            <text x="615" y="50" fill="#1f2328" font-size="12" text-anchor="middle">remote service</text>
+            <text x="615" y="66" fill="#57606a" font-size="10" text-anchor="middle">192.168.x.x:PORT</text>
+            <g fill="none" stroke="#0969da" stroke-width="1">
+              <line x1="190" y1="53" x2="270" y2="53"/><line x1="450" y1="53" x2="530" y2="53"/>
+            </g>
+            <text x="230" y="45" fill="#57606a" font-size="10" text-anchor="middle">loopback</text>
+            <text x="490" y="45" fill="#57606a" font-size="10" text-anchor="middle">LAN</text>
+            <rect x="20" y="130" width="170" height="46" fill="#f6f8fa" stroke="#d0d7de"/>
+            <text x="105" y="150" fill="#1f2328" font-size="12" text-anchor="middle">remote WSJT-X</text>
+            <text x="105" y="166" fill="#57606a" font-size="10" text-anchor="middle">UDP Server → bridge IP</text>
+            <rect x="270" y="130" width="180" height="46" fill="#ffffff" stroke="#0969da"/>
+            <text x="360" y="150" fill="#0550ae" font-size="12" text-anchor="middle">listen 0.0.0.0:2237</text>
+            <text x="360" y="166" fill="#57606a" font-size="10" text-anchor="middle">deliver 127.0.0.1:2238</text>
+            <rect x="530" y="130" width="170" height="46" fill="#f6f8fa" stroke="#d0d7de"/>
+            <text x="615" y="150" fill="#1f2328" font-size="12" text-anchor="middle">wsjtx-mcp</text>
+            <text x="615" y="166" fill="#57606a" font-size="10" text-anchor="middle">loopback only</text>
+            <g fill="none" stroke="#0969da" stroke-width="1">
+              <line x1="190" y1="153" x2="270" y2="153"/><line x1="450" y1="153" x2="530" y2="153"/>
+            </g>
+            <text x="230" y="145" fill="#57606a" font-size="10" text-anchor="middle">LAN · UDP</text>
+            <text x="490" y="145" fill="#57606a" font-size="10" text-anchor="middle">loopback</text>
+          </svg>
+          <figcaption>Top: the TCP relay. Bottom: the inverted UDP variant, where datagrams arrive from the LAN and replies are routed back to their source.</figcaption>
+        </figure>
+        <p>For TCP, the bridge listens on loopback and connects out to the remote program. For UDP the topology is inverted: WSJT-X broadcasts datagrams in, and control replies must return to the address each datagram came from. The bridge learns the remote peer from the first inbound datagram, or you pin it with <code>--to</code>.</p>
+
+        <h2 id="ask">Ask it</h2>
+        <p>mcp-host-bridge is not an MCP server, so there is nothing to ask the assistant. You install it once, from a terminal on the same computer as your MCP client.</p>
+        <h3>Get the bridge</h3>
+        <p>Download the single file for your OS from <a href="../downloads.html#mcp-host-bridge">Downloads</a>: <code>mcp-host-bridge-macos</code>, <code>mcp-host-bridge.exe</code> or <code>mcp-host-bridge-linux</code>. No Python is needed. Or install it with Python:</p>
+        <pre><code>pipx install mcp-host-bridge      # or: uvx mcp-host-bridge ...
+# or from source:
+git clone https://github.com/sbrunner-atx/mcp-host-bridge.git
+cd mcp-host-bridge &amp;&amp; uv sync &amp;&amp; uv run mcp-host-bridge --help</code></pre>
+        <div class="callout">
+          <span class="label">Unsigned binaries</span>
+          <p>The release binaries are not code-signed. On macOS, right-click the file and choose Open once, or run <code>xattr -d com.apple.quarantine ./mcp-host-bridge-macos</code>. On Windows, choose More info, then Run anyway.</p>
+        </div>
+        <h3>Install a bridge</h3>
+        <p>One command per program; the service survives a reboot.</p>
+        <pre><code>mcp-host-bridge install n3fjp  --to 192.168.1.50      # TCP  127.0.0.1:1100 -&gt; 192.168.1.50:1100
+mcp-host-bridge install fldigi --to 192.168.1.50      # TCP  127.0.0.1:7362 -&gt; 192.168.1.50:7362
+mcp-host-bridge install wsjtx  --to 192.168.1.111     # UDP  0.0.0.0:2237  -&gt; deliver 127.0.0.1:2238</code></pre>
+        <p>Then, in the MCP connector settings, set the service host to <code>127.0.0.1</code>, save, and fully quit and reopen the client. For WSJT-X, set wsjtx-mcp to <code>127.0.0.1</code> port 2238, and point WSJT-X's UDP Server at this host's LAN IP, port 2237.</p>
+
+        <h2 id="tools">Tools</h2>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Command</th><th scope="col">What it does</th></tr></thead>
+          <tbody>
+            <tr><td><code>install &lt;service&gt; --to HOST</code></td><td>Persistent service (survives reboot), using a built-in preset.</td></tr>
+            <tr><td><code>install &lt;name&gt; --port N --to HOST</code></td><td>A custom app with no preset: give it a port.</td></tr>
+            <tr><td><code>status &lt;service&gt;</code></td><td>Check it and test the connection.</td></tr>
+            <tr><td><code>uninstall &lt;service&gt;</code></td><td>Remove it.</td></tr>
+            <tr><td><code>run &lt;service&gt; --to HOST</code></td><td>Run in the foreground instead of installing a service.</td></tr>
+            <tr><td><code>list-services</code></td><td>See known presets.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <h3>Built-in OS alternatives</h3>
+        <p>This is a standard networking primitive. If you would rather not install anything, the same loopback-to-LAN hop can be done by hand:</p>
+        <ul>
+          <li>Windows: <code>netsh interface portproxy add v4tov4 listenaddress=127.0.0.1 listenport=1100 connectaddress=192.168.1.50 connectport=1100</code></li>
+          <li>macOS and Linux: <code>socat TCP-LISTEN:1100,bind=127.0.0.1,fork,reuseaddr TCP:192.168.1.50:1100</code></li>
+          <li>Anywhere with SSH: <code>ssh -N -L 127.0.0.1:1100:192.168.1.50:1100 user@host</code></li>
+        </ul>
+        <p>mcp-host-bridge wraps this in one cross-platform command with presets and reboot persistence.</p>
+
+        <h2 id="settings">Settings</h2>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Flag</th><th scope="col">Meaning</th></tr></thead>
+          <tbody>
+            <tr><td><code>--to HOST[:PORT]</code></td><td>Remote host (or <code>host:port</code>). Port defaults to the preset's port.</td></tr>
+            <tr><td><code>--port N</code></td><td>Define or override the service port.</td></tr>
+            <tr><td><code>--listen HOST:PORT</code></td><td>Local address to listen on (default <code>127.0.0.1:&lt;port&gt;</code>).</td></tr>
+            <tr><td><code>--name LABEL</code></td><td>Instance label (defaults to the service name).</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>UDP services use a <code>--listen</code> (LAN-facing) and <code>--deliver</code> (loopback) pair instead. UDP listen defaults to <code>0.0.0.0:&lt;port&gt;</code> and deliver to <code>127.0.0.1:&lt;port+1&gt;</code>; override either side with <code>--listen</code> or <code>--deliver</code> if needed.</p>
+        <p>Custom presets live in <code>~/.mcp-host-bridge/services.ini</code>: <code>name = port</code> is TCP, <code>name = port udp</code> (or <code>port,udp</code>) is UDP. The file is optional; user entries override built-ins.</p>
+
+        <h2 id="safety">Safety</h2>
+        <div class="callout warn">
+          <span class="label">Trusted LAN only</span>
+          <p>This is a plain byte relay: no authentication, no encryption. Use it only on a trusted LAN, the same trust model as the device APIs it fronts (N3FJP, fldigi, WSJT-X). It does not modify or inspect traffic.</p>
+        </div>
+        <h2 id="docs">Documents</h2>
+        <ul>
+          <li><a href="https://github.com/sbrunner-atx/mcp-host-bridge/raw/main/README.md">README</a> · <a href="https://github.com/sbrunner-atx/mcp-host-bridge/raw/main/CHANGELOG.md">CHANGELOG</a></li>
+          <li><a href="https://pypi.org/project/mcp-host-bridge/">PyPI</a> · <a href="https://github.com/sbrunner-atx/mcp-host-bridge">GitHub repository</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <p class="label">AE5VG · Austin, TX</p>
+      <p>Site text CC BY 4.0; software under the license named in each repository.</p>
+      <p class="sk">GL es 73 de AE5VG sk</p>
+    </div>
+    <div>
+      <p class="label">Contact</p>
+      <p>Software: open an issue on the relevant repository at <a href="https://github.com/sbrunner-atx">github.com/sbrunner-atx</a>.</p>
+      <p>Radio matters: the <a href="https://www.qrz.com/db/AE5VG">QRZ page for AE5VG</a>.</p>
+      <p>Email: <span class="email-here">stefan at this domain</span></p>
+    </div>
+  </div>
+</footer>
+<script src="../site.js"></script>
+</body>
+</html>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>fldigi-mcp · AE5VG</title>
+<meta name="description" content="An MCP server for fldigi: all 174 XML-RPC methods of fldigi 4.2.13 as grouped tools, signal hunting from the receiver audio, and a callsign transmit gate.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="badge" href="../index.html">AE5VG</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site" id="site-nav" aria-label="Site">
+      <a href="../index.html">Home</a>
+      <a href="index.html" aria-current="page">Products</a>
+      <a href="../downloads.html">Downloads</a>
+      <a href="../getting-started.html">Getting Started</a>
+      <a href="../user-guide/index.html">User Guide</a>
+      <a href="../development.html">Development</a>
+      <a href="../references/index.html">References</a>
+      <a href="../about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="label">Product · GPL-3.0-or-later</p>
+    <h1>fldigi-mcp</h1>
+    <p class="lead">An MCP server for controlling fldigi, the amateur radio digital-modem application, from MCP-aware clients such as Claude Desktop. fldigi ships a built-in XML-RPC control interface; fldigi-mcp connects to it and exposes the whole API as a small set of logically grouped tools, so an assistant can read the radio's state and drive the modem, rig, log and transmitter through plain language.</p>
+    <div class="btn-row">
+      <a class="btn" href="../downloads.html#fldigi-mcp">Download</a>
+      <a class="btn ghost" href="https://github.com/sbrunner-atx/fldigi-mcp">GitHub</a>
+    </div>
+    <div class="strip" data-release="fldigi-mcp">
+      <div><span class="label">Version</span><strong class="fill-version">…</strong></div>
+      <div><span class="label">Released</span><strong class="fill-released">…</strong></div>
+      <div><span class="label">License</span><strong>GPL-3.0-or-later</strong></div>
+      <div><span class="label">Ships as</span><strong>.mcpb bundle · PyPI</strong></div>
+    </div>
+  </div>
+</section>
+
+<main id="main">
+  <div class="wrap">
+    <div class="layout">
+      <nav aria-label="On this page"><ul class="toc">
+        <li><span class="label">On this page</span></li>
+        <li><a href="#what">What it does</a></li>
+        <li><a href="#features">Features and benefits</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#ask">Ask it</a></li>
+        <li><a href="#tools">Tools</a></li>
+        <li><a href="#settings">Settings</a></li>
+        <li><a href="#safety">Safety</a></li>
+        <li><a href="#docs">Documents</a></li>
+      </ul></nav>
+      <div>
+        <h2 id="what" style="margin-top:0">What it does</h2>
+        <p>fldigi's XML-RPC interface is its official, OS-independent control API. fldigi-mcp talks to it directly rather than through an unmaintained wrapper. Every one of the 174 XML-RPC methods in fldigi 4.2.13 is reachable through a named operation in one of 17 grouped tools, one permission each. A coverage test fails the build if a method of the shipped catalog is not wired or an argument type disagrees with fldigi's signature. The Tools table below lists every tool the server offers, including those for diagnostics, band guidance, signal hunting and the proposed patches.</p>
+        <p>Beyond the API itself, the server adds signal hunting on the receiver audio, an advisory band-guidance feature, and two bundled operating skills distilled from live on-air use. On a fldigi built with two proposed patches, it also reads fldigi's Signal Browser and the RSID bursts its detector heard.</p>
+        <div class="callout">
+          <span class="label">Proposed, not yet in fldigi</span>
+          <p>The Signal Browser and RSID patches were offered to the fldigi maintainer on 11 and 16 September 2026 (w1hkj/fldigi issue 55). They are not merged and are in no released fldigi. Details are under <a href="#features">Features and benefits</a>.</p>
+        </div>
+        <p>The project is in beta. It supports fldigi 4.2.13, verified live on 9 September 2026. It is an independent project, not affiliated with the fldigi / W1HKJ project.</p>
+        <p>The license is GPL-3.0-or-later, the same as fldigi, so code can flow both ways. It was MIT through 0.2.2; talking to fldigi over XML-RPC never required the change, porting its decoders does.</p>
+
+        <h2 id="features">Features and benefits</h2>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Feature</th><th scope="col">What it gives you</th></tr></thead>
+          <tbody>
+            <tr><td>Complete API coverage</td><td>All 174 XML-RPC methods of fldigi 4.2.13 through grouped tools, one permission each; a coverage test fails the build if a method is not wired. The <code>fldigi_call</code> escape hatch covers methods a newer build may add.</td></tr>
+            <tr><td>Callsign transmit gate</td><td>With no callsign configured the station is receive-only; nothing can key the radio.</td></tr>
+            <tr><td>Names match fldigi</td><td>Tools and operations mirror fldigi's own API namespaces and on-screen labels: Op Mode, AFC, SQL, Rev, Lock, RxID and TxID, T/R.</td></tr>
+            <tr><td>Standard-library XML-RPC</td><td>Talks to fldigi with Python's <code>xmlrpc.client</code>, not an unmaintained wrapper. The only third-party runtime dependencies are the MCP SDK and PyYAML.</td></tr>
+            <tr><td>Signal hunting</td><td><code>signal_hunt</code> names each signal's mode from the receiver audio, ranks the station that sits still and calls CQ, and <code>tune_to</code> sets modem and carrier. Verified on five recordings of known mode, 5 of 5. Receive only.</td></tr>
+            <tr><td>Audio from where the receiver is</td><td>The Audio input device setting names the sound card fldigi uses. Where the server cannot open it (a sandbox, a remote fldigi), <code>fldigi-mcp-tap</code> runs beside the receiver and answers over HTTP at the Signal-hunt tap URL. With no audio at all, <code>method="api"</code> steps fldigi's own <code>search_up</code>: slow, and blind to mode.</td></tr>
+            <tr><td>Signal Browser over the API (proposed patch)</td><td>On a patched fldigi, the assistant reads every station fldigi's decoder bank holds, up to 30 PSK, RTTY or CW stations at once, each with its text.</td></tr>
+            <tr><td>RSID hits over the API (proposed patch)</td><td>On a patched fldigi, with RxID set to notify-only, fldigi names the modes on the band from their RSID bursts without switching the modem. This separates Olivia from Contestia and THOR from DominoEX.</td></tr>
+            <tr><td>Band guidance</td><td>Advisory watering-hole suggestions and out-of-segment warnings, region aware, 160 m to 70 cm. Experimental and off by default.</td></tr>
+            <tr><td>Operating skills</td><td><code>fldigi-operating</code> and <code>signal-hunting</code> ship with the repo and the bundle, distilled from live on-air use.</td></tr>
+            <tr><td>Free API reference</td><td>The field-tested fldigi XML-RPC reference, every method verified against a live build, free whether or not you use this server: <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-api.pdf">PDF</a>, <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-api.md">Markdown</a>, and a <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-api-spec.md">machine-readable catalog</a> of all 174 methods.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout">
+          <span class="label">Proposed, not yet in fldigi</span>
+          <p>Two patches were offered to the fldigi maintainer on w1hkj/fldigi issue 55; neither is merged. The Signal Browser patch (11 September 2026) touches four files and adds <code>browser.get_channels</code> and <code>browser.clear</code>. The RSID patch (16 September 2026) applies on top of it and adds <code>rsid.get_hits</code> and <code>rsid.clear</code>, which return each accepted burst as <code>{utc, mode, hz}</code>. Until they are merged, names and fields may change. The server detects the methods in <code>fldigi.list</code>, never from a version number, and caches the result for 30 seconds. On an unpatched fldigi the <code>browser</code> and <code>rsid</code> tools answer with a hint.</p>
+        </div>
+        <p>To try the Signal Browser patch now, build fldigi from source with it. The RSID patch, <code>patches/fldigi-4.2.13-rsid-hits.patch</code>, applies on top of the first in the same way.</p>
+        <pre><code>tar xf fldigi-4.2.13.tar.gz &amp;&amp; cd fldigi-4.2.13
+patch -p1 &lt; /path/to/fldigi-mcp/patches/fldigi-4.2.13-browser-xmlrpc.patch
+./configure --prefix=$HOME/.local/fldigi &amp;&amp; make -j8 &amp;&amp; make install</code></pre>
+
+        <h2 id="how">How it works</h2>
+        <figure class="diagram">
+          <svg viewBox="0 0 720 120" role="img" aria-label="Diagram: Claude Desktop connects over MCP to fldigi-mcp, which connects over XML-RPC to fldigi, which connects to the radio." font-family="JetBrains Mono,monospace">
+            <g fill="none" stroke="#0969da" stroke-width="1">
+              <line x1="170" y1="60" x2="220" y2="60"/><line x1="390" y1="60" x2="440" y2="60"/><line x1="610" y1="60" x2="650" y2="60"/>
+            </g>
+            <rect x="20" y="35" width="150" height="50" fill="#f6f8fa" stroke="#d0d7de"/>
+            <text x="95" y="65" fill="#1f2328" font-size="13" text-anchor="middle">Claude Desktop</text>
+            <rect x="220" y="35" width="170" height="50" fill="#ffffff" stroke="#0969da"/>
+            <text x="305" y="65" fill="#0550ae" font-size="13" text-anchor="middle">fldigi-mcp</text>
+            <rect x="440" y="35" width="170" height="50" fill="#f6f8fa" stroke="#d0d7de"/>
+            <text x="525" y="65" fill="#1f2328" font-size="13" text-anchor="middle">fldigi</text>
+            <rect x="650" y="35" width="55" height="50" fill="#0969da"/>
+            <text x="677" y="65" fill="#ffffff" font-size="12" text-anchor="middle" font-weight="700">radio</text>
+            <text x="195" y="50" fill="#57606a" font-size="10" text-anchor="middle">MCP</text>
+            <text x="415" y="50" fill="#57606a" font-size="10" text-anchor="middle">XML-RPC</text>
+          </svg>
+          <figcaption>Everything on one computer: the assistant, the connector, fldigi, the radio.</figcaption>
+        </figure>
+        <p>fldigi's XML-RPC interface is its official, OS-independent control API, on by default at <code>127.0.0.1:7362</code>. The server talks to it directly and groups the 174 methods into tools by fldigi area, so "change the mode" is a single permission regardless of which underlying method runs.</p>
+        <p>fldigi need not run on the same machine. Point the server at it with <code>FLDIGI_HOST</code> and <code>FLDIGI_PORT</code>, and launch fldigi with <code>--xmlrpc-server-address 0.0.0.0</code>. The XML-RPC interface is unauthenticated, so keep the link on a trusted LAN or tunnel it over SSH. Sandboxed clients such as Claude Desktop reach only loopback; <a href="mcp-host-bridge.html">mcp-host-bridge</a> does the LAN hop.</p>
+
+        <h2 id="ask">Ask it</h2>
+        <div class="exchange" role="figure" aria-label="Example requests and what happens">
+<span class="tx">What is fldigi doing right now?</span>
+    <span class="note">the status tool: version, mode, frequency, T/R, callsign, band</span>
+<span class="tx">Set the rig to 14.070 USB and BPSK31.</span>
+    <span class="note">rig and modem tools; with band guidance on, an advisory note if the frequency is off the segment</span>
+<span class="tx">Find me someone calling CQ on 20 meters PSK31.</span>
+    <span class="note">signal_hunt ranks the steady CQ callers, tune_to picks one, twenty seconds of text confirms it</span>
+<span class="tx">Call CQ Field Day until someone answers. Work them, our exchange is 2A STX, log the contact to N3FJP, then keep calling.</span>
+    <span class="note">with n3fjp-mcp, the full loop: CQ, listen, exchange, TU, log, repeat; transmit is callsign gated</span>
+<span class="tx">stop</span>
+    <span class="note">abort is always allowed; it drops PTT at once and discards queued text</span>
+        </div>
+        <div class="callout warn">
+          <span class="label">The CQ request keys the transmitter</span>
+          <p>It works only with a callsign set, and Claude Desktop asks you to approve each time before it keys the radio. Run it first into a dummy load. You are the licensed operator and remain responsible for everything you transmit.</p>
+        </div>
+
+        <h2 id="tools">Tools</h2>
+        <p>Each tool is one permission and takes an <code>operation</code> argument, so "change the mode" is a single permission regardless of which underlying method runs.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Tool</th><th scope="col">Controls (fldigi area)</th></tr></thead>
+          <tbody>
+            <tr><td>status</td><td>Quick snapshot: version, mode, frequency, T/R, callsign, band.</td></tr>
+            <tr><td>diagnostics</td><td>Host and network info for connectivity troubleshooting; needs no fldigi connection.</td></tr>
+            <tr><td>application</td><td>Program info, launch and stop the fldigi process (<code>fldigi.*</code>).</td></tr>
+            <tr><td>modem</td><td>Op Mode and modem select, carrier, bandwidth, AFC range, Olivia.</td></tr>
+            <tr><td>frequency</td><td>Dial frequency and waterfall sideband.</td></tr>
+            <tr><td>controls</td><td>AFC, SQL, Rev, Lock, RxID, TxID, status fields.</td></tr>
+            <tr><td>transmit</td><td>T/R, Tune, abort, disable and enable Tx, macros, send. Callsign gated.</td></tr>
+            <tr><td>rig</td><td>CAT control: mode, frequency, bandwidth, notch, QSY, meters.</td></tr>
+            <tr><td>log</td><td>Logbook and contest fields; ADIF last and all records.</td></tr>
+            <tr><td>text</td><td>RX and TX text and data streams.</td></tr>
+            <tr><td>spot</td><td>Spotting and PSK Reporter.</td></tr>
+            <tr><td>wefax</td><td>WEFAX (weather fax) mode.</td></tr>
+            <tr><td>navtex</td><td>NAVTEX / SitorB mode.</td></tr>
+            <tr><td>flmsg</td><td>flmsg (message forms) interworking.</td></tr>
+            <tr><td>io</td><td>ARQ / KISS I/O port selection.</td></tr>
+            <tr><td>legacy</td><td>Deprecated methods fldigi still serves, each with its current equivalent named.</td></tr>
+            <tr><td>band_guidance</td><td>Advisory band and watering-hole help. Experimental.</td></tr>
+            <tr><td>signal_hunt</td><td>Find and name the signals in the receiver audio; rank CQing stations. Experimental, needs the <code>[hunt]</code> extra.</td></tr>
+            <tr><td>tune_to</td><td>Set modem and carrier to a signal_hunt candidate. Receive only.</td></tr>
+            <tr><td>browser</td><td>fldigi's Signal Browser: every station the decoder bank holds, with its text. Needs the fldigi patch in <code>patches/</code>.</td></tr>
+            <tr><td>rsid</td><td>RSID bursts heard in the passband, mode and frequency, without switching the modem. Needs the rsid-hits patch in <code>patches/</code>.</td></tr>
+            <tr><td>fldigi_call</td><td>Escape hatch: call any method by name, including future ones.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout">
+          <span class="label">Proposed, not yet in fldigi</span>
+          <p>The patches that <code>browser</code> and <code>rsid</code> need are offered upstream on w1hkj/fldigi issue 55 and not merged. On a stock fldigi both tools answer with a hint.</p>
+        </div>
+        <p>Use <code>application → list_methods</code> to enumerate every method the running build supports. On 4.2.13 all of them are surfaced in a group; <code>fldigi_call</code> is for methods a newer fldigi may add before this connector catches up.</p>
+
+        <h2 id="settings">Settings</h2>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Variable</th><th scope="col">Default</th><th scope="col">Purpose</th></tr></thead>
+          <tbody>
+            <tr><td>FLDIGI_HOST</td><td><code>127.0.0.1</code></td><td>fldigi XML-RPC host.</td></tr>
+            <tr><td>FLDIGI_PORT</td><td><code>7362</code></td><td>fldigi XML-RPC port.</td></tr>
+            <tr><td>FLDIGI_CALLSIGN</td><td>empty</td><td>Operator callsign. The single transmit gate: set it to enable transmit; blank keeps the station receive-only.</td></tr>
+            <tr><td>FLDIGI_BAND_GUIDANCE</td><td><code>off</code></td><td>Experimental advisory band guidance; <code>on</code> to enable.</td></tr>
+            <tr><td>FLDIGI_REGION</td><td><code>2</code></td><td>IARU region for band guidance: 1, 2 or 3.</td></tr>
+            <tr><td>FLDIGI_PATH</td><td>auto</td><td>Explicit path to the fldigi executable, for <code>application launch</code>.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>In the packaged desktop extension these appear as a settings form; most users only ever fill in the callsign.</p>
+        <div class="callout">
+          <span class="label">Signal-hunt settings</span>
+          <p>Two more settings serve <code>signal_hunt</code>. <code>FLDIGI_AUDIO_DEVICE</code> ("Audio input device") names the device fldigi listens to; part of its name is enough, for example <code>iMic</code>. <code>FLDIGI_HUNT_URL</code> ("Signal-hunt tap URL") points at <code>fldigi-mcp-tap</code> where the server cannot reach the sound card, for example <code>http://127.0.0.1:7365</code>.</p>
+        </div>
+
+        <h2 id="safety">Safety</h2>
+        <div class="callout warn">
+          <span class="label">Can key a transmitter</span>
+          <p>The callsign is the single transmit gate. Keying operations (transmit tx, tune, run_macro and send, the wefax and navtex send operations, and any keying method via <code>fldigi_call</code>) refuse unless <code>FLDIGI_CALLSIGN</code> is set. With it blank, the station is receive-only. <code>rx</code>, <code>abort</code> and <code>disable_tx</code> are always allowed because they take the station off the air. Any non-blank value is accepted: club, event, vanity, portable and international calls all work. You remain the control operator under Part 97.</p>
+        </div>
+        <p>A second layer sits in the client. The server marks read and status tools read-only and the keying tools destructive, so Claude Desktop asks for approval before each on-air action. You can tighten this to Ask or Block on the Tool permissions page. Nothing set there can loosen the callsign gate, which the server enforces.</p>
+
+        <h2 id="docs">Documents</h2>
+        <ul>
+          <li><a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-mcp%20Operating%20Field%20Guide.pdf">Operating Field Guide (PDF)</a> · <a href="../user-guide/operating-field-guide.html">read it online</a></li>
+          <li>fldigi XML-RPC API reference: <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-api.pdf">PDF</a> · <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-api.md">Markdown</a> · <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-api-spec.md">machine-readable spec</a></li>
+          <li><a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/INSTALL.md">INSTALL</a> · <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/install-and-safety.md">install-and-safety</a> · <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/band-guidance.md">band-guidance</a> · <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/README.md">README</a> · <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/CHANGELOG.md">CHANGELOG</a></li>
+          <li><a href="https://pypi.org/project/fldigi-mcp/">PyPI</a> · <a href="https://github.com/sbrunner-atx/fldigi-mcp">GitHub repository</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <p class="label">AE5VG · Austin, TX</p>
+      <p>Site text CC BY 4.0; software under the license named in each repository.</p>
+      <p class="sk">GL es 73 de AE5VG sk</p>
+    </div>
+    <div>
+      <p class="label">Contact</p>
+      <p>Software: open an issue on the relevant repository at <a href="https://github.com/sbrunner-atx">github.com/sbrunner-atx</a>.</p>
+      <p>Radio matters: the <a href="https://www.qrz.com/db/AE5VG">QRZ page for AE5VG</a>.</p>
+      <p>Email: <span class="email-here">stefan at this domain</span></p>
+    </div>
+  </div>
+</footer>
+<script src="../site.js"></script>
+</body>
+</html>

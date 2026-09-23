@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mode identification · AE5VG</title>
+<meta name="description" content="A cheat sheet for reading the waterfall: what each digital mode looks like, its width and tones, and where the cursor goes, with waterfall images from the Signal Identification Wiki.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+.mode-row{display:grid;grid-template-columns:minmax(0,1fr) 210px;gap:28px;padding:24px 0;border-bottom:1px solid var(--line);align-items:start}
+.mode-row h3{margin-top:0;font-size:22px}
+.mspec{display:grid;grid-template-columns:140px minmax(0,1fr);gap:5px 16px;margin:10px 0 0;font-size:15px}
+.mspec dt{font-family:var(--mono);font-size:11.5px;text-transform:uppercase;letter-spacing:1.5px;color:var(--link);padding-top:2px}
+.mspec dd{margin:0}
+.mspec dd code{white-space:nowrap}
+.wf{display:block;text-decoration:none}
+.wf img{width:100%;height:auto;display:block;border:1px solid var(--line);background:#fff}
+.wf span{font-family:var(--mono);font-size:10.5px;letter-spacing:1px;color:var(--muted);display:block;margin-top:4px}
+
+@media (max-width:640px){.mode-row{grid-template-columns:1fr}.mode-row .wf{max-width:210px}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="badge" href="../index.html">AE5VG</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site" id="site-nav" aria-label="Site">
+      <a href="../index.html">Home</a>
+      <a href="../products/index.html">Products</a>
+      <a href="../downloads.html">Downloads</a>
+      <a href="../getting-started.html">Getting Started</a>
+      <a href="../user-guide/index.html">User Guide</a>
+      <a href="../development.html">Development</a>
+      <a href="../references/index.html" aria-current="page">References</a>
+      <a href="../about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="label">Reference · mode_signatures.json · checked September 2026</p>
+    <h1>Mode identification</h1>
+    <p class="lead">A cheat sheet for reading the waterfall, from the signature table fldigi-mcp's signal hunt uses. Waterfall images courtesy of the <a href="https://www.sigidwiki.com/wiki/Category:Amateur_Radio">Signal Identification Wiki</a>; each links to the mode's wiki entry with more samples and audio.</p>
+  </div>
+</section>
+
+<main id="main">
+  <div class="wrap">
+
+    <div class="mode-row">
+      <div>
+        <h3>RTTY</h3>
+        <dl class="mspec">
+          <dt>Looks like</dt><dd>two narrow lines a fixed shift apart</dd>
+          <dt>Width / tones</dt><dd>shifts 85, 170 (amateur default at 45.45 Bd), 200, 450, 850 Hz; each line about 45 Hz</dd>
+          <dt>fldigi modem</dt><dd><code>RTTY</code></dd>
+          <dt>Cursor goes</dt><dd>midpoint of the two lines</dd>
+        </dl>
+      </div>
+      <a class="wf" href="https://www.sigidwiki.com/wiki/Radio_Teletype_(RTTY)"><img data-src="https://wsrv.nl/?url=www.sigidwiki.com/images/thumb/d/d4/RTTY_170Hz_45.45bd.jpg/300px-RTTY_170Hz_45.45bd.jpg" alt="RTTY waterfall: two parallel bright lines 170 Hz apart" loading="lazy"><span>sigidwiki → RTTY</span></a>
+    </div>
+
+    <div class="mode-row">
+      <div>
+        <h3>CW</h3>
+        <dl class="mspec">
+          <dt>Looks like</dt><dd>one line keyed on and off</dd>
+          <dt>Width / tones</dt><dd>1 to 12 Hz</dd>
+          <dt>fldigi modem</dt><dd><code>CW</code></dd>
+          <dt>Cursor goes</dt><dd>the line</dd>
+        </dl>
+      </div>
+      <a class="wf" href="https://www.sigidwiki.com/wiki/Morse_Code_(CW)"><img data-src="https://wsrv.nl/?url=www.sigidwiki.com/images/thumb/e/e8/CW.jpg/150px-CW.jpg" alt="CW waterfall: a single dashed line of on-off keying" loading="lazy"><span>sigidwiki → Morse Code (CW)</span></a>
+    </div>
+
+    <div class="mode-row">
+      <div>
+        <h3>BPSK31 · BPSK63 · BPSK125</h3>
+        <dl class="mspec">
+          <dt>Looks like</dt><dd>one steady line, wider with speed</dd>
+          <dt>Width / tones</dt><dd>BPSK31: 20 to 45 Hz · BPSK63: 50 to 80 Hz · BPSK125: 100 to 150 Hz</dd>
+          <dt>fldigi modem</dt><dd><code>BPSK31</code> <code>BPSK63</code> <code>BPSK125</code></dd>
+          <dt>Cursor goes</dt><dd>line center</dd>
+        </dl>
+      </div>
+      <a class="wf" href="https://www.sigidwiki.com/wiki/Phase_Shift_Keying_(PSK)"><img data-src="https://wsrv.nl/?url=www.sigidwiki.com/images/thumb/2/28/BPSKthumb.png/150px-BPSKthumb.png" alt="BPSK31 waterfall: one narrow continuous line" loading="lazy"><span>sigidwiki → PSK</span></a>
+    </div>
+
+    <div class="mode-row">
+      <div>
+        <h3>Olivia</h3>
+        <dl class="mspec">
+          <dt>Looks like</dt><dd>a grid of hopping dots</dd>
+          <dt>Width / tones</dt><dd>2 to 64 tones in 125 to 2000 Hz; spacing = bandwidth / tones; 8/250 is the usual calling submode</dd>
+          <dt>fldigi modem</dt><dd><code>OLIVIA-8/250</code> etc.</dd>
+          <dt>Cursor goes</dt><dd>center of the block</dd>
+        </dl>
+      </div>
+      <a class="wf" href="https://www.sigidwiki.com/wiki/Olivia"><img data-src="https://wsrv.nl/?url=www.sigidwiki.com/images/thumb/a/a3/Olivia_8-250y.png/150px-Olivia_8-250y.png" alt="Olivia 8/250 waterfall: a block of dots hopping between eight tones" loading="lazy"><span>sigidwiki → Olivia</span></a>
+    </div>
+
+    <div class="mode-row">
+      <div>
+        <h3>Contestia</h3>
+        <dl class="mspec">
+          <dt>Looks like</dt><dd>the same grid as Olivia</dd>
+          <dt>Width / tones</dt><dd>same as Olivia, at twice the symbol rate</dd>
+          <dt>fldigi modem</dt><dd><code>CONTESTIA</code></dd>
+          <dt>Cursor goes</dt><dd>center; only RSID or symbol rate separates it from Olivia</dd>
+        </dl>
+      </div>
+      <a class="wf" href="https://www.sigidwiki.com/wiki/Contestia"><img data-src="https://wsrv.nl/?url=www.sigidwiki.com/images/3/34/Contestiathmb.png" alt="Contestia waterfall: the same hopping-dot grid as Olivia" loading="lazy"><span>sigidwiki → Contestia</span></a>
+    </div>
+
+    <div class="mode-row">
+      <div>
+        <h3>MFSK16 · MFSK8</h3>
+        <dl class="mspec">
+          <dt>Looks like</dt><dd>hopping dots</dd>
+          <dt>Width / tones</dt><dd>MFSK16: 16 tones at 15.625 Hz, about 316 Hz wide · MFSK8: 32 tones at 7.8 Hz, same width at half the speed</dd>
+          <dt>fldigi modem</dt><dd><code>MFSK16</code> <code>MFSK8</code></dd>
+          <dt>Cursor goes</dt><dd>center of the block</dd>
+        </dl>
+      </div>
+      <a class="wf" href="https://www.sigidwiki.com/wiki/Multi_Frequency_Shift_Keying_(MFSK)"><img data-src="https://wsrv.nl/?url=www.sigidwiki.com/images/thumb/e/e6/MFSK_8_thmb.jpg/150px-MFSK_8_thmb.jpg" alt="MFSK waterfall: dots hopping across closely spaced tones" loading="lazy"><span>sigidwiki → MFSK</span></a>
+    </div>
+
+    <div class="mode-row">
+      <div>
+        <h3>DominoEX</h3>
+        <dl class="mspec">
+          <dt>Looks like</dt><dd>hopping dots</dd>
+          <dt>Width / tones</dt><dd>18 tones; DominoEX 4/5/8/11/16/22 are 173/224/346/262/355/524 Hz wide</dd>
+          <dt>fldigi modem</dt><dd><code>DOMEX11</code> etc.</dd>
+          <dt>Cursor goes</dt><dd>center</dd>
+        </dl>
+      </div>
+      <a class="wf" href="https://www.sigidwiki.com/wiki/DominoEX"><img data-src="https://wsrv.nl/?url=www.sigidwiki.com/images/thumb/0/0d/DominoEX.png/150px-DominoEX.png" alt="DominoEX waterfall: hopping dots over 18 tones" loading="lazy"><span>sigidwiki → DominoEX</span></a>
+    </div>
+
+    <div class="mode-row">
+      <div>
+        <h3>THOR</h3>
+        <dl class="mspec">
+          <dt>Looks like</dt><dd>the same grid as DominoEX</dd>
+          <dt>Width / tones</dt><dd>same six widths, with forward error correction</dd>
+          <dt>fldigi modem</dt><dd><code>THOR11</code> etc.</dd>
+          <dt>Cursor goes</dt><dd>center; RSID decides</dd>
+        </dl>
+      </div>
+      <a class="wf" href="https://www.sigidwiki.com/wiki/THOR"><img data-src="https://wsrv.nl/?url=www.sigidwiki.com/images/thumb/8/8e/THOR_11.png/200px-THOR_11.png" alt="THOR 11 waterfall: the same hopping-dot grid as DominoEX" loading="lazy"><span>sigidwiki → THOR</span></a>
+    </div>
+
+    <div class="mode-row">
+      <div>
+        <h3>THROB</h3>
+        <dl class="mspec">
+          <dt>Looks like</dt><dd>slow hopping dots</dd>
+          <dt>Width / tones</dt><dd>9 tones at 8 or 16 Hz, 72 or 144 Hz wide</dd>
+          <dt>fldigi modem</dt><dd><code>THROB</code></dd>
+          <dt>Cursor goes</dt><dd>center</dd>
+        </dl>
+      </div>
+      <a class="wf" href="https://www.sigidwiki.com/wiki/THROB"><img data-src="https://wsrv.nl/?url=www.sigidwiki.com/images/thumb/3/3d/THROB1.png/200px-THROB1.png" alt="THROB waterfall: slow pulsing dots over nine tones" loading="lazy"><span>sigidwiki → THROB</span></a>
+    </div>
+
+    <div class="mode-row">
+      <div>
+        <h3>MT63</h3>
+        <dl class="mspec">
+          <dt>Looks like</dt><dd>a flat continuous block</dd>
+          <dt>Width / tones</dt><dd>64 carriers in 500, 1000 or 2000 Hz; tolerates 120 Hz mistuning</dd>
+          <dt>fldigi modem</dt><dd><code>MT63-500</code> etc.</dd>
+          <dt>Cursor goes</dt><dd>lower edge plus half the width</dd>
+        </dl>
+      </div>
+      <a class="wf" href="https://www.sigidwiki.com/wiki/MT63"><img data-src="https://wsrv.nl/?url=www.sigidwiki.com/images/thumb/e/eb/MT63.jpg/150px-MT63.jpg" alt="MT63 waterfall: a flat continuous block of 64 carriers" loading="lazy"><span>sigidwiki → MT63</span></a>
+    </div>
+
+    <h2>Telling the look-alikes apart</h2>
+    <p>CW and BPSK31 can show the same 30 Hz line. The difference is keying: CW has gaps of 40 ms or more where the carrier is simply off; PSK never stops. Hopping modes are recognized because energy sits at discrete tone positions from one 30 ms frame to the next, which is exactly what the waterfall's dots are.</p>
+
+    <div class="callout">
+      <span class="label">What the spectrum cannot settle</span>
+      <p>Two pairs cannot be separated by the spectrum alone: Contestia and Olivia, and THOR and DominoEX. The station's RSID burst settles it.</p>
+    </div>
+
+    <p class="dates">One line of decoded text per mode will be added from the author's own off-air recordings.</p>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <p class="label">AE5VG · Austin, TX</p>
+      <p>Site text CC BY 4.0; software under the license named in each repository.</p>
+      <p class="sk">GL es 73 de AE5VG sk</p>
+    </div>
+    <div>
+      <p class="label">Contact</p>
+      <p>Software: open an issue on the relevant repository at <a href="https://github.com/sbrunner-atx">github.com/sbrunner-atx</a>.</p>
+      <p>Radio matters: the <a href="https://www.qrz.com/db/AE5VG">QRZ page for AE5VG</a>.</p>
+      <p>Email: <span class="email-here">stefan at this domain</span></p>
+    </div>
+  </div>
+</footer>
+<script src="../site.js"></script>
+</body>
+</html>

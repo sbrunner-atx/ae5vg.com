@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>n3fjp-mcp · AE5VG</title>
+<meta name="description" content="An MCP server for logging amateur radio QSOs to N3FJP's Amateur Contact Log and the 100-plus N3FJP contest loggers over their shared TCP API.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="badge" href="../index.html">AE5VG</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site" id="site-nav" aria-label="Site">
+      <a href="../index.html">Home</a>
+      <a href="index.html" aria-current="page">Products</a>
+      <a href="../downloads.html">Downloads</a>
+      <a href="../getting-started.html">Getting Started</a>
+      <a href="../user-guide/index.html">User Guide</a>
+      <a href="../development.html">Development</a>
+      <a href="../references/index.html">References</a>
+      <a href="../about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="label">Product · MIT</p>
+    <h1>n3fjp-mcp</h1>
+    <p class="lead">An MCP server for logging amateur radio QSOs to N3FJP logging software, Amateur Contact Log and the 100-plus N3FJP contest loggers, from MCP-aware clients such as Claude Desktop. Every program in the suite shares one TCP control API; n3fjp-mcp speaks that protocol directly, so an assistant can log contacts, read the log, run dupe checks and manage band and mode through plain language.</p>
+    <div class="btn-row">
+      <a class="btn" href="../downloads.html#n3fjp-mcp">Download</a>
+      <a class="btn ghost" href="https://github.com/sbrunner-atx/n3fjp-mcp">GitHub</a>
+    </div>
+    <div class="strip" data-release="n3fjp-mcp">
+      <div><span class="label">Version</span><strong class="fill-version">…</strong></div>
+      <div><span class="label">Released</span><strong class="fill-released">…</strong></div>
+      <div><span class="label">License</span><strong>MIT</strong></div>
+      <div><span class="label">Ships as</span><strong>.mcpb bundle · PyPI</strong></div>
+    </div>
+  </div>
+</section>
+
+<main id="main">
+  <div class="wrap">
+    <div class="layout">
+      <nav aria-label="On this page"><ul class="toc">
+        <li><span class="label">On this page</span></li>
+        <li><a href="#what">What it does</a></li>
+        <li><a href="#features">Features and benefits</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#ask">Ask it</a></li>
+        <li><a href="#tools">Tools</a></li>
+        <li><a href="#settings">Settings</a></li>
+        <li><a href="#safety">Safety</a></li>
+        <li><a href="#docs">Documents</a></li>
+      </ul></nav>
+      <div>
+        <h2 id="what" style="margin-top:0">What it does</h2>
+        <p>It is the logging half of an operate-then-log workflow; its sibling fldigi-mcp operates the radio. The headline tool runs the real N3FJP flow, the same sequence a keyboard would produce: set the call, fire CALLTAB for the dupe check and previous-contact lookup, fill the exchange, send ENTER, and report the records added plus any dupe detail. Whether the QSO was logged is judged from the QSO-count change or an ENTEREVENT, because ENTERRESPONSE can report 0 on a QSO that was written.</p>
+        <p>It is written against the protocol with Python's standard-library socket, no third-party wrapper; the only runtime dependency is the MCP SDK. Verified live against N3FJP's ARRL Field Day Contest Log, API version 2.2. The protocol is shared across the suite, but field sets vary per contest; the fields tool confirms what the running program uses.</p>
+        <div class="callout">
+          <span class="label">Independent project · not affiliated with N3FJP</span>
+          <p>n3fjp-mcp is an independent, community project by Stefan Brunner (AE5VG), using the N3FJP name with the permission of its owner. It is not affiliated with, endorsed by, or supported by N3FJP Software / Affirmatech. Please direct all support questions for this app to <a href="https://github.com/sbrunner-atx/n3fjp-mcp/issues">its issue tracker</a>, not to N3FJP. MIT licensed. "N3FJP" is the callsign and trademark of its owner.</p>
+        </div>
+
+        <h2 id="features">Features and benefits</h2>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Feature</th><th scope="col">What it gives you</th></tr></thead>
+          <tbody>
+            <tr><td>log_qso as one call</td><td>Set call, CALLTAB, exchange, ENTER: the verified keyboard sequence in a single operation, with the dupe response surfaced. Success is judged by a <code>logged</code> flag taken from the QSO-count change or an ENTEREVENT, not from ENTERRESPONSE, which can report 0 on a QSO that was written; clients retry only when <code>logged</code> is false.</td></tr>
+            <tr><td>Call lookup from CALLTAB</td><td>The CALLTABEVENT that N3FJP returns is surfaced: country, DXCC, zones, bearing and distance, plus dupe detection.</td></tr>
+            <tr><td>Broad coverage</td><td>Read queries, field read and write, search and list, dupe and entity checks, band, mode and frequency, direct database operations, and opt-in push notifications, grouped into tools with one permission each, plus the <code>n3fjp_call</code> escape hatch for the long tail and future commands.</td></tr>
+            <tr><td>Per-contest exchange presets</td><td>log_qso takes a contest and its exchange, as in <code>contest="field_day"</code> with class and section. Field sets vary per contest; the fields tool confirms what the running program uses.</td></tr>
+            <tr><td>Read tools marked read-only</td><td>Clients can default status, query, fields and search to Always Allow.</td></tr>
+            <tr><td>Approval tier for writes</td><td>Logging, band and mode, notifications, adding, editing or deleting individual records, and the escape hatch all sit at Needs Approval. There is no extra in-band confirmation, so you can set them to Always Allow for hands-off automation.</td></tr>
+            <tr><td>The DB-wipe switch</td><td>The one hard block: raw SQL that could delete or overwrite the entire log (DROP, TRUNCATE, a DELETE or UPDATE with no WHERE) is refused unless the dedicated, off-by-default <code>N3FJP_ALLOW_DB_WIPE</code> switch is on. Scoped record operations run without it.</td></tr>
+            <tr><td>Names match N3FJP</td><td>Tools and fields mirror N3FJP's own terminology: Action ENTER, CALLTAB, the TXTENTRY boxes, Class and Section.</td></tr>
+            <tr><td>No fragile dependencies</td><td>The protocol is spoken with Python's standard-library socket, no third-party wrapper; the only runtime dependency is the MCP SDK.</td></tr>
+            <tr><td>diagnostics tool</td><td>Read-only and does not connect to N3FJP: reports the resolved <code>N3FJP_HOST</code> and <code>N3FJP_PORT</code>, this process's hostname and Python, and the host's network interfaces, so you can tell whether the process can reach the target network at all.</td></tr>
+            <tr><td>N3FJP on another computer</td><td>A sandboxed client reaches only 127.0.0.1; <a href="mcp-host-bridge.html">mcp-host-bridge</a> on the client computer relays to N3FJP on the LAN, and the connector host stays at 127.0.0.1.</td></tr>
+            <tr><td>contest-operating skill</td><td>The contest QSO state machine (CQ, exchange, TU, log), the special-case playbook (QRM, garbled callsigns, doubling, no-copy repeats, callsign-only callers) and the verified N3FJP logging sequence with its known quirks, field-proven during ARRL Field Day 2026.</td></tr>
+            <tr><td>Operating Skills Field Guide</td><td>A PDF that documents contest-operating and its companion fldigi-operating from fldigi-mcp: installation, a first-session chapter for hams new to Claude, the operating standard, the special-case playbook, and worked examples from ARRL Field Day 2026.</td></tr>
+            <tr><td>Free API reference</td><td>The field-tested N3FJP TCP API reference, verified live against API 2.2, with every place where 2.2 differs from the public 0.9 documentation: commands removed or renamed, <code>CMD_NOT_FOUND</code>, the API port versus the networking port, the CALLTABEVENT lookup, and why ENTER can report 0 yet still log in networked mode. A machine-readable spec comes with it.</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <h2 id="how">How it works</h2>
+        <figure class="diagram">
+          <svg viewBox="0 0 720 190" role="img" aria-label="Diagram: a Mac running Claude Desktop, n3fjp-mcp and mcp-host-bridge, connected over the LAN to a Windows PC running N3FJP." font-family="JetBrains Mono,monospace">
+            <rect x="15" y="28" width="360" height="140" fill="none" stroke="#d0d7de" stroke-dasharray="5 4"/>
+            <text x="25" y="20" fill="#57606a" font-size="10">MAC</text>
+            <rect x="35" y="45" width="140" height="44" fill="#f6f8fa" stroke="#d0d7de"/>
+            <text x="105" y="71" fill="#1f2328" font-size="12" text-anchor="middle">Claude Desktop</text>
+            <rect x="35" y="108" width="140" height="44" fill="#ffffff" stroke="#0969da"/>
+            <text x="105" y="134" fill="#0550ae" font-size="12" text-anchor="middle">n3fjp-mcp</text>
+            <rect x="215" y="76" width="140" height="44" fill="#ffffff" stroke="#0969da"/>
+            <text x="285" y="94" fill="#0550ae" font-size="11" text-anchor="middle">mcp-host-</text>
+            <text x="285" y="109" fill="#0550ae" font-size="11" text-anchor="middle">bridge</text>
+            <rect x="470" y="28" width="235" height="140" fill="none" stroke="#d0d7de" stroke-dasharray="5 4"/>
+            <text x="480" y="20" fill="#57606a" font-size="10">WINDOWS PC</text>
+            <rect x="495" y="76" width="185" height="44" fill="#f6f8fa" stroke="#d0d7de"/>
+            <text x="587" y="102" fill="#1f2328" font-size="12" text-anchor="middle">N3FJP · TCP API 1100</text>
+            <g fill="none" stroke="#0969da" stroke-width="1">
+              <line x1="105" y1="89" x2="105" y2="108"/>
+              <line x1="175" y1="122" x2="215" y2="102"/>
+              <line x1="355" y1="98" x2="495" y2="98"/>
+            </g>
+            <text x="425" y="88" fill="#57606a" font-size="10" text-anchor="middle">LAN · TCP</text>
+          </svg>
+          <figcaption>The shack split: N3FJP is Windows software; the connector often runs on a Mac and reaches it through mcp-host-bridge.</figcaption>
+        </figure>
+        <h3>The verified TCP protocol</h3>
+        <p>Checked live against N3FJP's ARRL Field Day Contest Log 6.6.10 reporting API version 2.2. Details from the <a href="https://github.com/sbrunner-atx/n3fjp-mcp/raw/main/docs/N3FJP-API.md">N3FJP TCP API reference</a>.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Topic</th><th scope="col">What was verified</th></tr></thead>
+          <tbody>
+            <tr><td>Transport</td><td>Plain TCP. N3FJP is the server, the connector the client. Default port 1100. Each command ends with CR LF.</td></tr>
+            <tr><td>Envelope</td><td>Every command and response is wrapped as <code>&lt;CMD&gt;&lt;COMMANDID&gt;&lt;TAG&gt;value&lt;/TAG&gt;&lt;/CMD&gt;</code>. One packet can carry several blocks, so the stream is read continuously and split on <code>&lt;/CMD&gt;</code>, never on newlines.</td></tr>
+            <tr><td>Stream</td><td>Responses and opt-in notifications share one socket; a background reader routes each block to the waiting request or to a notification buffer.</td></tr>
+            <tr><td>API port, not networking port</td><td>Port 1100 is the API. Port 1000 is N3FJP's multi-PC networking socket; API commands sent there return nothing.</td></tr>
+            <tr><td>Unknown commands</td><td>Answer <code>&lt;CMD&gt;&lt;CMD_NOT_FOUND&gt;&lt;/CMD&gt;</code> rather than silence, so "not supported" can be told from "wrong port".</td></tr>
+            <tr><td>Changed since 0.9</td><td>There is no <code>APIVERSION</code> command; read the <code>APIVER</code> tag from <code>PROGRAM</code>. <code>READQSOCOUNT</code> became <code>QSOCOUNT</code>; <code>ALLFIELDSVALUES</code> is gone because <code>ALLFIELDS</code> includes values; <code>READUSERDATA</code> is not present.</td></tr>
+            <tr><td>Logging flow</td><td><code>UPDATE TXTENTRYCALL</code>, <code>ACTION CALLTAB</code>, <code>UPDATE</code> the exchange boxes, correct band and mode, <code>ACTION ENTER</code>, read the response.</td></tr>
+            <tr><td>CALLTABEVENT</td><td>One block a beat after CALLTAB carries country, DXCC, both zones, prefix, continent, bearing, long path and distance; a CALLTABDUPEEVENT follows for a dupe.</td></tr>
+            <tr><td>ENTER can report 0 yet still log</td><td>In Network mode the master-table commit is asynchronous, so ENTERRESPONSE can return 0 for a QSO that was written. Success is checked by the QSOCOUNT change instead.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <h3>Where the connector runs</h3>
+        <p>If N3FJP runs on the same computer as the client, leave the host at <code>127.0.0.1</code> and enable Settings → Application Program Interface → TCP API Enabled, port 1100, and you are done.</p>
+        <p>If N3FJP runs on a different computer, there is a catch: a sandboxed MCP client runs the connector so it can only reach loopback, so putting N3FJP's LAN IP in the settings will time out even though <code>telnet</code> to that IP works. <a href="mcp-host-bridge.html">mcp-host-bridge</a> on the client computer fixes it; the diagnostics tool helps confirm whether you need it. Keep the link on a trusted LAN, the API is unauthenticated.</p>
+
+        <h2 id="ask">Ask it</h2>
+        <div class="exchange" role="figure" aria-label="Example requests and what happens">
+<span class="tx">What is the N3FJP status?</span>
+    <span class="note">status: program, version, API version, QSO count, band, mode, frequency</span>
+<span class="tx">How many QSOs do we have?</span>
+    <span class="note">query qso_count</span>
+<span class="tx">Check if W1AW is a dupe.</span>
+    <span class="note">search dupecheck, with no side effects</span>
+<span class="tx">Log W1AW, 2A in STX.</span>
+    <span class="note">log_qso: set call, CALLTAB, exchange, ENTER; records added and dupe detail come back</span>
+        </div>
+
+        <h2 id="tools">Tools</h2>
+        <p>Each tool is one permission and takes an <code>operation</code> argument.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Tool</th><th scope="col">Default</th><th scope="col">Controls</th></tr></thead>
+          <tbody>
+            <tr><td><code>status</code></td><td>read</td><td>snapshot: program, version, API version, QSO count, band/mode/frequency</td></tr>
+            <tr><td><code>query</code></td><td>read</td><td>program, qso_count, next_serial, log/settings/shared paths, qso_rate, band_mode_freq</td></tr>
+            <tr><td><code>fields</code></td><td>read</td><td>read one entry box, or list visible / all fields with values</td></tr>
+            <tr><td><code>search</code></td><td>read</td><td>list recent, search, dupecheck (no side effects), entity status</td></tr>
+            <tr><td><code>log</code></td><td><strong>approval</strong></td><td><code>log_qso</code> (set call → CALLTAB → exchange → ENTER), set, set_many, calltab, enter, clear, focus</td></tr>
+            <tr><td><code>bandmode</code></td><td><strong>approval</strong></td><td>change_freq, set_band, set_mode, ignore_rig_polls</td></tr>
+            <tr><td><code>notifications</code></td><td><strong>approval</strong></td><td>enable / disable push events, drain buffered events</td></tr>
+            <tr><td><code>database</code></td><td><strong>approval</strong></td><td>add_direct, delete a record, raw sql, checklog, openlog, sqlclose</td></tr>
+            <tr><td><code>n3fjp_call</code></td><td><strong>approval</strong></td><td>escape hatch: send any raw command, incl. future ones</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>A tenth tool, <code>diagnostics</code>, is read-only and does not connect to N3FJP: it reports the resolved host and port, this process's hostname and Python, and the host's network interfaces.</p>
+
+        <h2 id="settings">Settings</h2>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Variable</th><th scope="col">Default</th><th scope="col">Purpose</th></tr></thead>
+          <tbody>
+            <tr><td><code>N3FJP_HOST</code></td><td><code>127.0.0.1</code></td><td>N3FJP API host</td></tr>
+            <tr><td><code>N3FJP_PORT</code></td><td><code>1100</code></td><td>N3FJP API port (the suite's default)</td></tr>
+            <tr><td><code>N3FJP_TIMEOUT</code></td><td><code>6</code></td><td>Socket/response timeout, seconds</td></tr>
+            <tr><td><code>N3FJP_ALLOW_DB_WIPE</code></td><td><code>off</code></td><td><strong>Danger.</strong> Allow whole-database delete/overwrite (raw SQL <code>DROP</code>/<code>TRUNCATE</code>/unscoped <code>DELETE</code>/<code>UPDATE</code>). Leave <strong>off</strong> unless you really mean it</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <h2 id="safety">Safety</h2>
+        <div class="callout warn">
+          <span class="label">Can touch your log database</span>
+          <p>Logging does not key a transmitter, so the protection here is about the log. Reads (status, query, fields, search) are marked read-only. Writes, meaning logging, band and mode, notifications, adding, editing or deleting individual records, and the n3fjp_call escape hatch, all sit at the Needs Approval tier, with no extra in-band confirmation. Whole-database operations, raw SQL that could delete or overwrite the entire log, are refused unless <code>N3FJP_ALLOW_DB_WIPE</code> is on; that switch is separate from, and stricter than, the client's approval prompts. Back up your log before ever enabling it. Wherever possible the server leans on N3FJP's own validation and surfaces its responses rather than re-implementing them.</p>
+        </div>
+
+        <h2 id="docs">Documents</h2>
+        <ul>
+          <li><a href="https://github.com/sbrunner-atx/n3fjp-mcp/raw/main/docs/operating-skills-field-guide.pdf">Operating Skills Field Guide (PDF)</a> · <a href="../user-guide/operating-field-guide.html">read it online</a></li>
+          <li>N3FJP TCP API reference: <a href="https://github.com/sbrunner-atx/n3fjp-mcp/raw/main/docs/N3FJP-API.pdf">PDF</a> · <a href="https://github.com/sbrunner-atx/n3fjp-mcp/raw/main/docs/N3FJP-API.md">Markdown</a> · <a href="https://github.com/sbrunner-atx/n3fjp-mcp/raw/main/docs/N3FJP-API-SPEC.md">machine-readable spec</a></li>
+          <li><a href="https://github.com/sbrunner-atx/n3fjp-mcp/raw/main/docs/INSTALL.md">INSTALL</a> · <a href="https://github.com/sbrunner-atx/n3fjp-mcp/raw/main/docs/REMOTE-HOST.md">REMOTE-HOST</a> · <a href="https://github.com/sbrunner-atx/n3fjp-mcp/raw/main/docs/TEST-PLAN.md">TEST-PLAN</a> · <a href="https://github.com/sbrunner-atx/n3fjp-mcp/raw/main/docs/LESSONS-FIELD-DAY-2026.md">Field Day 2026 lessons learned</a> · <a href="https://github.com/sbrunner-atx/n3fjp-mcp/raw/main/README.md">README</a> · <a href="https://github.com/sbrunner-atx/n3fjp-mcp/raw/main/CHANGELOG.md">CHANGELOG</a></li>
+          <li><a href="https://pypi.org/project/n3fjp-mcp/">PyPI</a> · <a href="https://github.com/sbrunner-atx/n3fjp-mcp">GitHub repository</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <p class="label">AE5VG · Austin, TX</p>
+      <p>Site text CC BY 4.0; software under the license named in each repository.</p>
+      <p class="sk">GL es 73 de AE5VG sk</p>
+    </div>
+    <div>
+      <p class="label">Contact</p>
+      <p>Software: open an issue on the relevant repository at <a href="https://github.com/sbrunner-atx">github.com/sbrunner-atx</a>.</p>
+      <p>Radio matters: the <a href="https://www.qrz.com/db/AE5VG">QRZ page for AE5VG</a>.</p>
+      <p>Email: <span class="email-here">stefan at this domain</span></p>
+    </div>
+  </div>
+</footer>
+<script src="../site.js"></script>
+</body>
+</html>

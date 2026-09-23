@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Ham Radio Model · AE5VG</title>
+<meta name="description" content="A small language model for digital-mode QSOs, in development: reading a contest exchange through noise the way an experienced operator does.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="badge" href="../index.html">AE5VG</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site" id="site-nav" aria-label="Site">
+      <a href="../index.html">Home</a>
+      <a href="index.html" aria-current="page">Products</a>
+      <a href="../downloads.html">Downloads</a>
+      <a href="../getting-started.html">Getting Started</a>
+      <a href="../user-guide/index.html">User Guide</a>
+      <a href="../development.html">Development</a>
+      <a href="../references/index.html">References</a>
+      <a href="../about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="label">Product · in development</p>
+    <h1>A small language model for digital-mode QSOs</h1>
+    <p class="lead">A contest exchange rarely arrives clean. It comes through band noise, fading, and another station transmitting over the top. An experienced operator still reads it, because the vocabulary is closed. The goal: FT8-style reliability of exchange on any keyboard mode, with a model small enough to run beside fldigi on a CPU.</p>
+    <div class="btn-row">
+      <a class="btn" href="dashboard.html">Capture rig dashboard</a>
+    </div>
+    <div class="strip">
+      <div><span class="label">Status</span><strong>In development</strong></div>
+      <div><span class="label">Components</span><strong>qso-resolver · qso-mcp</strong></div>
+      <div><span class="label">Published numbers</span><strong>none, on purpose</strong></div>
+    </div>
+  </div>
+</section>
+
+<main id="main">
+  <div class="wrap">
+    <h2 style="margin-top:0">Three principles</h2>
+    <div class="cards">
+      <div class="card">
+        <span class="label">01 · Reference layer</span>
+        <h3>Looked up, never learned</h3>
+        <p>All 85 ARRL and RAC sections plus the Field Day pseudo-section DX, the class grammar, the ITA2 lost-shift table, MASTER.SCP fetched at build time. The model cannot invent a section that does not exist, because sections are not something it predicts.</p>
+      </div>
+      <div class="card">
+        <span class="label">02 · Training data</span>
+        <h3>Real copy, not synthetic</h3>
+        <p>Training pairs come from real received copy: stations recorded through public KiwiSDR receivers sending the same thing more than once, or copied by two Signal Browser channels, with W1AW bulletins and DWD weather RTTY as further sources. The clean side of each pair is inferred from the best copy, not from published text, so the pairs train the model; they do not measure it. Contributed material is tracked with permission.</p>
+      </div>
+      <div class="card">
+        <span class="label">03 · Evaluation</span>
+        <h3>Honest numbers</h3>
+        <p>The harness runs against a held-out set of real QSOs, which does not yet exist in sufficient size. Until it does, no accuracy percentage is published, synthetic or otherwise.</p>
+      </div>
+    </div>
+
+    <h2>Two modes on one base model</h2>
+    <p>Contest mode runs a LoRA adapter over a closed output space: the exchange grammar constrains what the model may emit, so a busted section becomes a near-neighbor lookup, not a hallucination. Rag-chew mode runs without the adapter for free text. In both, confidence is the weakest field: when the model is not sure, ambiguity is handed back as <code>needs_human</code>, never guessed.</p>
+
+    <div class="callout">
+      <span class="label">Status · September 2026</span>
+      <p>The deterministic half is built: the reference layer, an edit-distance resolver with no model in the path, and the evaluation harness, which prints null instead of a rate until a real held-out set exists. A capture rig runs unattended collecting pairs; its dashboard is public. The model is not trained yet. The code is not public until there is a number to stand behind.</p>
+    </div>
+
+    <h2>How to help</h2>
+    <p>If you enable text capture in fldigi during a contest and keep your log, you have exactly the pairs this needs: what your screen showed against what the log says was sent. What a contribution looks like, and where to send it, is on the <a href="../development.html">Development</a> page.</p>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <p class="label">AE5VG · Austin, TX</p>
+      <p>Site text CC BY 4.0; software under the license named in each repository.</p>
+      <p class="sk">GL es 73 de AE5VG sk</p>
+    </div>
+    <div>
+      <p class="label">Contact</p>
+      <p>Software: open an issue on the relevant repository at <a href="https://github.com/sbrunner-atx">github.com/sbrunner-atx</a>.</p>
+      <p>Radio matters: the <a href="https://www.qrz.com/db/AE5VG">QRZ page for AE5VG</a>.</p>
+      <p>Email: <span class="email-here">stefan at this domain</span></p>
+    </div>
+  </div>
+</footer>
+<script src="../site.js"></script>
+</body>
+</html>

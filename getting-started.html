@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Getting Started · AE5VG</title>
+<meta name="description" content="For a ham who has never used an assistant: what you are installing, setting it up once, loading the MCP servers, and your first QSO on a dummy load.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="badge" href="index.html">AE5VG</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site" id="site-nav" aria-label="Site">
+      <a href="index.html">Home</a>
+      <a href="products/index.html">Products</a>
+      <a href="downloads.html">Downloads</a>
+      <a href="getting-started.html" aria-current="page">Getting Started</a>
+      <a href="user-guide/index.html">User Guide</a>
+      <a href="development.html">Development</a>
+      <a href="references/index.html">References</a>
+      <a href="about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="label">From zero to the first QSO</p>
+    <h1>Getting Started</h1>
+    <p class="lead">For a ham who has never used an assistant. The full operating standard is the <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-mcp%20Operating%20Field%20Guide.pdf">Operating Field Guide (PDF)</a>, also <a href="user-guide/operating-field-guide.html">readable online</a>.</p>
+  </div>
+</section>
+
+<main id="main">
+  <div class="wrap">
+    <div class="layout">
+      <nav aria-label="On this page"><ul class="toc">
+        <li><span class="label">On this page</span></li>
+        <li><a href="#what">What you are installing</a></li>
+        <li><a href="#setup">Set up once</a></li>
+        <li><a href="#load">Load the MCP servers</a></li>
+        <li><a href="#session">Start a session</a></li>
+        <li><a href="#qso">Your first QSO</a></li>
+        <li><a href="#hunt">Hunting for a station</a></li>
+        <li><a href="#remote">Another computer</a></li>
+        <li><a href="#next">Where to go next</a></li>
+      </ul></nav>
+      <div>
+        <h2 id="what" style="margin-top:0">What you are installing</h2>
+        <p>Claude is an assistant. It runs in the Claude Desktop app, which looks like a messaging window. The two MCP servers are rig-interface cables: one plugs Claude into fldigi, the other into N3FJP. You type plain English; nothing about your fldigi or N3FJP setup changes.</p>
+
+        <h2 id="setup">Set up once</h2>
+        <ol class="steps">
+          <li>Install Claude Desktop from <a href="https://claude.ai/download">claude.ai/download</a> and sign in. A paid plan is recommended; the free tier can run out of messages mid-QSO.</li>
+          <li>Start fldigi. Its XML-RPC interface is on by default at <code>127.0.0.1:7362</code>.</li>
+          <li>For logging, start N3FJP and enable <strong>Settings → Application Program Interface → TCP API Enabled</strong> (port 1100).</li>
+        </ol>
+
+        <h2 id="load">Load the MCP servers</h2>
+        <ol class="steps">
+          <li>Download <code>fldigi-mcp.mcpb</code> and <code>n3fjp-mcp.mcpb</code> from <a href="downloads.html">Downloads</a>.</li>
+          <li>In Claude Desktop: <strong>Settings → Extensions → Advanced settings → Install Extension</strong>, choose the file.</li>
+          <li>Enter your callsign in the fldigi-mcp settings. It is the transmit gate; blank keeps the station receive-only.</li>
+          <li>Repeat for n3fjp-mcp. Host and port default to <code>127.0.0.1:1100</code>.</li>
+        </ol>
+        <p>No terminal, no Python: Claude Desktop's runtime supplies both.</p>
+        <p>For Claude Code, Cowork and other MCP clients, run the connector from PyPI with <code>uvx fldigi-mcp</code>. Set the variables <code>FLDIGI_HOST</code>, <code>FLDIGI_PORT</code> and <code>FLDIGI_CALLSIGN</code>. To run it from source instead, use this config block:</p>
+        <pre><code>{
+  "mcpServers": {
+    "fldigi": {
+      "command": "uv",
+      "args": ["--directory", "/absolute/path/to/fldigi-mcp", "run", "fldigi-mcp"],
+      "env": { "FLDIGI_CALLSIGN": "AE5VG" }
+    }
+  }
+}</code></pre>
+        <p>Then copy the skill directories (<code>skills/&lt;name&gt;/</code>) into <code>~/.claude/skills/</code>, or a project's <code>.claude/skills/</code>.</p>
+
+        <h2 id="session">Start a session</h2>
+        <p>Open a new chat, or a Cowork session, and type: <code>What is the fldigi status?</code> Mode, frequency and T/R state come back. If not, <code>run the fldigi diagnostics</code> tells you whether it is a network problem before you blame fldigi.</p>
+
+        <h2 id="qso">Your first QSO, on a dummy load</h2>
+        <figure class="diagram">
+          <svg viewBox="0 0 380 350" role="img" aria-label="Diagram: the four-state QSO loop. 1, CQ: CQ FD CQ FD de MYCALL MYCALL pse k. 2, Exchange: CALL de MYCALL, Pse copy 2A 2A STX STX, de MYCALL BK. 3, TU: QSL CLASS SECT TU CALL de MYCALL GL FD sk sk. 4, Log: log_qso, check logged: true. Then QRZ and back to CQ." font-family="JetBrains Mono,monospace">
+            <g fill="none" stroke="#0969da" stroke-width="1">
+              <line x1="170" y1="64" x2="170" y2="86"/><line x1="170" y1="172" x2="170" y2="194"/><line x1="170" y1="264" x2="170" y2="286"/>
+              <polyline points="328,312 352,312 352,38 328,38"/>
+            </g>
+            <g fill="#0969da">
+              <polygon points="167,80 170,86 173,80"/><polygon points="167,188 170,194 173,188"/><polygon points="167,280 170,286 173,280"/><polygon points="334,35 328,38 334,41"/>
+            </g>
+            <g fill="#ffffff" stroke="#0969da" stroke-width="1">
+              <rect x="12" y="12" width="316" height="52"/><rect x="12" y="86" width="316" height="86"/><rect x="12" y="194" width="316" height="70"/><rect x="12" y="286" width="316" height="52"/>
+            </g>
+            <g font-size="13" fill="#0969da" font-weight="700">
+              <text x="24" y="34">1 · CQ</text><text x="24" y="108">2 · Exchange</text><text x="24" y="216">3 · TU</text><text x="24" y="308">4 · Log</text>
+            </g>
+            <g font-size="11" fill="#57606a" text-anchor="end">
+              <text x="316" y="34">anyone out there?</text><text x="316" y="108">caller decoded, send ours</text><text x="316" y="216">they QSL, confirm theirs back</text><text x="316" y="308">write it, then QRZ</text>
+            </g>
+            <g font-size="12" fill="#1f2328">
+              <text x="24" y="54">CQ FD CQ FD de &lt;MYCALL&gt; &lt;MYCALL&gt; pse k</text>
+              <text x="24" y="128">&lt;CALL&gt; de &lt;MYCALL&gt;</text><text x="24" y="145">Pse copy 2A 2A STX STX</text><text x="24" y="162">de &lt;MYCALL&gt; BK</text>
+              <text x="24" y="236">QSL &lt;CLASS&gt; &lt;SECT&gt; TU &lt;CALL&gt;</text><text x="24" y="253">de &lt;MYCALL&gt; GL FD sk sk</text>
+              <text x="24" y="328">log → log_qso … check logged: true</text>
+            </g>
+            <text x="366" y="175" font-size="10" fill="#57606a" text-anchor="middle" transform="rotate(90 366 175)">then QRZ, back to CQ</text>
+          </svg>
+          <figcaption>The four-state loop from the Field Guide: CQ, Exchange, TU, Log, then QRZ and back to CQ.</figcaption>
+        </figure>
+        <div class="callout warn">
+          <span class="label">This keys the transmitter: you are the control operator</span>
+          <p>With the radio on a dummy load, type: <code>Call CQ Field Day until someone answers. Work them, our exchange is 2A STX, log the contact to N3FJP, then keep calling.</code> Watch one full cycle: the TX drop, the listen window, the log entry. Then connect the antenna. <code>stop</code> works at any moment. Under Part 97 you remain the control operator; stay at the station while it transmits.</p>
+        </div>
+
+        <h2 id="hunt">Hunting for a station</h2>
+        <p>signal_hunt taps the audio fldigi listens to, names each signal's mode from its shape (RTTY, CW, BPSK31/63/125, Olivia, MFSK16, DominoEX, MT63), ranks the station that sits still and calls CQ, and tunes to it. It needs the <code>fldigi-mcp[hunt]</code> extra (numpy, sounddevice); the <code>.mcpb</code> runtime installs it for you. Set <strong>Audio input device</strong> to the device fldigi uses; part of its name is enough, for example <code>iMic</code>. macOS asks once for microphone permission. Type: <code>Find me someone calling CQ on 20 meters PSK31.</code></p>
+        <figure class="diagram">
+          <svg viewBox="0 0 380 326" role="img" aria-label="Diagram: the signal hunt loop. Hunt with signal_hunt over 20 seconds of audio, rank the candidates highest score first, tune with tune_to, read 20 seconds of text. If the station calls CQ with a callsign twice, hand off to fldigi-operating; if not, go back and tune the next candidate." font-family="JetBrains Mono,monospace">
+            <g fill="none" stroke="#0969da" stroke-width="1">
+              <line x1="152" y1="56" x2="152" y2="74"/><line x1="152" y1="118" x2="152" y2="136"/><line x1="152" y1="180" x2="152" y2="198"/><line x1="152" y1="242" x2="152" y2="270"/>
+              <polyline points="292,220 310,220 310,158 292,158"/>
+            </g>
+            <g fill="#0969da">
+              <polygon points="149,68 152,74 155,68"/><polygon points="149,130 152,136 155,130"/><polygon points="149,192 152,198 155,192"/><polygon points="149,264 152,270 155,264"/><polygon points="298,155 292,158 298,161"/>
+            </g>
+            <g fill="#ffffff" stroke="#0969da" stroke-width="1">
+              <rect x="12" y="12" width="280" height="44"/><rect x="12" y="74" width="280" height="44"/><rect x="12" y="136" width="280" height="44"/><rect x="12" y="198" width="280" height="44"/>
+            </g>
+            <rect x="12" y="270" width="280" height="44" fill="#0969da"/>
+            <g font-size="13" fill="#0969da" font-weight="700">
+              <text x="24" y="31">hunt</text><text x="24" y="93">rank</text><text x="24" y="155">tune</text><text x="24" y="217">read 20 s</text>
+            </g>
+            <g font-size="11" fill="#1f2328">
+              <text x="24" y="48">signal_hunt, 20 s of audio</text><text x="24" y="110">candidates, highest score first</text><text x="24" y="172">tune_to carrier_hz, fldigi_modem</text><text x="24" y="234">text → read, confirm the CQ</text>
+            </g>
+            <text x="24" y="289" font-size="13" fill="#ffffff" font-weight="700">hand off</text>
+            <text x="24" y="306" font-size="11" fill="#ffffff">to fldigi-operating</text>
+            <text x="160" y="260" font-size="10" fill="#57606a">CQ and a callsign, twice</text>
+            <g font-size="10" fill="#57606a"><text x="316" y="184">next</text><text x="316" y="197">candidate</text></g>
+          </svg>
+          <figcaption>The hunt loop from skill 03: hunt, rank, tune, read twenty seconds, then hand off to fldigi-operating or try the next candidate.</figcaption>
+        </figure>
+        <p>In a Cowork session, a container, or with fldigi on another computer, the server cannot open the sound card. Run <code>fldigi-mcp-tap --device iMic</code> beside fldigi and set <strong>Signal-hunt tap URL</strong> to <code>http://127.0.0.1:7365</code>, or that computer's address. With no audio at all, <code>signal_hunt</code> with <code>method="api"</code> steps fldigi's own <code>search_up</code>: slow, and blind to mode.</p>
+        <p>Two more ways to hunt need a patched fldigi. <code>signal_hunt method="browser"</code> reads fldigi's Signal Browser: up to 30 PSK, RTTY or CW stations at once, with their text. The <code>rsid</code> tool lists the RSID bursts fldigi heard, by mode and frequency, without switching the modem.</p>
+        <div class="callout">
+          <span class="label">Proposed, not yet in fldigi</span>
+          <p>The Signal Browser and RSID patches were offered to the fldigi maintainer on 11 and 16 September 2026 (w1hkj/fldigi issue 55). Neither is merged. On an unpatched fldigi both tools answer with a hint and nothing else changes.</p>
+        </div>
+        <p>Limits, stated: mode naming is verified on five recordings of known mode, 5 of 5. The hunt is receive only.</p>
+
+        <h2 id="remote">fldigi or N3FJP on another computer</h2>
+        <figure class="diagram">
+          <svg viewBox="0 0 720 190" role="img" aria-label="Diagram: a Mac running Claude Desktop, the connector and mcp-host-bridge, joined over the LAN to a Windows PC running N3FJP or fldigi, which connects to the radio." font-family="JetBrains Mono,monospace">
+            <rect x="15" y="28" width="360" height="140" fill="none" stroke="#d0d7de" stroke-dasharray="5 4"/>
+            <text x="25" y="20" fill="#57606a" font-size="10">MAC</text>
+            <rect x="35" y="45" width="140" height="44" fill="#f6f8fa" stroke="#d0d7de"/>
+            <text x="105" y="71" fill="#1f2328" font-size="12" text-anchor="middle">Claude Desktop</text>
+            <rect x="35" y="108" width="140" height="44" fill="#ffffff" stroke="#0969da"/>
+            <text x="105" y="134" fill="#0550ae" font-size="12" text-anchor="middle">n3fjp-mcp</text>
+            <rect x="215" y="76" width="140" height="44" fill="#ffffff" stroke="#0969da"/>
+            <text x="285" y="94" fill="#0550ae" font-size="11" text-anchor="middle">mcp-host-</text>
+            <text x="285" y="109" fill="#0550ae" font-size="11" text-anchor="middle">bridge</text>
+            <rect x="440" y="28" width="200" height="140" fill="none" stroke="#d0d7de" stroke-dasharray="5 4"/>
+            <text x="450" y="20" fill="#57606a" font-size="10">WINDOWS PC</text>
+            <rect x="460" y="76" width="160" height="44" fill="#f6f8fa" stroke="#d0d7de"/>
+            <text x="540" y="102" fill="#1f2328" font-size="12" text-anchor="middle">N3FJP · fldigi</text>
+            <rect x="660" y="73" width="50" height="50" fill="#0969da"/>
+            <text x="685" y="103" fill="#ffffff" font-size="11" text-anchor="middle" font-weight="700">radio</text>
+            <g fill="none" stroke="#0969da" stroke-width="1">
+              <line x1="105" y1="89" x2="105" y2="108"/>
+              <line x1="175" y1="122" x2="215" y2="102"/>
+              <line x1="355" y1="98" x2="460" y2="98"/>
+              <line x1="620" y1="98" x2="660" y2="98"/>
+            </g>
+            <text x="407" y="88" fill="#57606a" font-size="10" text-anchor="middle">LAN</text>
+          </svg>
+          <figcaption>The shack split: the connector keeps talking to loopback; the bridge carries it across the LAN.</figcaption>
+        </figure>
+        <p>For fldigi, start it on the other computer with <code>--xmlrpc-server-address 0.0.0.0</code> so it accepts LAN connections. Claude Desktop's sandbox reaches only <code>127.0.0.1</code>. Install <a href="products/mcp-host-bridge.html">mcp-host-bridge</a> on the computer that runs Claude, run one command, and leave the connector host at <code>127.0.0.1</code>. Trusted LAN only.</p>
+        <pre><code>mcp-host-bridge install n3fjp --to 192.168.1.50</code></pre>
+        <p>The same works for <code>fldigi</code> and <code>wsjtx</code>. Keep the link on a trusted LAN or tunnel it over SSH; the connection is not encrypted and fldigi's XML-RPC interface is unauthenticated.</p>
+
+        <h2 id="next">Where to go next</h2>
+        <p>The <a href="user-guide/index.html">User Guide</a> has the full Field Guides. The <a href="products/fldigi-mcp.html">fldigi-mcp product page</a> has the tools, the settings and the fldigi XML-RPC reference. See <a href="downloads.html">Downloads</a> for every file; <a href="development.html">Development</a> if you want to help.</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <p class="label">AE5VG · Austin, TX</p>
+      <p>Site text CC BY 4.0; software under the license named in each repository.</p>
+      <p class="sk">GL es 73 de AE5VG sk</p>
+    </div>
+    <div>
+      <p class="label">Contact</p>
+      <p>Software: open an issue on the relevant repository at <a href="https://github.com/sbrunner-atx">github.com/sbrunner-atx</a>.</p>
+      <p>Radio matters: the <a href="https://www.qrz.com/db/AE5VG">QRZ page for AE5VG</a>.</p>
+      <p>Email: <span class="email-here">stefan at this domain</span></p>
+    </div>
+  </div>
+</footer>
+<script src="site.js"></script>
+</body>
+</html>

@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The serial-console Field Guide · AE5VG</title>
+<meta name="description" content="The serial-console-mcp Field Guide: the console model, connection settings, the console standard, the device playbook, terminals, Junos and IOS basics, and worked sessions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="badge" href="../index.html">AE5VG</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site" id="site-nav" aria-label="Site">
+      <a href="../index.html">Home</a>
+      <a href="../products/index.html">Products</a>
+      <a href="../downloads.html">Downloads</a>
+      <a href="../getting-started.html">Getting Started</a>
+      <a href="index.html" aria-current="page">User Guide</a>
+      <a href="../development.html">Development</a>
+      <a href="../references/index.html">References</a>
+      <a href="../about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="label">Field Guide · September 2026</p>
+    <h1>The Serial Console</h1>
+    <p class="lead">serial-console-mcp brings AI to the configuration of telecommunication equipment through the console port it already has: Juniper and Cisco routers and switches, Icom CI-V and Kenwood, Yaesu and Elecraft CAT transceivers, and GS-232 antenna rotators, and it speaks to any other serial device too, raw, ANSI or VT100, from IoT gateways to alarm and control panels. This guide shows how the agent reads the prompt instead of guessing, changes configuration with a safety net, and hands the port back cleanly: everything a terminal program knows, explained for the operator who would rather ask.</p>
+    <div class="btn-row">
+      <a class="btn ghost" href="https://github.com/sbrunner-atx/serial-console-mcp/raw/main/docs/serial-console-mcp%20Field%20Guide.pdf">Download PDF</a>
+    </div>
+    <div class="strip">
+      <div><span class="label">Tools</span><strong>30</strong></div>
+      <div><span class="label">Device presets</span><strong>12</strong></div>
+      <div><span class="label">Console rules</span><strong>6</strong></div>
+      <div><span class="label">Worked sessions</span><strong>5</strong></div>
+    </div>
+  </div>
+</section>
+
+<main id="main">
+  <div class="wrap">
+    <div class="layout">
+      <nav aria-label="On this page"><ul class="toc">
+        <li><span class="label">Chapters</span></li>
+        <li><a href="#glance">A · The tools at a glance</a></li>
+        <li><a href="#install">B · Installing</a></li>
+        <li><a href="#first">C · Your first session</a></li>
+        <li><a href="#how">D · How the system works</a></li>
+        <li><a href="#settings">01 · Connection settings</a></li>
+        <li><a href="#standard">02 · The console standard</a></li>
+        <li><a href="#devices">03 · The device playbook</a></li>
+        <li><a href="#shack">04 · The shack</a></li>
+        <li><a href="#terminals">05 · Terminals</a></li>
+        <li><a href="#netskills">06 · Junos and IOS</a></li>
+        <li><a href="#examples">E · Worked sessions</a></li>
+        <li><a href="#trouble">F · When it does not answer</a></li>
+        <li><a href="#reference">G · Tool reference</a></li>
+        <li><a href="#about">H · About and provenance</a></li>
+      </ul></nav>
+      <div>
+        <h2 id="glance" style="margin-top:0">A · The tools at a glance</h2>
+        <p>One server, thirty tools, as many open ports as the shack has cables. The agent picks the tool; you say what you want in plain language. Nothing here is tied to telecom: if a device has a serial port and speaks raw bytes, ANSI or VT100, the same tools drive it.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Tools</th><th scope="col">What they do</th><th scope="col">When the agent reaches for them</th></tr></thead>
+          <tbody>
+            <tr><td>list_serial_ports · list_presets</td><td>Every port the computer sees, marked if open here; the usual settings for the device families.</td><td>First, whenever a port or its settings are unknown.</td></tr>
+            <tr><td>connect · reconnect_last · disconnect</td><td>Open a port by name with baud, framing, flow control, line ending and prompt, or from a preset. Several at once. Remembered across sessions.</td><td>"Connect the Kenwood as rig and the rotator on the other port."</td></tr>
+            <tr><td>send_text · send_hex</td><td>Write an ASCII line or raw bytes. Writes only; never reads.</td><td>Any command, login, bare return, CI-V frame.</td></tr>
+            <tr><td>read_until_prompt · read_available · query_text</td><td>Return buffered output up to a prompt (leaving the rest), or whatever has arrived, or clear-send-read in one.</td><td>Every reply.</td></tr>
+            <tr><td>expect</td><td>A scripted list of send-and-wait steps in one call, with automatic replies to pagers.</td><td>Logins, multi-step command sequences.</td></tr>
+            <tr><td>send_keys · screen</td><td>Press Ctrl-C, Esc, Tab, arrows and F-keys by name; view the VT100/xterm screen of a full-screen console.</td><td>"Interrupt that ping" · BIOS, BMC and menu consoles.</td></tr>
+            <tr><td>set_lines · pulse_line · send_break</td><td>Drive DTR and RTS, send BREAK; status shows CTS, DSR, CD, RI.</td><td>Key a rig's PTT, reset an Arduino, interrupt a boot.</td></tr>
+            <tr><td>capture_start · capture_stop · get_transcript</td><td>Log a session to a file, raw or timestamped; re-read the rolling transcript.</td><td>"Record this console session."</td></tr>
+            <tr><td>port_in_use_by · detect_baud</td><td>Which program holds a port; which baud rate produces readable text.</td><td>"It says in use" · "I do not know the rate."</td></tr>
+            <tr><td>cat_build · cat_parse</td><td>Kenwood, Elecraft and Yaesu <code>;</code> commands: build a frequency set, decode ID, FA, MD, IF and error replies.</td><td>Any text-CAT rig.</td></tr>
+            <tr><td>civ_build · civ_parse · civ_freq</td><td>Icom CI-V frames: build, decode (echo versus reply, BCD frequency, mode, PTT), convert.</td><td>Any Icom.</td></tr>
+            <tr><td>rotator_build · rotator_parse</td><td>GS-232 commands (read, move, stop, speed) and position replies.</td><td>Any Yaesu-protocol rotator.</td></tr>
+            <tr><td>clear_buffer · status</td><td>Housekeeping; status shows every open port, its lines, buffer and capture.</td><td>Pre-flight; after anything odd.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout">
+          <span class="label">Who reads this guide</span>
+          <p>The agent reads the tool descriptions. This guide is for the human at the bench: what the agent will do on your behalf, which words make it do the right thing, and how to tell when a silent port is a wrong baud rate rather than a dead device.</p>
+        </div>
+
+        <h2 id="install">B · Installing</h2>
+        <p>The server runs as a host process next to Claude Desktop, not inside its sandbox. That is the whole reason it can see <code>/dev/cu.*</code>, <code>COM4</code> or <code>/dev/ttyUSB0</code>.</p>
+        <h3>With the installer (recommended)</h3>
+        <ol class="steps">
+          <li><strong>Run the installer.</strong> Download the <code>.exe</code> (Windows) or the <code>.pkg</code> (Mac) from <a href="../downloads.html#serial-console-mcp">Downloads</a> and click through it. It copies one binary and registers it in <code>claude_desktop_config.json</code>, merging with any servers already there and backing up the old file. The installers are unsigned, so expect a Gatekeeper or SmartScreen warning.</li>
+          <li><strong>Fully quit Claude Desktop, then reopen it.</strong> Closing the window is not enough. Windows: right-click the tray icon, Quit. Mac: ⌘Q. Servers are read at launch.</li>
+        </ol>
+        <h3>From PyPI (uv or pipx)</h3>
+        <pre><code>uvx serial-console-mcp configure --command uvx --arg serial-console-mcp
+# or
+pipx install serial-console-mcp
+serial-console-mcp configure --command "$(which serial-console-mcp)"</code></pre>
+        <p>Needs Python 3.10 or newer. <code>configure</code> writes the Claude Desktop entry, merging with servers already there and backing up the old file; <code>serial-console-mcp configure --remove</code> undoes it. Any MCP client can launch the same command over stdio. Developers: <code>git clone</code>, <code>uv sync</code>, <code>uv run pytest</code>.</p>
+        <h3>Verify, thirty seconds</h3>
+        <ol class="steps">
+          <li><strong>Ask for the ports.</strong> "What serial ports do you see?" A list with USB descriptions means the server is running and the OS sees your adapter. "No serial ports found" with the device plugged in almost always means a charge-only USB cable or a missing driver (FTDI, CP210x, CH340).</li>
+          <li><strong>Open and close a port.</strong> "Connect to the first one, show me the status, then disconnect." Status should say the reader is running with zero bytes buffered.</li>
+        </ol>
+        <div class="callout">
+          <span class="label">One program per port</span>
+          <p>A serial port can be open in exactly one program. If a terminal, WSJT-X, a contest logger, the Arduino Serial Monitor or the device's own software holds it, the connect fails with "already in use". Say "disconnect" before you hand the port to something else.</p>
+        </div>
+
+        <h2 id="first">C · Your first session, a console by conversation</h2>
+        <p>You do not need to know a terminal program. If you can plug in a cable and describe your gear, you can operate it.</p>
+        <h3>What you are actually installing</h3>
+        <p>Claude is an assistant made by Anthropic, running in the Claude Desktop app. serial-console-mcp is best thought of as a rig-interface cable with a very patient operator on the other end: Claude types what you ask into the port, watches what comes back, and reports it. Nothing about your device changes; it sees an ordinary terminal. The cable does not care what is on the other end: a switch, a radio, an alarm panel, an IoT gateway or a lab instrument all look the same to it.</p>
+        <h3>Operating is a conversation</h3>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">You type</th><th scope="col">What happens</th></tr></thead>
+          <tbody>
+            <tr><td>What serial ports do you see?</td><td>Every port with its USB description, so you can pick the CP210x or FTDI that is your device.</td></tr>
+            <tr><td>Connect to /dev/cu.usbserial-10 at 9600.</td><td>Opens the port 9600 8N1 with no flow control and starts the background reader.</td></tr>
+            <tr><td>Connect to /dev/cu.BLTH at 38400 with XON/XOFF.</td><td>Same, with software flow control on. Every field of a terminal's Quick Connect dialog can be said this way (chapter 01).</td></tr>
+            <tr><td>Send a return and read until the login prompt.</td><td>Writes a bare CR, then reads until <code>login:</code> appears.</td></tr>
+            <tr><td>Log in as admin and run show version. Show me all of it.</td><td>Sends the username, waits for the password prompt, sends the password, waits for the shell prompt, runs the command, reads until the prompt again. Long output comes back whole.</td></tr>
+            <tr><td>Reconnect to the same port as last time.</td><td>The last port and settings are remembered across sessions.</td></tr>
+            <tr><td>Disconnect.</td><td>Closes the port so a terminal program or WSJT-X can have it.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout warn">
+          <span class="label">You are still the operator</span>
+          <p>These tools send exactly what you ask, to whatever is on the cable. Claude Desktop asks you to approve each tool call, so you see every command before it runs. Read it. A console session on a router or a rig can reconfigure, reboot, or transmit, and this server does not try to guess which commands are dangerous. If something looks wrong, decline it, and keep a real terminal handy for anything you would not want an assistant to type.</p>
+        </div>
+        <div class="callout">
+          <span class="label">First time? Something harmless.</span>
+          <p>Start with a read-only command: <code>show version</code> on a router, <code>ID;</code> on a Kenwood, a frequency read on an Icom. Watch one full cycle, send, prompt, output, before asking for anything that changes state.</p>
+        </div>
+
+        <h2 id="how">D · How the system works</h2>
+        <p>A serial console is not question-and-answer. It echoes what you type, prints on its own, and can dump pages. So the server never guesses when a reply is done; it keeps reading, and you tell it what the end looks like.</p>
+        <figure class="diagram">
+          <svg viewBox="0 0 480 390" role="img" aria-label="Diagram: send (send_text or send_hex) writes to the device and reads nothing; a background reader drains the device into a buffer from the moment the port opens; read_until_prompt or read_available takes from the buffer until the prompt, or until the line goes quiet, and leftover bytes stay buffered." font-family="JetBrains Mono,monospace">
+            <rect x="20" y="20" width="200" height="76" fill="#ffffff" stroke="#0969da" stroke-width="1"/>
+            <text x="120" y="46" fill="#0550ae" font-size="15" text-anchor="middle">send</text>
+            <text x="120" y="66" fill="#1f2328" font-size="12" text-anchor="middle">send_text · send_hex</text>
+            <text x="120" y="84" fill="#57606a" font-size="11" text-anchor="middle">write only</text>
+            <rect x="260" y="20" width="200" height="76" fill="#f6f8fa" stroke="#d0d7de" stroke-width="1"/>
+            <text x="360" y="52" fill="#1f2328" font-size="15" text-anchor="middle">device</text>
+            <text x="360" y="72" fill="#57606a" font-size="12" text-anchor="middle">serial console port</text>
+            <rect x="260" y="140" width="200" height="76" fill="#ffffff" stroke="#0969da" stroke-width="1"/>
+            <text x="360" y="172" fill="#0550ae" font-size="15" text-anchor="middle">background reader</text>
+            <text x="360" y="192" fill="#57606a" font-size="12" text-anchor="middle">drains the port</text>
+            <rect x="260" y="260" width="200" height="76" fill="#ffffff" stroke="#0969da" stroke-width="1"/>
+            <text x="360" y="292" fill="#0550ae" font-size="15" text-anchor="middle">buffer</text>
+            <text x="360" y="312" fill="#57606a" font-size="12" text-anchor="middle">4 MB per port</text>
+            <rect x="20" y="260" width="200" height="76" fill="#ffffff" stroke="#0969da" stroke-width="1"/>
+            <text x="120" y="284" fill="#0550ae" font-size="15" text-anchor="middle">read</text>
+            <text x="120" y="304" fill="#1f2328" font-size="12" text-anchor="middle">read_until_prompt ·</text>
+            <text x="120" y="322" fill="#1f2328" font-size="12" text-anchor="middle">read_available</text>
+            <text x="120" y="358" fill="#57606a" font-size="11" text-anchor="middle">or until the line goes quiet</text>
+            <text x="120" y="376" fill="#57606a" font-size="11" text-anchor="middle">leftover stays buffered</text>
+            <g fill="none" stroke="#0969da" stroke-width="1">
+              <line x1="220" y1="58" x2="254" y2="58"/>
+              <line x1="360" y1="96" x2="360" y2="134"/>
+              <line x1="360" y1="216" x2="360" y2="254"/>
+              <line x1="260" y1="298" x2="226" y2="298"/>
+            </g>
+            <g fill="#0969da" stroke="none">
+              <polygon points="254,54 260,58 254,62"/>
+              <polygon points="356,134 360,140 364,134"/>
+              <polygon points="356,254 360,260 364,254"/>
+              <polygon points="226,294 220,298 226,302"/>
+            </g>
+          </svg>
+          <figcaption>The console model: send writes only; the background reader drains the port into the buffer from the moment it opens; a read takes from the buffer until the prompt, or until the line goes quiet.</figcaption>
+        </figure>
+        <ul>
+          <li><strong>The reader owns the port.</strong> One thread drains the OS buffer continuously. Echo, unsolicited syslog, and a three-page <code>show run</code> all arrive intact instead of being raced by ad-hoc polling. This is the model minicom and expect use.</li>
+          <li><strong>Prompt, not timer.</strong> <code>read_until_prompt</code> returns the instant the prompt shows up and hands back everything up to and including it. A fixed delay would truncate long output or waste seconds on short output; a prompt does neither.</li>
+          <li><strong>Leftover is never lost.</strong> Bytes after the matched prompt go back to the front of the buffer, so an unsolicited line that arrived mid-read is the first thing the next read sees.</li>
+          <li><strong>Timeouts return what they have.</strong> If the prompt never shows, you still get the partial output with a note to try again or change the prompt.</li>
+          <li><strong>A dead port is announced.</strong> Unplug the adapter and the reader stops; every tool then says so and asks you to reconnect, rather than timing out in silence.</li>
+          <li><strong>Memory is bounded.</strong> The buffer holds four megabytes. A device that streams unread for hours drops its oldest bytes and <code>status</code> reports how many.</li>
+        </ul>
+        <div class="callout">
+          <span class="label">The habit that matters</span>
+          <p>Tell the agent the prompt. "The prompt is <code>user@r1&gt;</code> with a trailing space" turns every read into a clean, complete reply. Without it the agent falls back to reading until the line goes quiet, which works for one-line CAT answers and fails for anything paged.</p>
+        </div>
+
+        <h2 id="settings">01 · Connection settings</h2>
+        <p>Everything in a terminal program's Quick Connect dialog, said in a sentence. The default is 9600-8-N-1 with no flow control, which is what most consoles and much radio gear expect; name only what differs.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Dialog field</th><th scope="col">Parameter</th><th scope="col">Default</th><th scope="col">Values</th><th scope="col">How to say it</th></tr></thead>
+          <tbody>
+            <tr><td>Port</td><td><code>port</code></td><td>required</td><td>/dev/cu.usbserial-10 · COM4 · /dev/ttyUSB0</td><td>"the CP210x one" works if you listed ports first</td></tr>
+            <tr><td>Baud rate</td><td><code>baud</code></td><td>9600</td><td>1200 … 115200</td><td>"at 38400"</td></tr>
+            <tr><td>Data bits</td><td><code>bytesize</code></td><td>8</td><td>5 · 6 · 7 · 8</td><td>"7 data bits"</td></tr>
+            <tr><td>Parity</td><td><code>parity</code></td><td>N</td><td>N · E · O</td><td>"even parity"</td></tr>
+            <tr><td>Stop bits</td><td><code>stopbits</code></td><td>1</td><td>1 · 1.5 · 2</td><td>"two stop bits"</td></tr>
+            <tr><td>RTS/CTS</td><td><code>rtscts</code></td><td>off</td><td>on · off</td><td>"with hardware flow control"</td></tr>
+            <tr><td>XON/XOFF</td><td><code>xonxoff</code></td><td>off</td><td>on · off</td><td>"with XON/XOFF"</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>Shorthand works too. "38400 8N1", "9600 7E1" and "the usual Cisco console settings" all resolve to the right parameters. The agent repeats the settings back in the connect reply, so a misheard baud rate is visible before the first command goes out.</p>
+        <h3>Presets: the whole dialog in one word</h3>
+        <p><code>connect(preset="kenwood-cat")</code> loads a family's usual settings, including two the dialog never asks for: the line ending the device expects and the prompt that ends its replies. Anything you say explicitly overrides the preset. The presets: <code>cisco-console</code>, <code>juniper-craft</code>, <code>linux-console</code>, <code>kenwood-cat</code>, <code>elecraft-cat</code>, <code>yaesu-cat</code>, <code>icom-civ</code>, <code>xiegu-civ</code>, <code>yaesu-rotator</code>, <code>arduino</code>, <code>nmea-gps</code>, <code>screen-console</code>. Presets also choose the terminal mode (chapter 05): the console presets strip colors and escape sequences, the radio presets pass raw bytes. Ask "list the presets" to see each one's values and caveats. They are factory defaults; the device's menu wins.</p>
+        <p>Do not know the rate at all? "What baud is this thing?" runs <code>detect_baud</code>: it tries the common rates, sends a return (or a command you name, such as <code>ID;</code> for a Kenwood), and ranks the rates by how readable the reply is.</p>
+        <h3>Flow control, the two lines that are usually wrong</h3>
+        <ul>
+          <li><strong>Leave both off unless the manual says otherwise.</strong> Consoles, CAT ports and microcontrollers overwhelmingly run without flow control.</li>
+          <li><strong>RTS/CTS needs the wires.</strong> Many console cables and three-wire adapters do not carry RTS and CTS. Turn it on with such a cable and every write waits for a CTS that never comes; the server gives up after two seconds and tells you exactly that.</li>
+          <li><strong>XON/XOFF is for text only.</strong> It treats the bytes 0x11 and 0x13 as flow-control characters and swallows them. Never enable it for Icom CI-V or any other binary protocol; a frequency containing those bytes would silently corrupt.</li>
+        </ul>
+        <h3>Remembered across sessions</h3>
+        <p>Every successful connect writes the connection, by name, with all its settings, preset and prompt, to a small file in your user profile. "Reconnect to the rig" or "reconnect to the same port as last time" reads it back. <code>status</code> shows what is remembered when nothing is open.</p>
+        <div class="callout">
+          <span class="label">Line ending is a send setting, not a port setting</span>
+          <p>The dialog does not ask because a terminal sends whatever you type. Here it matters: <code>send_text</code> appends CR (most radios, rotators), LF (Unix-style consoles, Arduino), CRLF, or nothing (Kenwood-style CAT ends in <code>;</code>). Say "this device wants LF" once: it is stored on the connection, as is the prompt, so every later send and read uses it without being told.</p>
+        </div>
+
+        <h2 id="standard">02 · The console standard</h2>
+        <p>Six rules the tools are built around. Each one closes a hole that a naive send-and-wait would fall into.</p>
+        <ol class="steps">
+          <li><strong>Sending never reads.</strong> <code>send_text</code> and <code>send_hex</code> put bytes on the wire and return. A reply is a separate, explicit read. This is what lets the agent log in (send, wait for <code>Password:</code>, send, wait for the shell) without guessing delays.</li>
+          <li><strong>Name the prompt with its trailing space.</strong> The match runs over everything received, including the echo of your own command. <code>"# "</code> is safe; a bare <code>"#"</code> matches the first <code>#</code> in a banner or in <code>show run | include #</code>. A regex such as <code>[\w.-]+[#&gt;] ?$</code> handles hostnames that change after <code>configure</code>. Set the prompt once on <code>connect</code> (or let the preset) and every read uses it. With no prompt anywhere, the read ends when the received text ends in #, &gt;, $ or %.</li>
+          <li><strong>Clear before a command whose reply must be clean.</strong> Syslog, interface flaps and a previous timed-out read leave bytes in the buffer. <code>send_text(…, clear_buffer_first=true)</code> or <code>query_text</code> discard them so the next read starts at your echo.</li>
+          <li><strong>Text prompts for CLIs, idle reads for everything else.</strong> Routers, switches and shells: <code>read_until_prompt</code>. Binary protocols and one-line CAT answers have no prompt: <code>read_available</code> or <code>query_text</code> with an empty prompt, which returns once the line has been quiet for a beat.</li>
+          <li><strong>Baud wrong looks like garbage; line ending wrong looks like silence.</strong> A stream of replacement and box characters means the baud rate. An echo with no reply means the device is waiting for the other line ending. Send a bare return first to draw a fresh prompt; if that also produces nothing, check the cable.</li>
+          <li><strong>Disconnect before handing the port to anything else.</strong> The OS gives a port to one process. A forgotten open port is the most common reason WSJT-X or a terminal program cannot find a device that is plainly plugged in.</li>
+        </ol>
+        <div class="callout">
+          <span class="label">Where the rules come from</span>
+          <p>They are the reasons minicom and expect exist. The server implements them so the agent does not have to rediscover them at your bench.</p>
+        </div>
+
+        <h2 id="devices">03 · The device playbook</h2>
+        <p>Four families have their own playbook, and the last row is how to approach anything else on a serial port. Settings below are the common factory defaults; the device's manual or menu wins when they differ.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Family</th><th scope="col">Typical settings</th><th scope="col">Line ending</th><th scope="col">Read with</th><th scope="col">Notes</th></tr></thead>
+          <tbody>
+            <tr><td>Network craft and console ports (Juniper, Cisco, Arista, switches, firewalls)</td><td>9600 8N1</td><td>LF or CR</td><td>read_until_prompt: "login: ", "&gt; ", "# "</td><td>Send a bare return to draw a prompt. Turn off paging once (<code>set cli screen-length 0</code>, <code>terminal length 0</code>) or <code>--More--</code> becomes your prompt.</td></tr>
+            <tr><td>Text CAT radios (Kenwood, Elecraft, Yaesu FT-991 and FTdx, Flex)</td><td>4800 to 115200 8N1, per the rig's menu</td><td>NONE</td><td>query_text (empty prompt, idle read)</td><td>Commands end in <code>;</code> with no CR: <code>ID;</code> <code>FA;</code> <code>MD;</code>. Replies are one line ending in <code>;</code>. <code>cat_build</code> formats a frequency set, <code>cat_parse</code> names the rig, mode and frequency. Elecraft echoes nothing; Kenwood may need <code>AI0;</code> to stop auto-info.</td></tr>
+            <tr><td>Icom CI-V (IC-7300, 7610, 705, 9700)</td><td>19200 8N1 (USB), 9600 via the CI-V jack</td><td>n/a (binary)</td><td>send_hex → read_available</td><td>Frames are <code>FE FE &lt;rig&gt; E0 &lt;cmd&gt; … FD</code>; the reply shows as hex. Frequency is BCD, low byte first. Never enable XON/XOFF. If the rig echoes, the first frame back is your own. Xiegu G90 and X6100 speak CI-V too (address 0x70, the <code>xiegu-civ</code> preset). Baofeng-class handhelds have no CAT: their cable carries a memory-programming protocol, which is CHIRP's job, not a console.</td></tr>
+            <tr><td>Rotators, switches, MCUs (Yaesu GS-232, Green Heron, Arduino, ESP32)</td><td>9600 or 115200 8N1</td><td>CR (rotators), LF (Arduino)</td><td>read_available or read_until_prompt</td><td>GS-232 <code>C</code> returns <code>+0xxx</code> azimuth; <code>rotator_build</code> and <code>rotator_parse</code> cover read, move, stop and speed. Opening a port resets many Arduinos via DTR; wait a second and expect a boot banner. Sketches that print continuously are a <code>read_available</code> job.</td></tr>
+            <tr><td>Everything else on a serial port (IoT gateways, alarm and access-control panels, UPS and PDU menus, lab instruments, industrial controllers)</td><td>9600 8N1 to start; detect_baud if silent</td><td>CR or CRLF (try both)</td><td>read_until_prompt, read_available, screen</td><td>Choose the terminal mode by what the device prints: plain text or binary, <code>dumb</code>; colors and cursor codes, <code>ansi</code>; a full-screen menu that repaints, <code>xterm</code> with <code>screen</code>. Binary protocols such as Modbus RTU go through <code>send_hex</code> and <code>read_available</code>; the server does not decode them. Panels that can arm, disarm, unlock or switch power: start in read-only mode and confirm every command.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout warn">
+          <span class="label">Transmit-capable gear</span>
+          <p>A CAT command can key the radio (<code>TX;</code>) and a console command can reboot a router. The server does not filter; the approval prompt is your filter. On a rig, start with reads (<code>ID; FA; MD;</code>) and put the radio on a dummy load before any command that could transmit.</p>
+        </div>
+
+        <h2 id="shack">04 · The shack: several ports, control lines, scripts, capture</h2>
+        <p>A station is more than one cable. This chapter is what release 0.2 added on top of the console model: naming ports, driving the lines that key and reset, scripting a login in one call, and keeping a record.</p>
+        <h3>Several ports at once</h3>
+        <p>Every connection has a name: "connect the Kenwood as rig, then the rotator on the other port as rotator". Tools act on the most recently used connection unless you say otherwise: "ask the rig for its frequency, then turn the rotator to 180". <code>status</code> lists all of them and marks the current one. "Disconnect everything" closes them all. Connecting to a port that is already open replaces that connection; reusing a name for a different port is refused, so rig can never silently become the amplifier.</p>
+        <h3>Control lines</h3>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Tool</th><th scope="col">What it does</th><th scope="col">Typical use</th></tr></thead>
+          <tbody>
+            <tr><td>set_lines</td><td>Set DTR and/or RTS and hold them.</td><td>Hold an Arduino in reset; assert PTT for as long as the user says.</td></tr>
+            <tr><td>pulse_line</td><td>Drive DTR or RTS to a level for N ms, then restore it, always.</td><td>Reset a board (DTR low, 100 ms); key a rig for a timed transmission (RTS, 2000 ms).</td></tr>
+            <tr><td>send_break</td><td>Hold TX low for N ms.</td><td>Enter ROMMON, interrupt a boot.</td></tr>
+            <tr><td>status</td><td>Shows CTS, DSR, CD, RI, DTR, RTS.</td><td>"Is the cable wired for flow control?"</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout warn">
+          <span class="label">A line can be a transmitter</span>
+          <p>Many rig interfaces key PTT from RTS or DTR. Asking the agent to pulse a line on such a port is a transmission: the skill tells it to confirm first, keep pulses short, and never leave PTT asserted with <code>set_lines</code> unless you said so. Read-only mode refuses these tools outright.</p>
+        </div>
+        <h3>Scripting with expect</h3>
+        <p>A login is four round trips: return, username, password, first command. <code>expect</code> runs them as one call, each step a send and the prompt to wait for, and returns every step's output. A step can also just wait, or just send. <code>auto_reply</code> answers pagers on the way: <code>{"--More--": " "}</code> turns a paged <code>show run</code> into one result. If a step's prompt never shows, the sequence stops there and says so, with whatever arrived.</p>
+        <pre><code>expect(steps=[
+  {"send": "",             "expect": "login: "},
+  {"send": "admin",        "expect": "Password:"},
+  {"send": "&lt;password&gt;",   "expect": "&gt; "},
+  {"send": "show version", "expect": "&gt; ", "clear_first": true}
+])</code></pre>
+        <h3>Capture and transcript</h3>
+        <p>"Record this session" starts a capture: raw writes received bytes exactly as they arrive, a terminal log; annotated writes timestamped lines marked TX or RX, which is what you want when debugging a protocol. <code>capture_stop</code> reports the file. Independently, the last 256 KB received on every connection is kept as a transcript, so "show me what the router printed earlier" works even after those bytes were consumed by a read. MCP clients that browse resources see the same transcript as <code>serial://transcript/&lt;name&gt;</code>.</p>
+        <h3>Read-only mode and idle auto-close</h3>
+        <p>Two environment variables in the server's config entry: <code>SERIAL_CONSOLE_READ_ONLY=1</code> makes the server refuse anything but read-style commands (<code>show</code>, <code>display</code>, two-letter CAT reads such as <code>ID;</code>, CI-V read frames) and refuse control-line changes; it is the way to let a cautious admin try the tool on a production console. <code>SERIAL_CONSOLE_IDLE_MINUTES=15</code> closes a port nobody has used for that long, so a forgotten connection stops blocking WSJT-X. Both are off by default.</p>
+
+        <h2 id="terminals">05 · Terminals: clean text, keys, and a real screen</h2>
+        <p>A terminal program offers a menu of emulations: VT100, VT220, Xterm, ANSI, Linux, Wyse, TN3270. An agent needs three things from that list, and this chapter is those three. Everything else on the menu is either the same family under another name or a 1980s terminal nobody has plugged in for twenty years.</p>
+        <h3>Three terminal modes</h3>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Mode</th><th scope="col">What the agent sees</th><th scope="col">Use it for</th></tr></thead>
+          <tbody>
+            <tr><td>dumb</td><td>The bytes exactly as received. The default.</td><td>CAT, CI-V, rotators, GPS, Arduino, IoT gateways and sensors, binary protocols, and most CLIs.</td></tr>
+            <tr><td>ansi</td><td>Color and escape sequences stripped as they arrive; a bare carriage return overwrites the line, backspace moves left, erase-line and cursor moves are honored. A progress bar reads as its final state, a colored prompt as plain text, and read_until_prompt matches through the color codes.</td><td>Linux shells, colored router prompts, embedded and IoT consoles, anything that prints <code>ESC[32m</code> noise. The console presets set it.</td></tr>
+            <tr><td>xterm · vt100</td><td>All of the above plus a real character grid, 80×24 unless you say otherwise, updated continuously. The <code>screen</code> tool returns the grid as rows of text with the cursor position, and the terminal answers "who are you" queries as a VT100 so full-screen programs behave.</td><td>BIOS setup over a serial console, RAID and BMC consoles, menu-driven switches (older ProCurve, Netgear), alarm and control panel menus, UPS and PDU setup screens, vi, top. The <code>screen-console</code> preset.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>Choose the mode on <code>connect(terminal=…)</code> or let the preset. The raw bytes are always kept in the capture file and in the screen model; only what the read tools return is cleaned. The screen model needs the <code>[screen]</code> extra (<code>pip install 'serial-console-mcp[screen]'</code>); the installers include it. Without it, xterm quietly runs as ansi and says so.</p>
+        <h3>Prompts on a redrawn line</h3>
+        <p>Ask Junos for help with <code>show system ?</code>, or clear the line with Ctrl-U, and it does not print a fresh prompt. It sends a carriage return, retypes the line, pads it with spaces and backs up over them, so the bytes end in <code>show system&nbsp;&nbsp;&nbsp;\b\b\b</code> rather than in <code>&gt; </code>. In ansi, vt100 and xterm mode, read_until_prompt and expect also try the pattern on the last line as the screen shows it, up to the cursor: after Ctrl-U the preset's <code>[#&gt;%] ?$</code> finds <code>root@sw&gt; </code>, and after <code>?</code> the pattern <code>&gt; show system $</code> finds the retyped words. A line that has ended, or that a carriage return has just rewound, is never taken for a prompt. dumb mode matches the bytes exactly, backspaces and all. Tab completion is different: on Junos 15.1 it only adds the rest of the word in place, so it needs nothing special.</p>
+        <h3>Keys by name</h3>
+        <p><code>send_text</code> types a line. <code>send_keys</code> presses keys: "hit Ctrl-C, that ping is still running", "press Tab to complete it", "arrow down twice and Enter". Names are the obvious ones: ctrl-c through ctrl-z, esc, tab, enter, backspace, delete, up, down, left, right, home, end, pgup, pgdn, f1 to f12, a single character, or <code>text:…</code> for a literal run. They are encoded the way an xterm sends them, which is what every current device expects. Nothing is read; look at the reply with read_until_prompt, read_available or screen.</p>
+        <div class="callout">
+          <span class="label">The full-screen loop</span>
+          <p>Connect with the screen-console preset, then alternate: press a key, read the screen, decide, press the next. Read the screen after every keypress; a menu that did not move is the most common way an agent gets lost in a BIOS. The skill says the same thing to the agent.</p>
+        </div>
+        <div class="callout">
+          <span class="label">What is deliberately not here</span>
+          <p>TN3270 is IBM mainframe over telnet, not serial. SCOANSI, Wyse 50/60 and Televideo are proprietary terminals for old SCO and Unix hosts with no maintained emulator; the rare host that still wants one usually accepts VT100. If you meet such a host, dumb with a capture file is the honest fallback.</p>
+        </div>
+        <h3>Read-only mode and keys</h3>
+        <p>In read-only mode, named keys are allowed (interrupting and navigating never change configuration by themselves) but single characters and <code>text:</code> runs are refused, since those are typing.</p>
+
+        <h2 id="netskills">06 · Junos and IOS, the basics</h2>
+        <p>The server knows about bytes and prompts. Two skills teach the agent what the prompts mean on the two console families it will meet most: how to tell which mode it is in, how to get out of one and into another, how to change something without cutting the branch it sits on, and which show commands answer the everyday questions. Both live in <code>skills/</code> and load the way the fldigi skills do.</p>
+        <h3>junos-operating</h3>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Prompt ends in</th><th scope="col">Mode</th><th scope="col">Move</th></tr></thead>
+          <tbody>
+            <tr><td>% (newer releases: ~ # with no [edit] above)</td><td>FreeBSD shell</td><td><code>cli</code> to reach the CLI; <code>cli -c "show … | no-more"</code> runs one command without leaving the shell; <code>exit</code> here logs out. root always lands here; put the console back here if that is how you found it.</td></tr>
+            <tr><td>&gt;</td><td>Operational</td><td><code>show …</code>; <code>configure exclusive</code> to edit; <code>exit</code> back to the shell (or to login:); <code>start shell</code> opens a shell whose <code>exit</code> returns here.</td></tr>
+            <tr><td># with [edit] above</td><td>Configuration</td><td><code>show | compare</code>, <code>commit check</code>, <code>commit confirmed 5</code>, <code>rollback 0</code> to discard, <code>exit</code> at the top to leave.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>The rules the skill enforces: read the prompt before every action; <code>configure exclusive</code> rather than bare <code>configure</code>; show the user <code>show | compare</code> before any commit; <code>commit confirmed</code> for anything that can cut the path you are on, then a plain <code>commit</code> once reachability is verified; <code>rollback 1</code> then <code>commit</code> to undo.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Question</th><th scope="col">Junos command</th></tr></thead>
+          <tbody>
+            <tr><td>What is it, which version</td><td><code>show version</code>, <code>show chassis hardware</code></td></tr>
+            <tr><td>Is it healthy (there is no show system status)</td><td><code>show system alarms</code>, <code>show chassis alarms</code>, <code>show chassis routing-engine</code> (CPU, memory, last reboot), <code>show chassis environment</code> (power, temperature), <code>show system storage</code></td></tr>
+            <tr><td>Uptime, last config change</td><td><code>show system uptime</code></td></tr>
+            <tr><td>Interfaces</td><td><code>show interfaces terse</code> (one line each), <code>show interfaces brief</code> (a short block each), <code>show interfaces descriptions</code></td></tr>
+            <tr><td>VLANs, neighbors, routes</td><td><code>show ethernet-switching interfaces</code>, <code>show vlans</code>, <code>show lldp neighbors</code>, <code>show route</code></td></tr>
+            <tr><td>Config and log</td><td><code>show configuration | display set</code>, <code>show log messages | last 50</code></td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p><code>set cli screen-length 0</code> once, or <code>| no-more</code>, before anything long. At a <code>---(more</code> pager every key is a pager command (q quits, s saves the output to a file), so press q before typing the next command. Unsure a command exists? Type <code>?</code> after the words so far, clear the line with Ctrl-U, and read the prompt again; the ansi terminal matches it on the redrawn line, so no extra return is needed.</p>
+        <h3>ios-operating</h3>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Prompt</th><th scope="col">Mode</th><th scope="col">Move</th></tr></thead>
+          <tbody>
+            <tr><td>Switch&gt;</td><td>User EXEC</td><td><code>enable</code> (may ask for a password: ask the user).</td></tr>
+            <tr><td>Switch#</td><td>Privileged EXEC</td><td>All <code>show</code>; <code>configure terminal</code> to edit; <code>disable</code> or <code>exit</code> to leave.</td></tr>
+            <tr><td>Switch(config)#</td><td>Configuration</td><td>Every line is live as typed. <code>end</code> back to #, then <code>write memory</code> to keep it.</td></tr>
+            <tr><td>rommon 1 &gt;</td><td>Boot monitor</td><td>The OS is not running. Stop and tell the user.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>IOS has no commit, so the discipline is different: <code>reload in 10</code> before any change that could cut the path, verify, <code>reload cancel</code>, then <code>write memory</code>. Undo a line with <code>no</code> in front of it; IOS-XE with <code>archive</code> has <code>configure replace</code>. There is no shell underneath IOS to get out of; the prompts that are not the CLI are the boot monitor and the setup dialog.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Question</th><th scope="col">IOS command</th></tr></thead>
+          <tbody>
+            <tr><td>What is it, version, uptime, last reload reason</td><td><code>show version</code>, <code>show inventory</code></td></tr>
+            <tr><td>Is it healthy (no show system status here either)</td><td><code>show environment all</code>, <code>show processes cpu sorted</code>, <code>show processes memory sorted</code></td></tr>
+            <tr><td>Interfaces (show interfaces brief is NX-OS and IOS-XR, not IOS)</td><td><code>show ip interface brief</code>, <code>show interfaces status</code>, <code>show interfaces description</code></td></tr>
+            <tr><td>VLANs, neighbors, routes</td><td><code>show vlan brief</code>, <code>show mac address-table</code>, <code>show cdp neighbors</code>, <code>show ip route</code></td></tr>
+            <tr><td>Config and log</td><td><code>show running-config</code>, <code>show logging | include %</code></td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p><code>terminal length 0</code> once per session. IOS pipes are include, exclude, begin, section and count; last and no-more are Junos.</p>
+        <div class="callout">
+          <span class="label">What both skills refuse to do on their own</span>
+          <p>Commit, write, reload, erase, zeroize. Each needs the user's words in the conversation, and the confirmed-commit or reload-timer safety net is the default for anything that can sever the console's own path. In read-only mode the skills stay inside <code>show</code> and the mode-changing words.</p>
+        </div>
+        <div class="callout">
+          <span class="label">Verified on the EX2200</span>
+          <p>The Junos parts of this chapter were run live on 15 September 2026, with nothing committed: shell to CLI and back with <code>cli</code>, <code>exit</code>, <code>start shell</code> and <code>cli -c</code>; every show command in the Junos table (including the proof that show system status is a syntax error), the pager and the <code>?</code> help, and configuration mode through <code>configure exclusive</code>, <code>commit check</code>, <code>edit</code>, <code>up</code>, <code>top</code>, <code>run show</code>, <code>rollback 0</code> and <code>exit</code>. The testing taught one lesson the hard way: before the pager string was right, a command typed at the pager was read as pager keys and saved the output to a file on the switch. The skill now says to press q first. The IOS skill is written from the Cisco command references and has not yet met a Cisco on this bench.</p>
+        </div>
+
+        <h2 id="examples">E · Worked sessions</h2>
+        <p>Five sessions, one per family, showing what you say, what the agent sends, and what comes back. Device replies are representative, not recordings.</p>
+
+        <h3>1 · Juniper craft port: log in and read a version</h3>
+        <p class="meta">9600 8N1 · LF · read_until_prompt</p>
+        <div class="exchange" role="figure" aria-label="Session 1 transcript">
+    <span class="note">You: "Connect to the CP210x port at 9600, log in as admin, and show me the version."</span>
+<span class="tx">TOOL  list_serial_ports → /dev/cu.SLAB_USBtoUART · CP2102N USB to UART Bridge</span>
+<span class="tx">TOOL  connect(port="/dev/cu.SLAB_USBtoUART", preset="juniper-craft", name="r1")</span>
+      → Connected 'r1' … 9600 (8N1, flow control none). Line ending CR, prompt '[#&gt;%] ?$' regex.
+    <span class="note">The agent asks you for the password rather than inventing one; you approve the expect call, which shows every step, like any other.</span>
+<span class="tx">TOOL  expect(steps=[{send:"", expect:"login: "}, {send:"admin", expect:"Password:"},</span>
+<span class="tx">             {send:"&lt;pw&gt;", expect:"&gt; "}, {send:"show version", expect:"&gt; ", clear_first:true}])</span>
+READ  Step 1: sent ''+CR; matched 'login: ' after 41 bytes: r1 (ttyd0) login:
+READ  Step 2: sent 'admin'+CR; matched 'Password:' … Step 3: matched '&gt; '
+READ  Step 4: sent 'show version'+CR; matched '&gt; ' after 212 bytes:
+      Hostname: r1
+      Model: srx320
+      Junos: 21.4R3-S4.15
+      …
+      admin@r1&gt;
+        </div>
+        <p><strong>Why it worked.</strong> The preset supplied CR and the prompt regex; each step named the exact next prompt; clear_first made the last reply begin at the echo. One approval, one round trip.</p>
+
+        <h3>2 · Kenwood-style CAT: identify the rig and read the VFO</h3>
+        <p class="meta">38400 8N1 · no line ending · query_text</p>
+        <div class="exchange" role="figure" aria-label="Session 2 transcript">
+    <span class="note">You: "Connect to the Kenwood at 38400 as rig and tell me what it is and where it is tuned."</span>
+<span class="tx">TOOL  connect(port="/dev/cu.usbserial-1420", preset="kenwood-cat", name="rig", baud=38400)</span>
+      → … Line ending NONE, prompt ';'
+<span class="tx">SEND  query_text("ID;")</span>   <span class="note">← no line ending, reads until ';'; both from the preset</span>
+READ  Matched prompt ';' after 6 bytes: ID021;
+<span class="tx">SEND  query_text("FA;")</span>
+READ  Matched prompt ';' after 14 bytes: FA00014074000;
+<span class="tx">TOOL  cat_parse("ID021;FA00014074000;")</span>
+      → Kenwood TS-590S · VFO A frequency: 14.074000 MHz
+    <span class="note">Agent: "It is a TS-590S on 14.074 MHz." To QSY: cat_build("FA", frequency_mhz=14.070) → FA00014070000; for query_text.</span>
+        </div>
+        <p><strong>Why it worked.</strong> The preset supplied both things the dialog never asks for: no line ending (Kenwood parsers reject a CR) and <code>;</code> as the prompt, so each reply returned the instant it was complete; cat_parse turned the codes into a model and a frequency.</p>
+
+        <h3>3 · Icom CI-V: read the operating frequency in hex</h3>
+        <p class="meta">19200 8N1 · send_hex → read_available</p>
+        <div class="exchange" role="figure" aria-label="Session 3 transcript">
+    <span class="note">You: "Ask the IC-7300 for its frequency. CI-V address 94."</span>
+<span class="tx">TOOL  connect(port="/dev/cu.usbmodem14201", preset="icom-civ")</span>
+      → 19200 8N1, flow control none
+<span class="tx">TOOL  civ_build("03", rig="94") → FE FE 94 E0 03 FD (read operating frequency)</span>
+<span class="tx">SEND  send_hex("FE FE 94 E0 03 FD", clear_buffer_first=true)</span>
+READ  read_available(1.0) → Received 17 bytes
+      Hex: fe fe 94 e0 03 fd fe fe e0 94 03 00 00 07 14 00 fd
+<span class="tx">TOOL  civ_parse("fe fe 94 e0 03 fd fe fe e0 94 03 00 00 07 14 00 fd")</span>
+READ  Frame 1: … → read operating frequency (echo of our own command; the rig's reply follows)
+      Frame 2: to E0 from 94 cmd 03 data [00 00 07 14 00] → read operating frequency: 14.070000 MHz
+    <span class="note">Agent: "The IC-7300 is on 14.070000 MHz." To QSY: civ_freq(mhz=14.074) gives the data bytes for civ_build("05", …).</span>
+        </div>
+        <p><strong>Why it worked.</strong> Binary protocol, so the hex view is the answer and civ_parse does the BCD arithmetic; the rig's USB interface echoes, and the parser labels the echo so it is not mistaken for a reply. XON/XOFF stayed off, so the 0x14 and 0x07 bytes arrived untouched.</p>
+
+        <h3>4 · Arduino sensor: watch a stream, then stop it</h3>
+        <p class="meta">115200 8N1 · LF · read_available</p>
+        <div class="exchange" role="figure" aria-label="Session 4 transcript">
+    <span class="note">You: "Connect to the Arduino at 115200 and show me a few seconds of what it is printing."</span>
+<span class="tx">TOOL  connect(port="/dev/cu.usbmodem2101", preset="arduino", baud=115200)</span>
+    <span class="note">Opening the port toggles DTR and resets the board; the first bytes are its boot banner. To reset it again later: pulse_line("DTR", ms=100, level=false).</span>
+READ  read_available(3.0) → Received 118 bytes
+      Text: 'BME280 ready
+      23.4 C 1012.8 hPa 41%
+      23.4 C 1012.8 hPa 41%
+      23.5 C …'
+<span class="tx">TOOL  status → Reader running; 87 bytes buffered</span>
+<span class="tx">TOOL  disconnect → Disconnected from /dev/cu.usbmodem2101.</span>
+        </div>
+        <p><strong>Why it worked.</strong> A device that talks on its own has no prompt and no query; read_available with a longer timeout captures a window (capture_start would keep all of it in a file), and disconnect frees the port for the Arduino IDE.</p>
+
+        <h3>5 · Rotator: read the heading, turn to Europe, confirm</h3>
+        <p class="meta">9600 8N1 · CR · yaesu-rotator preset</p>
+        <div class="exchange" role="figure" aria-label="Session 5 transcript">
+    <span class="note">You: "Where is the beam pointing? Turn it to 45 degrees and tell me when it is there." (the rig is still open as rig)</span>
+<span class="tx">TOOL  connect(port="/dev/cu.usbserial-AB12", preset="yaesu-rotator", name="rotator")</span>
+      → Connected 'rotator' … Other open connections: rig.
+<span class="tx">SEND  query_text(rotator_build("azimuth")) → sends "C"+CR, reads until "\r"</span>
+READ  Matched prompt '\r' after 6 bytes: +0180   → rotator_parse: azimuth 180° (GS-232A)
+<span class="tx">SEND  send_text(rotator_build("move", azimuth=45)) → "M045"+CR (moves reply nothing)</span>
+    <span class="note">The agent waits, then re-reads the position until it stops changing.</span>
+READ  query_text("C") → +0045 → azimuth 45°
+    <span class="note">Agent: "Beam is on 045. The rig connection is untouched; say the word and I will read its frequency."</span>
+        </div>
+        <p><strong>Why it worked.</strong> Two ports open at once, each with its own preset; the rotator's CR line ending and "\r" reply terminator came from the preset; a move is confirmed by reading, never assumed.</p>
+
+        <h2 id="trouble">F · When it does not answer</h2>
+        <p>Almost every silent port is one of six things. The server's own messages point at most of them; this table is the rest.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Symptom</th><th scope="col">Most likely cause</th><th scope="col">What to say</th></tr></thead>
+          <tbody>
+            <tr><td>No serial ports found</td><td>Charge-only USB cable, missing driver, device off. Windows: nothing under Ports (COM &amp; LPT).</td><td>Swap the cable, then "list the ports again".</td></tr>
+            <tr><td>Could not open, already in use</td><td>Another program holds the port. On a Mac or Linux the message names it (port_in_use_by).</td><td>Close it, then "try connecting again".</td></tr>
+            <tr><td>Port name was not found</td><td>Names change when you replug; the remembered port is stale.</td><td>"List the ports and connect to the right one."</td></tr>
+            <tr><td>Garbage characters, box drawing</td><td>Wrong baud rate. Occasionally wrong data bits or parity.</td><td>"Detect the baud rate" · "reconnect at 115200".</td></tr>
+            <tr><td>Echo comes back, no reply</td><td>Wrong line ending for this device, or a CLI that needs a return to wake.</td><td>"Send a return first" · "use LF instead of CR".</td></tr>
+            <tr><td>Prompt not seen, partial output returned</td><td>The prompt string does not match: missing trailing space, hostname changed, or --More-- paging.</td><td>"The prompt is admin@r1&gt; with a space" · "answer --More-- with a space".</td></tr>
+            <tr><td>Output full of ESC[0m and [32m noise</td><td>Color and cursor escape sequences shown raw: the connection is in dumb mode.</td><td>"Reconnect with terminal ansi" (or a console preset).</td></tr>
+            <tr><td>A command will not stop; the prompt never returns</td><td>ping, monitor, a pager or a hung process is still running.</td><td>"Press Ctrl-C" · "press q".</td></tr>
+            <tr><td>Menu screen looks like scrambled fragments</td><td>A full-screen program is repainting with cursor addressing; line tools cannot show it.</td><td>"Reconnect as xterm and show me the screen."</td></tr>
+            <tr><td>Read-only mode refused to send</td><td>SERIAL_CONSOLE_READ_ONLY is set and the command is not a read.</td><td>Unset it in the config entry, or widen SERIAL_CONSOLE_ALLOW.</td></tr>
+            <tr><td>Wrong device answered</td><td>Several ports open; the command went to the current one.</td><td>"Send that to the rotator" · "what is the status?"</td></tr>
+            <tr><td>Write failed: write timeout</td><td>RTS/CTS is on and the cable does not carry CTS.</td><td>"Reconnect without hardware flow control."</td></tr>
+            <tr><td>Background reader has stopped</td><td>Adapter unplugged or port taken by another program mid-session.</td><td>"Disconnect and reconnect."</td></tr>
+            <tr><td>Claude says it has no serial tools</td><td>Claude Desktop was not fully quit after install, or the config entry is missing.</td><td>Quit with ⌘Q or the tray Quit, reopen, new chat.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout">
+          <span class="label">Two questions that sort most of it</span>
+          <p>"What is the status?" tells you whether a port is open, at what settings, whether the reader is alive, and how much is buffered. "Read whatever is waiting" shows raw bytes as text and hex, which is how you tell a baud-rate problem (garbage) from a line-ending problem (silence).</p>
+        </div>
+
+        <h2 id="reference">G · Tool reference</h2>
+        <p>Parameters as the agent sees them. Defaults in brackets. Every tool that acts on a port takes <code>connection</code> [current].</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Tool</th><th scope="col">Parameters</th><th scope="col">Returns</th></tr></thead>
+          <tbody>
+            <tr><td>list_serial_ports</td><td>none</td><td>Ports with description, hardware id, open-here marker.</td></tr>
+            <tr><td>list_presets</td><td>none</td><td>Each preset's settings and notes.</td></tr>
+            <tr><td>connect</td><td>port · preset · name · baud [9600] · bytesize [8] · parity N|E|O [N] · stopbits [1] · rtscts [off] · xonxoff [off] · line_ending [CR] · prompt · prompt_regex · terminal dumb|ansi|vt100|xterm [dumb] · cols [80] · rows [24]</td><td>Settings echoed back, preset notes, other open ports.</td></tr>
+            <tr><td>reconnect_last</td><td>name [most recent]</td><td>Same as connect, from the remembered settings.</td></tr>
+            <tr><td>disconnect</td><td>connection · all_connections [false]</td><td>Confirmation; always releases the port.</td></tr>
+            <tr><td>send_text</td><td>data · line_ending [connection's] · clear_buffer_first [false]</td><td>Byte count sent.</td></tr>
+            <tr><td>send_hex</td><td>hex_bytes · clear_buffer_first [false]</td><td>Bytes sent, as hex.</td></tr>
+            <tr><td>read_until_prompt</td><td>prompt [connection's, else ends-with # &gt; $ %] · timeout [10 s] · regex · auto_reply</td><td>Output through the prompt; on timeout, whatever arrived.</td></tr>
+            <tr><td>read_available</td><td>read_timeout [1 s]</td><td>Bytes as text and hex, after the line goes quiet.</td></tr>
+            <tr><td>query_text</td><td>data · line_ending · prompt [connection's; "" = idle] · read_timeout [5 s]</td><td>The reply.</td></tr>
+            <tr><td>expect</td><td>steps [{send, send_hex, line_ending, expect, regex, timeout, clear_first}] · auto_reply · stop_on_timeout [true]</td><td>Each step's result.</td></tr>
+            <tr><td>clear_buffer</td><td>none</td><td>Bytes discarded.</td></tr>
+            <tr><td>send_keys</td><td>keys [ctrl-c, esc, tab, enter, up, f1, "x", text:…]</td><td>Confirmation of what was pressed.</td></tr>
+            <tr><td>screen</td><td>reset [false]</td><td>The xterm/vt100 grid as text, with cursor position.</td></tr>
+            <tr><td>status</td><td>none</td><td>Every open port: settings, reader, buffer, lines, capture; or what is remembered.</td></tr>
+            <tr><td>set_lines</td><td>dtr · rts</td><td>Resulting DTR and RTS.</td></tr>
+            <tr><td>pulse_line</td><td>line DTR|RTS · ms [100] · level [true]</td><td>Confirmation, line restored.</td></tr>
+            <tr><td>send_break</td><td>ms [250]</td><td>Confirmation.</td></tr>
+            <tr><td>capture_start</td><td>path [auto] · format raw|annotated [raw]</td><td>The file being written.</td></tr>
+            <tr><td>capture_stop</td><td>none</td><td>File and bytes written.</td></tr>
+            <tr><td>get_transcript</td><td>last_bytes [4000]</td><td>Tail of everything received (rolling 256 KB); also the resource serial://transcript/{name}.</td></tr>
+            <tr><td>port_in_use_by</td><td>port</td><td>Process holding it (macOS, Linux).</td></tr>
+            <tr><td>detect_baud</td><td>port · probe [""] · probe_line_ending [CR] · candidates · settle [0.5 s]</td><td>Rates ranked by readable reply, best guess.</td></tr>
+            <tr><td>cat_build</td><td>command · value · frequency_mhz · flavor kenwood|elecraft|yaesu [kenwood]</td><td>The <code>;</code> string, with its meaning.</td></tr>
+            <tr><td>cat_parse</td><td>reply · flavor [kenwood]</td><td>Each reply decoded: rig model, MHz, mode, IF fields, ?/E/O errors.</td></tr>
+            <tr><td>rotator_build</td><td>action azimuth|position|elevation|move|move_azel|stop|…|speed · azimuth · elevation · speed</td><td>The GS-232 command.</td></tr>
+            <tr><td>rotator_parse</td><td>reply</td><td>Azimuth and elevation in degrees, or the rejection.</td></tr>
+            <tr><td>civ_build</td><td>command · data · rig [94] · controller [E0]</td><td>Frame as hex, with its meaning.</td></tr>
+            <tr><td>civ_parse</td><td>hex_bytes · controller [E0]</td><td>Each frame decoded: echo or reply, frequency, mode, OK/NG, PTT.</td></tr>
+            <tr><td>civ_freq</td><td>mhz | bcd_hex</td><td>The other representation.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <h3>Behavior worth knowing</h3>
+        <ul>
+          <li>Non-ASCII text in <code>send_text</code> is sent as <code>?</code>; use <code>send_hex</code> for raw bytes.</li>
+          <li>Display decoding is UTF-8 with replacement characters; prompt matching is byte-exact, so binary noise before a prompt does not shift the match.</li>
+          <li>Write timeout is two seconds; reader poll a tenth of a second; idle settle for prompt-less reads 150 ms; the receive buffer holds 4 MB per port and the transcript 256 KB.</li>
+          <li>Remembered connections live in <code>last_connection.json</code> under <code>~/Library/Application Support/serial-console-mcp/</code> (Mac), <code>%APPDATA%\serial-console-mcp\</code> (Windows), <code>~/.config/serial-console-mcp/</code> (Linux); auto-named captures go in a <code>captures</code> folder beside it.</li>
+          <li>Terminal modes only change what the read tools return; the capture file and the screen model always get the raw bytes. The escape stripper is chunk-safe: a sequence split across two reads is held until complete.</li>
+          <li>The operating skill in <code>skills/serial-console/SKILL.md</code> carries this guide's rules for the agent.</li>
+        </ul>
+
+        <h2 id="about">H · About and provenance</h2>
+        <p>Release 0.3.2 was run against real hardware on 15 September 2026. The guide says what has been verified; it does not claim more.</p>
+        <p>serial-console-mcp began as a generic console tool for network craft ports and radio gear and was rewritten for this release around the background-reader model in chapter D. The 0.3.2 code is verified by an 83-case test suite driving a simulated serial port, by continuous integration on Linux, macOS and Windows, and by a live session on 15 September 2026: the PyPI package, launched by uvx exactly as Claude Desktop launches it, drove a Juniper EX2200-C (Junos 15.1R6.7) over a Prolific USB-serial adapter at 9600 8N1 with the juniper-craft preset. One expect call entered the CLI from the shell, disabled paging, ran show version, show chassis hardware and show system uptime with every prompt matched on the regex, and returned to the shell; an annotated capture recorded it. The worked sessions in chapter E remain representative walk-throughs; the Juniper one now matches what the real switch printed.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Resource</th><th scope="col">Where</th></tr></thead>
+          <tbody>
+            <tr><td>serial-console-mcp</td><td><a href="https://github.com/sbrunner-atx/serial-console-mcp">github.com/sbrunner-atx/serial-console-mcp</a></td></tr>
+            <tr><td>Installers</td><td>GitHub Releases: the <code>.exe</code> for Windows and the <code>.pkg</code> for Mac, listed on <a href="../downloads.html#serial-console-mcp">Downloads</a></td></tr>
+            <tr><td>PyPI</td><td><a href="https://pypi.org/project/serial-console-mcp/">pypi.org/project/serial-console-mcp</a> · <code>uvx serial-console-mcp</code></td></tr>
+            <tr><td>Server and tests</td><td><code>src/serial_console_mcp/</code> (server, presets, terminal, cat, civ, rotator) · <code>tests/test_serial_console.py</code></td></tr>
+            <tr><td>Operating skills</td><td><code>skills/serial-console</code> · <code>skills/junos-operating</code> · <code>skills/ios-operating</code> (<code>SKILL.md</code> each)</td></tr>
+            <tr><td>Live-port harness</td><td><code>_hosttest/run_live.py &lt;steps.json&gt;</code></td></tr>
+            <tr><td>This guide's sources</td><td><code>docs/brand/</code> (HTML and CSS, WeasyPrint)</td></tr>
+            <tr><td>Sibling servers</td><td><a href="../products/fldigi-mcp.html">fldigi-mcp</a> · <a href="../products/wsjtx-mcp.html">wsjtx-mcp</a> · <a href="../products/n3fjp-mcp.html">n3fjp-mcp</a> · <a href="../products/mcp-host-bridge.html">mcp-host-bridge</a></td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>Corrections and additions are welcome; open an issue on the <a href="https://github.com/sbrunner-atx/serial-console-mcp">repository</a>.</p>
+        <div class="callout">
+          <span class="label">73</span>
+          <p>This is private, personal work by Stefan Brunner, AE5VG, built for amateur radio operators and anyone else with a console cable. Not affiliated with any equipment vendor or any employer. MIT licensed. GL es 73 de AE5VG sk.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <p class="label">AE5VG · Austin, TX</p>
+      <p>Site text CC BY 4.0; software under the license named in each repository.</p>
+      <p class="sk">GL es 73 de AE5VG sk</p>
+    </div>
+    <div>
+      <p class="label">Contact</p>
+      <p>Software: open an issue on the relevant repository at <a href="https://github.com/sbrunner-atx">github.com/sbrunner-atx</a>.</p>
+      <p>Radio matters: the <a href="https://www.qrz.com/db/AE5VG">QRZ page for AE5VG</a>.</p>
+      <p>Email: <span class="email-here">stefan at this domain</span></p>
+    </div>
+  </div>
+</footer>
+<script src="../site.js"></script>
+</body>
+</html>

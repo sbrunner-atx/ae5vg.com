@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capture rig dashboard · AE5VG</title>
+<meta name="description" content="What the capture rig is listening to right now, what the last 24 hours produced, and every usable line it decoded over the last three days.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin:18px 0 26px}
+.kv > div{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);padding:12px 16px}
+.kv .k{font-family:var(--mono);font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
+.kv .v{font-size:26px;font-weight:700;color:var(--text);line-height:1.2;font-family:var(--mono)}
+.kv .s{font-size:14px;color:var(--muted)}
+.bar{height:10px;background:var(--panel);border:1px solid var(--line);border-radius:5px;overflow:hidden;margin:8px 0 4px;max-width:560px}
+.bar i{display:block;height:100%;background:var(--accent)}
+.state{display:inline-block;padding:3px 10px;border-radius:4px;font-family:var(--mono);font-size:13px;letter-spacing:1px}
+.state.listening{background:#dafbe1;color:#1a7f37}.state.stopped{background:#ffebe9;color:#cf222e}.state.starting{background:var(--warn-bg);color:#9a6700}
+.small{font-size:14px;color:var(--muted)}
+td.num,th.num{text-align:right;font-family:var(--mono)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.tabs button,.filters select,.filters input{font-family:var(--mono);font-size:13px;padding:7px 12px;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:4px}
+.tabs button{cursor:pointer}
+.tabs button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.filters{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px;align-items:center}
+.filters input#q{background:#fff}
+.seg{border:1px solid var(--line);border-left:6px solid var(--accent);background:#fff;margin:0 0 14px;padding:12px 16px}
+.seg .h{display:flex;flex-wrap:wrap;gap:14px;align-items:baseline;font-family:var(--mono);font-size:13px;color:var(--muted);margin-bottom:8px}
+.seg .h b{color:var(--text);font-size:15px}
+.seg.skipped{border-left-color:var(--line);color:var(--muted)}
+.ln{font-family:var(--mono);font-size:13px;line-height:1.55;white-space:pre-wrap;word-break:break-word;padding:2px 0;border-bottom:1px dotted var(--line)}
+.ln .src{color:var(--muted);font-size:11px;margin-right:8px}
+.ln .call{background:#ddf4ff;color:#0550ae;padding:0 3px;border-radius:3px}
+.count{font-size:14px;color:var(--muted);margin:0 0 14px;font-family:var(--mono)}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="badge" href="../index.html">AE5VG</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site" id="site-nav" aria-label="Site">
+      <a href="../index.html">Home</a>
+      <a href="index.html" aria-current="page">Products</a>
+      <a href="../downloads.html">Downloads</a>
+      <a href="../getting-started.html">Getting Started</a>
+      <a href="../user-guide/index.html">User Guide</a>
+      <a href="../development.html">Development</a>
+      <a href="../references/index.html">References</a>
+      <a href="../about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="label">The Ham Radio Model · capture rig</p>
+    <h1>Capture rig dashboard</h1>
+    <p class="lead">One KiwiSDR channel at a time, rotating the digital watering holes, decoded through fldigi one segment behind real time, paired into training data for <a href="qso-resolver.html">the model</a>. Own recordings of the public amateur bands through public KiwiSDR receivers; no decoded text leaves the rig except what this page shows; nothing edited, noise left out.</p>
+    <p id="stamp" class="small">Loading…</p>
+  </div>
+</section>
+
+<main id="main">
+  <div class="wrap">
+    <h2 id="now" style="margin-top:0">Now</h2>
+    <div id="now-body"><p class="small">Waiting for the status file…</p></div>
+
+    <h2 id="day">Last 24 hours</h2>
+    <div id="day-body"></div>
+    <p class="small">Pairs are lines of the same station received more than once, aligned against the best copy. The clean side is inferred from the best copy, not from published text, so pairs are training data and not an evaluation set.</p>
+
+    <h2 id="recent">Recent segments</h2>
+    <div id="recent-body"></div>
+
+    <h2 id="decoded">Decoded, the last three days</h2>
+    <p>Every line the rig decoded that reads as traffic, segment by segment, garble included and nothing edited. A line counts as traffic when it holds several recognizable words or ham shorthand in sequence, or a callsign with an allocated prefix next to DE or CQ or repeated, in a line that is mostly not junk. A decoder on an empty channel prints single letters with a callsign-shaped token now and then; that is left out, so a quiet segment shows nothing. Each card names the KiwiSDR and the dial frequency; the slice is the 3 kHz above it, where the watering hole sits.</p>
+    <p>These are our own recordings of the public amateur bands through public KiwiSDR receivers, and they may be shared; amateur transmissions carry no expectation of privacy. Material contributed by other hams is handled case by case.</p>
+    <div class="tabs" id="tabs" role="group" aria-label="Pick a UTC day"></div>
+    <div class="filters">
+      <select id="band" aria-label="Filter by band"><option value="">all bands</option></select>
+      <select id="mode" aria-label="Filter by mode"><option value="">all modes</option></select>
+      <input id="q" placeholder="callsign or text" size="22" aria-label="Search callsign or text">
+      <label class="small"><input type="checkbox" id="callsonly"> callsign lines only</label>
+    </div>
+    <p class="count" id="count"></p>
+    <div id="list"></div>
+    <p class="small">Source: a status file the rig publishes every two minutes, and day files rewritten on the same schedule, republished through a cache; a line can be up to five minutes behind.</p>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <p class="label">AE5VG · Austin, TX</p>
+      <p>Site text CC BY 4.0; software under the license named in each repository.</p>
+      <p class="sk">GL es 73 de AE5VG sk</p>
+    </div>
+    <div>
+      <p class="label">Contact</p>
+      <p>Software: open an issue on the relevant repository at <a href="https://github.com/sbrunner-atx">github.com/sbrunner-atx</a>.</p>
+      <p>Radio matters: the <a href="https://www.qrz.com/db/AE5VG">QRZ page for AE5VG</a>.</p>
+      <p>Email: <span class="email-here">stefan at this domain</span></p>
+    </div>
+  </div>
+</footer>
+<script src="../site.js"></script>
+<script>
+const GIST = "0f7aaf406781706fee444a9ad8e94103";
+const API = `https://api.github.com/gists/${GIST}`;
+const RAW_STATUS = `https://gist.githubusercontent.com/sbrunner-atx/${GIST}/raw/status.json`;
+const RAW_DAY = d => `https://gist.githubusercontent.com/sbrunner-atx/${GIST}/raw/decoded-${d}.json`;
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ago = iso => { const s = Math.max(0, (Date.now() - Date.parse(iso)) / 1000); return s < 90 ? `${Math.round(s)} s ago` : s < 5400 ? `${Math.round(s/60)} min ago` : `${(s/3600).toFixed(1)} h ago`; };
+const kv = (k, v, s) => `<div><div class="k">${k}</div><div class="v">${v}</div>${s ? `<div class="s">${s}</div>` : ""}</div>`;
+
+function renderStatus(st) {
+  $("stamp").textContent = `Status generated ${st.generated_utc} (${ago(st.generated_utc)}).`;
+  const c = st.current || {};
+  const d = st.decoder || {};
+  let now = `<p><span class="state ${esc(st.state)}">${esc(st.state)}</span></p>`;
+  if (st.state === "listening" && c.band) {
+    const mm = String(Math.floor((c.segment_into_s||0)/60)).padStart(2,"0"), ss = String((c.segment_into_s||0)%60).padStart(2,"0");
+    now += `<div class="kv">
+      ${kv("Frequency", `${c.mhz.toFixed(4)} MHz`, `${esc(c.band)} · ${esc(c.mode)}`)}
+      ${kv("KiwiSDR", esc(c.receiver), `stream open since ${c.started_utc.slice(11,16)}Z`)}
+      ${kv("Segment", `${mm}:${ss} / ${Math.round(c.segment_s/60)}:00`, `${c.segments_closed} closed in this stream`)}
+      ${kv("Decoder", `${d.lag_minutes ?? 0} min behind`, `${d.segments_pending ?? 0} segment(s) pending${d.backlog_flag ? ", backlog" : ""}`)}
+    </div>
+    <div class="bar"><i style="width:${Math.round((c.segment_progress||0)*100)}%"></i></div>
+    <p class="small">Segments cut on the clock every ${Math.round(c.segment_s/60)} minutes; each is decoded as soon as it closes.</p>`;
+  } else if (st.state === "stopped") {
+    now += `<p>The passive loop is not running. Last stream: ${c.label ? esc(c.label) : "unknown"}.</p>`;
+  }
+  $("now-body").innerHTML = now;
+  const l = st.last_24h || {};
+  $("day-body").innerHTML = `<div class="kv">
+    ${kv("Listening", `${l.listening_hours ?? 0} h`, `${l.streams_decoded ?? 0} streams decoded`)}
+    ${kv("Lines", l.lines ?? 0, `${l.lines_traffic ?? 0} read as traffic, ${l.lines_with_callsign ?? 0} with a callsign`)}
+    ${kv("Stations", l.distinct_stations ?? 0, `${l.repeated_clusters ?? 0} repeated clusters`)}
+    ${kv("Pairs", l.pairs ?? 0, `${l.pairs_exact ?? 0} exact`)}
+  </div>
+  <p class="small">Pairs by kind: ${Object.keys(l.pairs_by_kind||{}).length ? esc(Object.entries(l.pairs_by_kind).map(([k,v])=>`${k} ${v}`).join(", ")) : "none yet"} · by mode: ${Object.keys(l.pairs_by_mode||{}).length ? esc(Object.entries(l.pairs_by_mode).map(([k,v])=>`${k} ${v}`).join(", ")) : "none yet"} · by band: ${Object.keys(l.pairs_by_band||{}).length ? esc(Object.entries(l.pairs_by_band).map(([k,v])=>`${k} ${v}`).join(", ")) : "none yet"}</p>
+  <p class="small">"repeat" is the station sending the same thing again; "browser-neighbour" (the rig's own label) is two Signal Browser channels copying one transmission, a second demodulator's copy rather than a repeat. Both are counted, never mixed.</p>`;
+  const rs = st.recent_segments || [];
+  $("recent-body").innerHTML = rs.length ? `<div style="overflow-x:auto"><table><thead><tr><th scope="col">Decoded</th><th scope="col">Band</th><th scope="col">Mode</th><th scope="col">KiwiSDR</th><th scope="col" class="num">Lines</th><th scope="col" class="num">Stations</th><th scope="col" class="num">Pairs</th></tr></thead><tbody>
+    ${rs.map(r => `<tr><td>${esc(r.utc.slice(5,16))}Z</td><td>${esc(r.band)}</td><td>${esc(r.mode)}</td><td>${esc(r.receiver)}</td><td class="num">${r.lines}</td><td class="num">${r.stations}</td><td class="num">${r.pairs}</td></tr>`).join("")}</tbody></table></div>` : "<p class='small'>No segments decoded yet.</p>";
+}
+
+async function loadStatus() {
+  try {
+    let st = null;
+    try {
+      const r = await fetch(API, {headers: {"Accept": "application/vnd.github+json"}});
+      if (r.ok) { const g = await r.json(); st = JSON.parse(g.files["status.json"].content); }
+    } catch (e) {}
+    if (!st) { const r = await fetch(RAW_STATUS + "?t=" + Date.now()); st = await r.json(); }
+    renderStatus(st);
+  } catch (e) {
+    $("stamp").textContent = "Could not load the status file. The source may be rate-limited for this network; try again in a minute.";
+  }
+}
+loadStatus(); setInterval(loadStatus, 60000);
+
+/* decoded browser */
+const days = [0,1,2].map(k => { const t = new Date(Date.now() - k*86400000); return t.toISOString().slice(0,10).replace(/-/g,""); });
+const cache = {};
+let cur = days[0];
+function mark(text, calls) {
+  let h = esc(text);
+  for (const c of (calls||[])) h = h.split(esc(c)).join(`<span class="call">${esc(c)}</span>`);
+  return h;
+}
+function renderDay() {
+  const doc = cache[cur];
+  if (!doc) { $("list").innerHTML = "<p class='small'>Loading…</p>"; return; }
+  const band = $("band").value, mode = $("mode").value, q = $("q").value.trim().toUpperCase(), co = $("callsonly").checked;
+  let segs = (doc.segments || []).slice().reverse();
+  if (band) segs = segs.filter(s => s.band === band);
+  if (mode) segs = segs.filter(s => s.mode === mode);
+  let nl = 0, ns = 0;
+  const html = segs.map(s => {
+    let lines = s.lines || [];
+    if (co) lines = lines.filter(l => l.calls && l.calls.length);
+    if (q) lines = lines.filter(l => l.text.toUpperCase().includes(q));
+    if ((q || co) && !lines.length) return "";
+    ns++; nl += lines.length;
+    const t = `${s.segment_utc.slice(9,11)}:${s.segment_utc.slice(11,13)}Z`;
+    if (s.skipped) return `<div class="seg skipped"><div class="h"><b>${t}</b><span>${esc(s.band)} ${esc(s.mode)}</span><span>${esc(s.receiver)}</span><span>skipped: nothing above the floor</span></div></div>`;
+    const y = (s.stations !== undefined) ? `<span>${s.stations} station(s), ${s.pairs} pair(s)</span>` : "";
+    const dial = s.dial_khz ? `<span>dial ${(s.dial_khz/1000).toFixed(4)} MHz USB, audio ${s.passband_hz ? s.passband_hz[0]+" to "+s.passband_hz[1] : "300 to 3400"} Hz</span>` : "";
+    return `<div class="seg"><div class="h"><b>${t}</b><span>${esc(s.band)} ${esc(s.mode)}</span><span>KiwiSDR ${esc(s.receiver)}</span>${dial}<span>modem ${esc(s.modem)}</span>${y}<span>${lines.length} line(s)</span></div>
+      ${lines.map(l => `<div class="ln"><span class="src">${esc(l.src)}${l.q !== null && l.q !== undefined ? " q" + Math.round(l.q) : ""}</span>${mark(l.text, l.calls)}</div>`).join("")}</div>`;
+  }).join("");
+  $("list").innerHTML = html || "<p class='small'>Nothing matches.</p>";
+  $("count").textContent = `${ns} segment(s), ${nl} line(s)` + (doc.trimmed ? ` · ${doc.trimmed}` : "");
+}
+function fillFilters() {
+  const bands = new Set(), modes = new Set();
+  for (const d of Object.values(cache)) for (const s of (d.segments||[])) { if (s.band) bands.add(s.band); if (s.mode) modes.add(s.mode); }
+  const keep = (sel) => { const v = sel.value; const vals = sel.id === "band" ? bands : modes; sel.innerHTML = `<option value="">${sel.id === "band" ? "all bands" : "all modes"}</option>` + [...vals].sort().map(x => `<option>${esc(x)}</option>`).join(""); sel.value = v; };
+  keep($("band")); keep($("mode"));
+}
+async function loadDay(d) {
+  try { const r = await fetch(RAW_DAY(d) + "?t=" + Math.floor(Date.now()/120000)); cache[d] = r.ok ? await r.json() : {segments: [], generated_utc: "n/a"}; }
+  catch (e) { cache[d] = {segments: [], generated_utc: "n/a"}; }
+  fillFilters(); if (d === cur) renderDay();
+}
+$("tabs").innerHTML = days.map(d => `<button data-d="${d}" class="${d===cur?"on":""}">${d.slice(0,4)}-${d.slice(4,6)}-${d.slice(6,8)}${d===days[0]?" (today)":""}</button>`).join("");
+$("tabs").addEventListener("click", e => { if (e.target.dataset.d) { cur = e.target.dataset.d; for (const b of $("tabs").children) b.classList.toggle("on", b.dataset.d === cur); renderDay(); } });
+for (const id of ["band","mode","q","callsonly"]) $(id).addEventListener("input", renderDay);
+days.forEach(loadDay);
+</script>
+</body>
+</html>

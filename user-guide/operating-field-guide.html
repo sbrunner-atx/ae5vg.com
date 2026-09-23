@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Operating Field Guide · AE5VG</title>
+<meta name="description" content="The operating skills bundled with fldigi-mcp and n3fjp-mcp: the standard, the special-case playbook, and worked examples from ARRL Field Day 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="badge" href="../index.html">AE5VG</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site" id="site-nav" aria-label="Site">
+      <a href="../index.html">Home</a>
+      <a href="../products/index.html">Products</a>
+      <a href="../downloads.html">Downloads</a>
+      <a href="../getting-started.html">Getting Started</a>
+      <a href="index.html" aria-current="page">User Guide</a>
+      <a href="../development.html">Development</a>
+      <a href="../references/index.html">References</a>
+      <a href="../about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="label">Field Guide · September 2026</p>
+    <h1>The Operating Skills</h1>
+    <p class="lead">A field guide to the operating skills bundled with fldigi-mcp and n3fjp-mcp: how an agent keys the transmitter and returns to receive at the exact instant an over ends, runs a contest QSO from CQ to logged contact, and survives everything a real band throws at it. Every rule in this guide was proven on the air.</p>
+    <div class="btn-row">
+      <a class="btn ghost" href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-mcp%20Operating%20Field%20Guide.pdf">Download PDF</a>
+    </div>
+    <div class="strip">
+      <div><span class="label">Operating skills</span><strong>3</strong></div>
+      <div><span class="label">Rules in the standard</span><strong>6</strong></div>
+      <div><span class="label">Special cases handled</span><strong>7</strong></div>
+      <div><span class="label">Worked examples from the air</span><strong>3</strong></div>
+    </div>
+    <p class="meta">Field-proven at ARRL Field Day 2026 · Class 2A · BPSK31</p>
+  </div>
+</section>
+
+<main id="main">
+  <div class="wrap">
+    <div class="layout">
+      <nav aria-label="On this page"><ul class="toc">
+        <li><span class="label">Chapters</span></li>
+        <li><a href="#glance">A · Skills at a glance</a></li>
+        <li><a href="#install">B · Installing the skills</a></li>
+        <li><a href="#first">C · Your first session</a></li>
+        <li><a href="#how">D · How the system works</a></li>
+        <li><a href="#standard">E · The operating standard</a></li>
+        <li><a href="#fldigi">01 · fldigi-operating</a></li>
+        <li><a href="#contest">02 · contest-operating</a></li>
+        <li><a href="#hunt">03 · signal-hunting</a></li>
+        <li><a href="#playbook">F · The special-case playbook</a></li>
+        <li><a href="#examples">G · Worked examples</a></li>
+        <li><a href="#logging">H · Logging to N3FJP</a></li>
+        <li><a href="#about">I · About and provenance</a></li>
+      </ul></nav>
+      <div>
+        <h2 id="glance" style="margin-top:0">A · Skills at a glance</h2>
+        <p>Three skills, one operating system. Each in one view: what it governs, and what you get.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">#</th><th scope="col">Skill</th><th scope="col">Ships with</th><th scope="col">What it governs</th><th scope="col">What you get</th></tr></thead>
+          <tbody>
+            <tr><td>01</td><td><strong>fldigi-operating</strong></td><td>fldigi-mcp</td><td>The radio: keying the transmitter, returning to receive the instant an over ends, and polling the RX stream so no caller is missed.</td><td>Instant TX to RX handoff, and a caller never ignored.</td></tr>
+            <tr><td>02</td><td><strong>contest-operating</strong></td><td>n3fjp-mcp</td><td>The contest: the QSO state machine from CQ to logged contact, the special-case playbook, and verified N3FJP logging.</td><td>Completed exchanges, and a clean, duplicate-free log.</td></tr>
+            <tr><td>03</td><td><strong>signal-hunting</strong></td><td>fldigi-mcp</td><td>The band: naming each signal's mode from the audio, ranking the station that sits still and calls CQ, tuning to it, and reading fldigi's Signal Browser where the proposed <code>browser.*</code> patch is present.</td><td>The right station found, named and tuned before you call.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout">
+          <span class="label">Proposed, not yet in fldigi</span>
+          <p>The <code>browser.*</code> and <code>rsid.*</code> methods that skill 03 can use come from two patches offered upstream on w1hkj/fldigi issue 55. Neither is merged; <a href="#hunt">skill 03</a> has the details.</p>
+        </div>
+        <div class="callout">
+          <span class="label">Who reads these skills</span>
+          <p>You do not invoke these skills by name; the agent does, when you say things like "call CQ on 20 meters" or "run the Field Day loop". The skills are the agent's operating procedures. This guide is for the human at the station: what the agent will do on your behalf, and how to verify it is doing it right.</p>
+        </div>
+
+        <h2 id="install">B · Installing the skills</h2>
+        <p>Each skill ships inside its MCP package: install the server, and the skill travels with it. Nothing is configured separately.</p>
+        <h3>In Claude Desktop (.mcpb bundle, recommended)</h3>
+        <ol class="steps">
+          <li><strong>Install the bundles.</strong> Double-click <code>fldigi-mcp.mcpb</code> and <code>n3fjp-mcp.mcpb</code>, or add them under Settings → Extensions. Each bundle carries its skill at <code>skills/&lt;name&gt;/SKILL.md</code> plus this guide.</li>
+          <li><strong>Set the transmit gate.</strong> In the fldigi-mcp extension settings, enter your callsign. With no callsign set the station is receive-only; nothing can key the radio.</li>
+        </ol>
+        <h3>In Claude Code / Cowork</h3>
+        <ol class="steps">
+          <li><strong>Copy the skill directories</strong> from each repo into <code>~/.claude/skills/</code>, or a project's <code>.claude/skills/</code>: <code>skills/fldigi-operating/</code> and <code>skills/contest-operating/</code>.</li>
+          <li><strong>Connect the MCP servers</strong> (<code>uvx fldigi-mcp</code>, <code>uvx n3fjp-mcp</code>, or from the repos) so the tools the skills reference are available.</li>
+        </ol>
+        <h3>Verify, thirty seconds</h3>
+        <ol class="steps">
+          <li><strong>Check the radio link.</strong> Ask "What is the fldigi status?" Mode, frequency and T/R state should come back. If not, the <code>diagnostics</code> tool tells you whether it is a network problem before you blame fldigi.</li>
+        </ol>
+        <div class="callout warn">
+          <span class="label">2 · Dry-run the handoff: this keys the transmitter</span>
+          <p>On a dummy load: "send TEST DE &lt;YOURCALL&gt; and return to receive". fldigi should key, send, and drop PTT on its own, with no lingering carrier.</p>
+        </div>
+        <div class="callout">
+          <span class="label">Good to know</span>
+          <p>fldigi's XML-RPC default port is 7362. A different configured port (7372, say) usually means a localhost-to-remote forwarder such as mcp-host-bridge is intended; check <code>FLDIGI_PORT</code> before concluding fldigi is down.</p>
+        </div>
+
+        <h2 id="first">C · Your first session, Claude for hams</h2>
+        <p>You do not need to know anything about AI to run this station. If you can install fldigi and type a sentence, you can operate. This chapter is the whole learning curve.</p>
+        <h3>What you are actually installing</h3>
+        <p>Claude is an assistant made by Anthropic. It runs in an ordinary desktop program, the Claude Desktop app (Windows or Mac), which looks like a messaging window: you type at the bottom, answers appear above. The two MCP servers in this project are best thought of as rig-interface cables: one plugs Claude into fldigi, the other into N3FJP. You type plain English; Claude works the programs. Nothing about your fldigi or N3FJP setup changes; they run exactly as they always have.</p>
+        <h3>Setup, once</h3>
+        <ol class="steps">
+          <li><strong>Install the Claude Desktop app.</strong> Download it from <code>claude.ai/download</code>, install like any program, and sign in (create the account on the same page). A paid plan is recommended; the free tier can run out of messages mid-QSO.</li>
+          <li><strong>Run your shack software as usual.</strong> Start fldigi (its XML-RPC interface is on by default). If you want contest logging, start N3FJP and enable its TCP API (Settings → Application Program Interface → checked).</li>
+          <li><strong>Add the two extensions.</strong> Double-click <code>fldigi-mcp.mcpb</code>, click Install when Claude Desktop opens, and enter your callsign when asked; that callsign is the transmit gate. Repeat with <code>n3fjp-mcp.mcpb</code>. Done; this is a one-time step.</li>
+          <li><strong>Say hello.</strong> Open a new chat and type: "What is the fldigi status?" If mode, frequency and T/R state come back, your station is connected.</li>
+        </ol>
+        <h3>Operating is a conversation</h3>
+        <p>There are no commands to memorize and no syntax to get wrong. You type what you would tell a competent operator sitting at your rig:</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">You type</th><th scope="col">What happens</th></tr></thead>
+          <tbody>
+            <tr><td>What is the fldigi status?</td><td>Mode, frequency, T/R, and callsign gate: your pre-flight check.</td></tr>
+            <tr><td>Set the rig to 14.070 USB and BPSK31.</td><td>Claude QSYs the rig and sets the modem.</td></tr>
+            <tr><td>Call CQ Field Day until someone answers. Work them, our exchange is 2A STX, log the contact to N3FJP, then keep calling.</td><td>The full loop in this guide: CQ, listen, exchange, TU, log, repeat. Claude narrates each QSO as it happens.</td></tr>
+            <tr><td>stop</td><td>Transmission stops immediately and the radio returns to receive. Works at any moment, mid-over included.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout warn">
+          <span class="label">You are still the control operator</span>
+          <p>Claude operates; you hold the license. Part 97 responsibility, supervision, station identification, staying in the band, remains yours, exactly as if a guest operator sat at your key. Stay at the station while it transmits. Two safeguards are built in: with no callsign configured the station physically cannot key up, and "stop" always works.</p>
+        </div>
+        <div class="callout warn">
+          <span class="label">First time? Dummy load.</span>
+          <p>Run your first full session into a dummy load: "call CQ and work whoever comes back", watch one complete cycle, TX drop, listen window, log entry, then connect the antenna. If anything misbehaves, type "run the fldigi diagnostics" and read the answer; it distinguishes a network problem from an fldigi problem.</p>
+        </div>
+
+        <h2 id="how">D · How the system works</h2>
+        <p>A QSO is a loop with four states. fldigi-operating governs the radio in every state; contest-operating decides what to say and when to log.</p>
+        <figure class="diagram">
+          <svg viewBox="0 0 380 350" role="img" aria-label="Diagram: the four-state QSO loop. 1, CQ: CQ FD CQ FD de MYCALL MYCALL pse k. 2, Exchange: CALL de MYCALL, Pse copy 2A 2A STX STX, de MYCALL BK. 3, TU: QSL CLASS SECT TU CALL de MYCALL GL FD sk sk. 4, Log: log_qso, check logged: true. Then QRZ and back to CQ." font-family="JetBrains Mono,monospace">
+            <g fill="none" stroke="#0969da" stroke-width="1">
+              <line x1="170" y1="64" x2="170" y2="86"/><line x1="170" y1="172" x2="170" y2="194"/><line x1="170" y1="264" x2="170" y2="286"/>
+              <polyline points="328,312 352,312 352,38 328,38"/>
+            </g>
+            <g fill="#0969da">
+              <polygon points="167,80 170,86 173,80"/><polygon points="167,188 170,194 173,188"/><polygon points="167,280 170,286 173,280"/><polygon points="334,35 328,38 334,41"/>
+            </g>
+            <g fill="#ffffff" stroke="#0969da" stroke-width="1">
+              <rect x="12" y="12" width="316" height="52"/><rect x="12" y="86" width="316" height="86"/><rect x="12" y="194" width="316" height="70"/><rect x="12" y="286" width="316" height="52"/>
+            </g>
+            <g font-size="13" fill="#0969da" font-weight="700">
+              <text x="24" y="34">1 · CQ</text><text x="24" y="108">2 · Exchange</text><text x="24" y="216">3 · TU</text><text x="24" y="308">4 · Log</text>
+            </g>
+            <g font-size="11" fill="#57606a" text-anchor="end">
+              <text x="316" y="34">anyone out there?</text><text x="316" y="108">caller decoded, send ours</text><text x="316" y="216">they QSL, confirm theirs back</text><text x="316" y="308">write it, then QRZ</text>
+            </g>
+            <g font-size="12" fill="#1f2328">
+              <text x="24" y="54">CQ FD CQ FD de &lt;MYCALL&gt; &lt;MYCALL&gt; pse k</text>
+              <text x="24" y="128">&lt;CALL&gt; de &lt;MYCALL&gt;</text><text x="24" y="145">Pse copy 2A 2A STX STX</text><text x="24" y="162">de &lt;MYCALL&gt; BK</text>
+              <text x="24" y="236">QSL &lt;CLASS&gt; &lt;SECT&gt; TU &lt;CALL&gt;</text><text x="24" y="253">de &lt;MYCALL&gt; GL FD sk sk</text>
+              <text x="24" y="328">log → log_qso … check logged: true</text>
+            </g>
+            <text x="366" y="175" font-size="10" fill="#57606a" text-anchor="middle" transform="rotate(90 366 175)">then QRZ, back to CQ</text>
+          </svg>
+          <figcaption>The four-state loop: CQ (anyone out there?), Exchange (caller decoded, send ours), TU (they QSL, confirm theirs back), Log (write it, then QRZ).</figcaption>
+        </figure>
+        <ul>
+          <li><strong>Skills trigger on plain language.</strong> No commands to memorize. Say "call CQ until someone answers, then work them and log it" and both skills engage. You can also ask for a skill by name when you want a specific lens.</li>
+          <li><strong>The radio layer runs first because it changes everything above it.</strong> An over that does not drop PTT on time transmits idle carrier on top of the answering station; no exchange strategy survives that. The <code>^r</code> handoff is not optional.</li>
+          <li><strong>The two skills chain deliberately.</strong> fldigi-operating delivers clean overs and an honestly read RX stream; contest-operating consumes that stream, runs the exchange, and hands a confirmed QSO to the logger. Findings that die on a garbled callsign become an AGN request instead of a log entry.</li>
+          <li><strong>The operator stays in command.</strong> Say "stop" at any time: <code>transmit → abort</code> drops PTT immediately and discards queued text. The callsign gate means an unconfigured station cannot transmit at all.</li>
+        </ul>
+        <div class="callout warn">
+          <span class="label">The habit that matters</span>
+          <p>Run it on a live band, not a tour. Put fldigi on a dummy load, say "call CQ and work whoever comes back", and watch one full cycle, TX drop, listen window, log entry, before you connect the antenna.</p>
+        </div>
+
+        <h2 id="standard">E · The operating standard</h2>
+        <p>Six rules, inherited by both skills. Every one of them exists because we broke it once, on the air, at Field Day 2026.</p>
+        <ol class="steps">
+          <li><strong>Never poll the TX buffer to decide when to stop.</strong> fldigi holds PTT on an empty buffer by design. End every over with <code>^r</code> (via <code>transmit → send</code>) and fldigi drops to receive at the exact sample the last character finishes. Polling always lags; the lag is transmitted on top of your caller.</li>
+          <li><strong>The RX buffer never contains your own echo.</strong> Every character came from an external station. Your callsign in RX means someone is calling you; pursue it. "Dismiss as own echo" logic makes you ignore callers; we wrote it, it did, and we deleted it.</li>
+          <li><strong>Never log without a confirmed callsign.</strong> Class and section can be inferred from a repeat; a callsign cannot. An incomplete QSO is not a contact; abandon it and CQ again.</li>
+          <li><strong>Trust <code>logged: true</code>, nothing else.</strong> N3FJP's ENTERRESPONSE can report 0 for a QSO that was written (networked mode commits asynchronously). Blind retries on <code>records_added: 0</code> produced duplicate log records. Retry only when <code>logged</code> is false.</li>
+          <li><strong>Budget two overs for an unreadable station.</strong> One AGN, one listen window. Still garble? Back to CQ. A marginal signal that costs five minutes is four QSOs you did not make.</li>
+          <li><strong>Double what must survive QRM.</strong> <code>2A 2A STX STX</code>, callsign twice on CQ, and echo the other station's exchange back in your TU so they can verify what you logged before you QRZ.</li>
+        </ol>
+        <div class="callout">
+          <span class="label">Why this exists</span>
+          <p>These skills were built by running one real autonomous Field Day session and keeping the after-action report; the full account is in <code>n3fjp-mcp/docs/LESSONS-FIELD-DAY-2026.md</code>, and the worked examples in chapter G retell it verbatim.</p>
+        </div>
+
+        <h2 id="fldigi">Skill 01 · fldigi-operating</h2>
+        <p class="meta">Ships with fldigi-mcp</p>
+        <p>Governs the radio: transmit, hand off to receive, listen properly.</p>
+        <h3>Transmitting an over</h3>
+        <pre><code>transmit → send "&lt;over text&gt;\n"   (return_to_rx=true, the default)</code></pre>
+        <div class="callout warn">
+          <span class="label">This keys the transmitter</span>
+          <p><code>transmit → send</code> puts the station on the air. It refuses unless a callsign is set, and <code>transmit → abort</code> is always allowed.</p>
+        </div>
+        <p>One call: clears the TX buffer, appends <code>^r</code>, keys the radio. End messages with a real newline (<code>\n</code>); the two-character string <code>^n</code> transmits literally. If building an over incrementally with <code>text → add_tx</code>, the last fragment must end in <code>^r</code>, with nothing added after it.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Operation</th><th scope="col">Behavior</th><th scope="col">Use for</th></tr></thead>
+          <tbody>
+            <tr><td>^r via transmit → send</td><td>Graceful auto-return the moment the over ends.</td><td>Every normal over.</td></tr>
+            <tr><td>transmit → abort</td><td>Immediate stop, discards queued text.</td><td>The panic button: caller back early, wrong message, operator says stop.</td></tr>
+            <tr><td>transmit → rx</td><td>Returns to RX only after the buffer drains.</td><td>Almost never; slow, and not the stop button.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <h3>Listening</h3>
+        <ul>
+          <li><strong>Delta reads only.</strong> <code>text → rx_length</code> for the end position, then <code>text → read</code> from your last position. Save the new position.</li>
+          <li><strong>Restart detection.</strong> <code>rx_length</code> smaller than your last position means fldigi restarted; re-baseline and continue.</li>
+          <li><strong>Listen window.</strong> After <code>get_trx_status</code> returns <code>"rx"</code>, listen about 10 seconds (1 to 2 polls) before the next CQ. PSK31 operators type slowly.</li>
+          <li><strong>Validate callsigns</strong> against <code>[A-Z0-9]{1,3}[0-9][A-Z]{1,3}</code> before any directed reply; QRM garbage looks call-ish.</li>
+        </ul>
+        <pre><code>loop:
+  transmit → send "CQ CQ de &lt;MYCALL&gt; &lt;MYCALL&gt; pse k\n"
+  poll controls → get_trx_status until "rx"
+  listen ~10 s  (1-2 polls of text → rx_length)
+  if plausible callsign in new RX text → work the station
+  else → loop</code></pre>
+        <div class="callout warn">
+          <span class="label">The loop keys the transmitter</span>
+          <p>Every pass sends a CQ on the air. Stay at the station while it runs; "stop" drops PTT at once.</p>
+        </div>
+
+        <h2 id="contest">Skill 02 · contest-operating</h2>
+        <p class="meta">Ships with n3fjp-mcp</p>
+        <p>Governs the contest: what to say in each state, when a QSO is real, and when it goes in the log.</p>
+        <h3>The exchange, tuned on the air</h3>
+        <ul>
+          <li><strong>Double everything important.</strong> <code>2A 2A STX STX</code> copies far better than <code>2A STX</code> through QSB and QRM.</li>
+          <li><strong>Echo their exchange back in the TU</strong> (<code>QSL 1D AZ TU W7XYZ …</code>); the other station verifies you logged them correctly before you QRZ.</li>
+          <li><strong>Callsign-only callers are normal.</strong> Some operators send just their call and wait. Send your exchange; theirs arrives in the next over. Others send everything up front; then you go straight to TU after your exchange.</li>
+          <li><strong>Log while the TU is still transmitting.</strong> The radio is busy about 15 seconds, exactly the time logging takes. When TX drops you are ready to CQ.</li>
+        </ul>
+        <h3>Logging in one call</h3>
+        <pre><code>log → log_qso  {"call": "W7XYZ", "contest": "field_day",
+                "exchange": {"class": "1D", "section": "AZ"}}</code></pre>
+        <p>Exchange fields go in the <code>exchange</code> dict; they are not top-level parameters. Success is <code>logged: true</code> in the response; chapter H has the full protocol and its quirks.</p>
+        <div class="callout warn">
+          <span class="label">The rule that keeps the log clean</span>
+          <p>Never retry on <code>records_added: 0</code> alone; that value can be 0 for a QSO that was written. Retry only when <code>logged</code> is false. Blind retries are where duplicate log records come from.</p>
+        </div>
+
+        <h2 id="hunt">Skill 03 · signal-hunting</h2>
+        <p class="meta">Ships with fldigi-mcp</p>
+        <p>Finds a station worth working the way an operator reads the waterfall: name what is there, rank the one that sits still and calls CQ, tune to it, confirm in twenty seconds.</p>
+        <h3>What the tool sees</h3>
+        <p>fldigi's XML-RPC exposes no spectrum, so <code>signal_hunt</code> taps the audio fldigi is listening to (the Audio input device setting names it) and returns ranked candidates. It needs the optional extra <code>fldigi-mcp[hunt]</code>, numpy and sounddevice. Each candidate is where the cursor goes, what modem to run, and why it ranks where it does.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Field</th><th scope="col">Meaning</th></tr></thead>
+          <tbody>
+            <tr><td>carrier_hz</td><td>The audio carrier: where the waterfall cursor goes. fldigi's Freq is dial plus carrier.</td></tr>
+            <tr><td>mode, fldigi_modem</td><td>RTTY with its shift, CW, BPSK31/63/125, Olivia with tones and bandwidth (OLIVIA-8/250), MFSK16, DominoEX, MT63, or unknown.</td></tr>
+            <tr><td>db_over_floor</td><td>Strength, from a max-hold spectrum, so a station that transmits for part of the window still shows at full strength.</td></tr>
+            <tr><td>persistence</td><td>Fraction of the window the signal was present at that carrier. A CQ loop is near 1; the other side of a QSO comes and goes.</td></tr>
+            <tr><td>periodicity</td><td>How strongly the on-off pattern repeats at lags of 8 to 60 seconds. A CQ loop repeats; a QSO in progress does not.</td></tr>
+            <tr><td>score</td><td>Strength weighted by persistence and periodicity. The CQing station wins.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <h3>With the Signal Browser patch</h3>
+        <div class="callout">
+          <span class="label">Proposed, not yet in fldigi</span>
+          <p>The <code>browser</code> tool and <code>signal_hunt method="browser"</code> call two XML-RPC methods that stock fldigi does not have: <code>browser.get_channels</code> (one struct per channel: channel, freq, active, text) and <code>browser.clear</code>. They come from a four-file patch offered to Dave W1HKJ on 11 September 2026 (w1hkj/fldigi issue 55) and shipped in fldigi-mcp under <code>patches/</code>. Until he merges it, the names and fields are a proposal and may change. On an unpatched fldigi both calls answer with a hint, and nothing else in this chapter changes.</p>
+        </div>
+        <p>fldigi's own Signal Browser, the left-hand panel, is a bank of thirty demodulators with DCD; it copies PSK, RTTY and CW stations too faint for any spectrum to rank. On a build that carries the patch, <code>browser channels</code> or <code>signal_hunt method="browser"</code> returns every channel with its carrier and the text already copied, line breaks kept: the confirm step is done before you tune. Four synthetic PSK31 stations from 0 to −26 dB: all four copied in full. The browser names no mode; hunt the audio first when the band's mode is unknown. Building it yourself is three lines, in the README.</p>
+        <h3>Letting the station name its own mode</h3>
+        <div class="callout">
+          <span class="label">Proposed, not yet in fldigi</span>
+          <p>The <code>rsid</code> tool calls <code>rsid.get_hits</code> and <code>rsid.clear</code>, from a second four-file patch offered to Dave W1HKJ on 16 September 2026 (w1hkj/fldigi issue 55). It ships in fldigi-mcp under <code>patches/</code> and applies on top of the browser patch. Until it is merged the names and fields are a proposal. On an unpatched fldigi the tool answers with a hint, and nothing else in this chapter changes.</p>
+        </div>
+        <p>Naming a mode from its shape is guesswork for the hopping modes: Olivia and Contestia share a grid, and so do THOR and DominoEX. Most operators on those modes send an RSID burst at the start of an over, and fldigi's detector hears it across the whole passband. Set RxID to notify only, and the detector reports the mode without switching the modem, so the pass you are running keeps its browser. <code>rsid hits</code> then gives <code>{utc, mode, hz}</code> for every burst. The mode name is exactly what <code>tune_to</code> takes, and the frequency is where the cursor goes. Ask the band before you guess at it, especially when the analyser says <code>unknown</code> on a strong signal.</p>
+        <h3>How a mode is named</h3>
+        <p>From the signal's shape, the way you would from the waterfall, with the numbers checked against the Signal Identification Wiki. Two narrow lines a standard shift apart (170 Hz in amateur use) is RTTY, carrier at the midpoint. One 30 Hz line is PSK31, unless it is keyed on and off with gaps of 40 ms or more, which makes it CW. The hopping modes show as a grid of discrete dots when you look at where the energy is from one 30 ms frame to the next: Olivia, with tones = bandwidth / spacing; MFSK16, 16 tones at 15.6 Hz; DominoEX and THOR, 18 tones. MT63 is a flat continuous block. Contestia looks like Olivia and THOR like DominoEX; only RSID separates those. The full signature table is on the <a href="../references/mode-id.html">Mode ID</a> page.</p>
+        <h3>The loop</h3>
+        <pre><code>signal_hunt seconds=20 (contest: mode="RTTY", seconds=40)
+read candidates highest score first
+tune_to carrier_hz, fldigi_modem   (RxID off during a classified pass)
+wait 20 s, then text → read
+if CQ and a callsign-shaped token, twice → hand to fldigi-operating
+elif modem → get_quality below 30 → next candidate
+else a QSO in progress → wait for SK or 73</code></pre>
+        <div class="callout">
+          <span class="label">Limits, stated</span>
+          <p>Verified on five recordings of known mode, PSK31, CW, RTTY at 170 and 450 Hz, Olivia 8/250: 5 of 5. A small set; treat unknown as honest. Symbol rate is not measured yet, which is what would separate Contestia from Olivia without RSID. Without audio access the tool falls back to stepping fldigi's own <code>search_up</code> and reading <code>get_quality</code>: slow, and blind to mode. Receive only; nothing in this skill keys the transmitter.</p>
+        </div>
+
+        <h2 id="playbook">F · The special-case playbook</h2>
+        <p>All seven encountered live at Field Day 2026; none of them hypothetical.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Situation</th><th scope="col">What the agent does</th></tr></thead>
+          <tbody>
+            <tr><td>Callsign only, no exchange</td><td>Normal. Send your exchange; theirs arrives in the next over.</td></tr>
+            <tr><td>Exchange arrives with the first call</td><td>Also normal (<code>K6ABC de W7XYZ 1D AZ 1D AZ pse k</code>). Send yours; they QSL; straight to TU.</td></tr>
+            <tr><td>"No copy" / "repeat"</td><td>Resend once, abbreviated: <code>&lt;CALL&gt; de &lt;MYCALL&gt; · 2A STX 2A STX · BK</code>. Still nothing → QRZ once, then CQ.</td></tr>
+            <tr><td>Garbled or partial callsign</td><td><code>de &lt;MYCALL&gt; AGN AGN pse k</code>, one listen window. Still unreadable → CQ. Two overs maximum.</td></tr>
+            <tr><td>Two stations doubled</td><td>Interleaved callsigns and control garbage. One AGN, then CQ; usually one calls again alone.</td></tr>
+            <tr><td>Another station CQing on frequency</td><td>PSK's narrow passband decodes neighbors. <code>CQ … de &lt;OTHERCALL&gt;</code> is not a caller; ignore and continue.</td></tr>
+            <tr><td>Signal lost mid-QSO</td><td>Exchange never completed → do not log. An incomplete QSO is not a contact.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout">
+          <span class="label">Field note · N3FJP modal dialogs</span>
+          <p>Modal dialogs on the logging PC block the entire N3FJP API. If logging calls stop responding mid-contest, a dialog is open and needs human attention; nothing the agent can clear remotely.</p>
+        </div>
+
+        <h2 id="examples">G · Worked examples from Field Day</h2>
+        <p>Three real QSOs from the session log, 14.070 MHz BPSK31, transcribed as decoded, garble included. All callsigns are anonymized (ARRL-style sample calls) out of respect for the stations worked; the exchanges, flow and garble are verbatim.</p>
+
+        <h3>Example 1 · W7XYZ, the textbook QSO</h3>
+        <div class="exchange" role="figure" aria-label="Example 1 transcript">
+<span class="tx">TX  CQ FD CQ FD de K6ABC K6ABC pse k</span>
+RX  K6ABC de W7XYZ 1D AZ; 1D AZ  PSE K
+    <span class="note">caller sent callsign and full exchange up front; no need to ask</span>
+<span class="tx">TX  W7XYZ de K6ABC K6ABC · Pse copy 2A 2A STX STX · de K6ABC BK</span>
+RX  K6ABC QSL TU 73 de W7XYZ · GL es 73 · sk
+<span class="tx">TX  QSL 1D AZ TU W7XYZ de K6ABC GL FD sk sk</span>
+    <span class="note">logged while the TU was still transmitting: log_qso → logged: true</span>
+        </div>
+        <p><strong>Logged, 1D AZ.</strong> Clean copy both ways, exchange confirmed in both directions, one pass through the state machine.</p>
+
+        <h3>Example 2 · N4DEF, callsign first, exchange after</h3>
+        <div class="exchange" role="figure" aria-label="Example 2 transcript">
+<span class="tx">TX  CQ FD CQ FD de K6ABC K6ABC pse k</span>
+RX  **4* K6ABr  DE N4DEF N4DEet N4DEF
+    <span class="note">callsign only, repeated three times through light garble, readable; no exchange yet: normal, not an error</span>
+<span class="tx">TX  N4DEF de K6ABC K6ABC · Pse copy 2A 2A STX STX · de K6ABC BK</span>
+RX  **** K6ABC · QSL  PSE COPY 1D  1D  NFL DE N4DEe   K
+    <span class="note">their QSL and exchange arrive together in the second over</span>
+<span class="tx">TX  QSL 1D NFL TU N4DEF de K6ABC GL FD sk sk</span>
+        </div>
+        <p><strong>Logged, 1D NFL.</strong> The state machine tolerates the exchange arriving one over late; the callsign was confirmed before anything was logged.</p>
+
+        <h3>Example 3 · K0GHI, no copy, abandoned correctly</h3>
+        <div class="exchange" role="figure" aria-label="Example 3 transcript">
+<span class="tx">TX  CQ FD CQ FD de K6ABC K6ABC pse k</span>
+RX  6ABC de K0GHI K0GH  · pse cpy 1E UT 1E UT
+<span class="tx">TX  K0GHI de K6ABC K6ABC · Pse copy 2A 2A STX STX · de K6ABC BK</span>
+RX  nt z repeat no cpy
+    <span class="note">they did not copy us; resend once, abbreviated (playbook, row 3)</span>
+<span class="tx">TX  K0GHI de K6ABC · 2A STX 2A STX · BK</span>
+RX  cptt t  te  e t eg
+<span class="tx">TX  K0GHI de K6ABC AGN pse k</span>
+RX  (silence, two listen windows)
+<span class="tx">TX  CQ FD CQ FD de K6ABC K6ABC pse k</span>
+        </div>
+        <p><strong>Not logged.</strong> We never confirmed they copied our exchange. Rule 3 of the standard: an incomplete QSO is not a contact. Two overs spent, then back to work.</p>
+
+        <h2 id="logging">H · Logging to N3FJP</h2>
+        <p>The verified protocol, and every quirk we hit on the air.</p>
+        <h3>Preferred: one call</h3>
+        <pre><code>log → log_qso  {"call": "W7XYZ", "contest": "field_day",
+                "exchange": {"class": "1D", "section": "AZ"}}</code></pre>
+        <h3>Manual alternative</h3>
+        <pre><code>log → set_many  {"CALL": "W7XYZ", "CLASS": "1D", "SECTION": "AZ"}
+log → enter</code></pre>
+        <div class="callout warn">
+          <span class="label">Success is logged: true; trust nothing else</span>
+          <p>Both paths return a <code>logged</code> boolean derived from the QSO-count delta and/or an ENTEREVENT push. <code>records_added</code> can report 0 for a QSO that was written; N3FJP networked (master-table) mode commits asynchronously. Retry only when <code>logged</code> is false.</p>
+        </div>
+        <h3>Quirks, observed live</h3>
+        <ul>
+          <li><code>set_many → calltab</code> can trigger an ENTEREVENT directly (the band, mode and dupe check fires on callsign entry). If it does, the QSO is logged; do not send another <code>enter</code>.</li>
+          <li><code>calltab</code> also populates COUNTRY, STATE and section lookups; useful for checking that the section you copied is plausible for the callsign.</li>
+          <li>A <code>CALLTABDUPEEVENT</code> means the call is already in the log for this band and mode; usually a sign you, or a retry, already logged it.</li>
+          <li>Exchange fields belong in the <code>exchange</code> dict of <code>log_qso</code>; passing them as top-level parameters silently logs nothing.</li>
+        </ul>
+
+        <h2 id="about">I · About and provenance</h2>
+        <p>These skills were not designed on paper. They are the distillate of one real autonomous contest session.</p>
+        <p>At ARRL Field Day 2026, a class-2A club station ran 20-meter BPSK31 with an agent operating fldigi and N3FJP through fldigi-mcp and n3fjp-mcp: calling CQ, working callers, and logging contacts, with the human operator supervising and able to stop transmission at any moment. Every rule, timing and special case in this guide comes from that session's after-action report, <code>n3fjp-mcp/docs/LESSONS-FIELD-DAY-2026.md</code>.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Resource</th><th scope="col">Where</th></tr></thead>
+          <tbody>
+            <tr><td>fldigi-mcp</td><td>github.com/sbrunner-atx/fldigi-mcp · PyPI: fldigi-mcp</td></tr>
+            <tr><td>n3fjp-mcp</td><td>github.com/sbrunner-atx/n3fjp-mcp · PyPI: n3fjp-mcp</td></tr>
+            <tr><td>Skill sources</td><td>&lt;repo&gt;/skills/&lt;name&gt;/SKILL.md</td></tr>
+            <tr><td>This guide's sources</td><td>&lt;repo&gt;/docs/brand/ (HTML and CSS, WeasyPrint)</td></tr>
+            <tr><td>After-action report</td><td>n3fjp-mcp/docs/LESSONS-FIELD-DAY-2026.md</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>Corrections and additions are welcome; open an issue on either repository.</p>
+        <div class="callout">
+          <span class="label">73</span>
+          <p>This is private, personal work by Stefan Brunner, AE5VG, built for amateur radio operators. Not affiliated with fldigi, N3FJP, or any employer. GPL-3.0-or-later, like fldigi itself. GL es 73 de AE5VG sk.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <p class="label">AE5VG · Austin, TX</p>
+      <p>Site text CC BY 4.0; software under the license named in each repository.</p>
+      <p class="sk">GL es 73 de AE5VG sk</p>
+    </div>
+    <div>
+      <p class="label">Contact</p>
+      <p>Software: open an issue on the relevant repository at <a href="https://github.com/sbrunner-atx">github.com/sbrunner-atx</a>.</p>
+      <p>Radio matters: the <a href="https://www.qrz.com/db/AE5VG">QRZ page for AE5VG</a>.</p>
+      <p>Email: <span class="email-here">stefan at this domain</span></p>
+    </div>
+  </div>
+</footer>
+<script src="../site.js"></script>
+</body>
+</html>

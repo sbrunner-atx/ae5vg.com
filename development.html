@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Development · AE5VG</title>
+<meta name="description" content="Why this is open source, what kind of help matters, how to contribute on GitHub, the model under construction, and where to get help.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="badge" href="index.html">AE5VG</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site" id="site-nav" aria-label="Site">
+      <a href="index.html">Home</a>
+      <a href="products/index.html">Products</a>
+      <a href="downloads.html">Downloads</a>
+      <a href="getting-started.html">Getting Started</a>
+      <a href="user-guide/index.html">User Guide</a>
+      <a href="development.html" aria-current="page">Development</a>
+      <a href="references/index.html">References</a>
+      <a href="about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="label">A call for help</p>
+    <h1>Development</h1>
+    <p class="lead">The software is one person's bench work. It needs other stations, other operating systems, other rigs.</p>
+  </div>
+</section>
+
+<main id="main">
+  <div class="wrap">
+    <div class="layout">
+      <nav aria-label="On this page"><ul class="toc">
+        <li><span class="label">On this page</span></li>
+        <li><a href="#why">Why open source</a></li>
+        <li><a href="#need">What we need</a></li>
+        <li><a href="#contribute">Contributing on GitHub</a></li>
+        <li><a href="#model">The model we are building</a></li>
+        <li><a href="#help">Getting help</a></li>
+      </ul></nav>
+      <div>
+        <h2 id="why" style="margin-top:0">Why this is open source, and what kind of help matters</h2>
+        <p>Everything here was built at one bench, with one rig, one switch and one contest weekend. That is enough to prove a design and nowhere near enough to trust it. The help that matters is not code, mostly: it is running the software somewhere this bench cannot reach, an operating system that has not been tried, a rig family that follows a different manual, a band at a different hour, and writing down what happened.</p>
+
+        <h2 id="need">What we need</h2>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Area</th><th scope="col">What would help</th><th scope="col">Where to start</th></tr></thead>
+          <tbody>
+            <tr><td>Windows and Linux</td><td>Testers for the bundles and installers on both platforms.</td><td><a href="downloads.html">Downloads</a>, then an issue with what happened.</td></tr>
+            <tr><td>Operating</td><td>Operators who run the Field Day loop and file the after-action notes.</td><td><a href="getting-started.html">Getting Started</a>, then the <a href="https://github.com/sbrunner-atx/n3fjp-mcp/issues">n3fjp-mcp issues</a>.</td></tr>
+            <tr><td>Serial bench</td><td>A Cisco console, an Icom or Kenwood rig and a GS-232 rotator on a bench for serial-console-mcp; those playbooks follow the vendors' references and have not met hardware.</td><td><a href="https://github.com/sbrunner-atx/serial-console-mcp/issues">serial-console-mcp issues</a>.</td></tr>
+            <tr><td>fldigi patches</td><td>Review of the two proposed patches: the Signal Browser and RSID methods.</td><td><a href="https://github.com/sbrunner-atx/fldigi-mcp">fldigi-mcp</a>, <code>patches/</code>, and w1hkj/fldigi issue 55.</td></tr>
+            <tr><td>The model</td><td>Hams who enable text capture in fldigi during a contest and keep their log.</td><td>The section <a href="#model">below</a>.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout"><span class="label">Proposed, not yet in fldigi</span><p>The Signal Browser methods (<code>browser.get_channels</code>, <code>browser.clear</code>) and the RSID methods (<code>rsid.get_hits</code>, <code>rsid.clear</code>) are patches offered to the fldigi maintainer on w1hkj/fldigi issue 55 on 11 and 16 September 2026. They are not merged. On a stock fldigi the tools answer with a hint and nothing else changes.</p></div>
+
+        <h2 id="contribute">How to contribute on GitHub</h2>
+        <pre><code>git clone https://github.com/sbrunner-atx/&lt;repo&gt;.git
+cd &lt;repo&gt; &amp;&amp; uv sync
+uv run ruff check .
+uv run pytest</code></pre>
+        <p>Fork, branch, pull request; open an issue first for anything larger than a fix. Each repository carries a CONTRIBUTING.md. The test suites run without a radio, an fldigi or an N3FJP. Licenses per repository: fldigi-mcp is GPL-3.0-or-later, the same as fldigi; the others are MIT.</p>
+
+        <h2 id="model">The model we are building</h2>
+        <p>The long-term goal is on the <a href="products/qso-resolver.html">product page</a>: a small model that reads a digital-mode QSO through noise, running in the field beside fldigi. The pieces that exist today are deterministic, deliberately.</p>
+        <h3>qso-resolver: the deterministic half</h3>
+        <ul>
+          <li><strong>The reference layer is looked up, never learned:</strong> all 85 ARRL and RAC sections plus the Field Day pseudo-section DX, the class grammar, the ITA2 lost-shift table for RTTY, and MASTER.SCP fetched at build time.</li>
+          <li><strong>The resolver</strong> is edit-distance against that reference, with no model in the path. Its three deliberate properties: no model, no network and no weights, so the baseline is a floor; confidence is the weakest field, not the average, because one wrong field is a wrong QSO; and ambiguity is never resolved by picking one, because a wrong QSO in the log is worse than a missed one.</li>
+          <li><strong>The evaluation harness</strong> prints null instead of a rate until a real held-out set of QSOs exists. A synthetic score presented as accuracy would be exactly what this project exists to be better than.</li>
+          <li><strong>The adapters</strong> read ADIF, Cabrillo and fldigi text capture, and pair received lines with logged truth by timestamp.</li>
+        </ul>
+        <h3>qso-mcp: the model's interface</h3>
+        <ul>
+          <li>Two modes on one base model: contest mode with a LoRA adapter over a closed output space, rag-chew mode without it.</li>
+          <li>Confidence is the weakest field: below the threshold the answer is <code>needs_human</code>, and ambiguity is handed back, never guessed.</li>
+          <li>The grammar constraint keeps contest output inside the exchange vocabulary.</li>
+        </ul>
+        <h3>What a contribution of real pairs looks like</h3>
+        <p>Turn fldigi's text capture on during a contest, keep the contest log, and send both, with your permission to use them. What your screen showed against what the log says was sent is exactly a training pair. The capture rig's own collection reports on the <a href="products/dashboard.html">dashboard</a>. Offers by <a href="https://github.com/sbrunner-atx/fldigi-mcp/issues">GitHub issue</a> or by email below.</p>
+
+        <h2 id="help">Getting help</h2>
+        <ol class="steps">
+          <li>GitHub Issues on the relevant repository first: <a href="https://github.com/sbrunner-atx/fldigi-mcp/issues">fldigi-mcp</a>, <a href="https://github.com/sbrunner-atx/wsjtx-mcp/issues">wsjtx-mcp</a>, <a href="https://github.com/sbrunner-atx/n3fjp-mcp/issues">n3fjp-mcp</a>, <a href="https://github.com/sbrunner-atx/serial-console-mcp/issues">serial-console-mcp</a>, <a href="https://github.com/sbrunner-atx/mcp-host-bridge/issues">mcp-host-bridge</a>.</li>
+          <li>Radio matters: the <a href="https://www.qrz.com/db/AE5VG">QRZ page for AE5VG</a>.</li>
+          <li>Email: <span class="email-here">stefan at this domain</span></li>
+        </ol>
+        <p>No contact form, no newsletter, no social widgets.</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <p class="label">AE5VG · Austin, TX</p>
+      <p>Site text CC BY 4.0; software under the license named in each repository.</p>
+      <p class="sk">GL es 73 de AE5VG sk</p>
+    </div>
+    <div>
+      <p class="label">Contact</p>
+      <p>Software: open an issue on the relevant repository at <a href="https://github.com/sbrunner-atx">github.com/sbrunner-atx</a>.</p>
+      <p>Radio matters: the <a href="https://www.qrz.com/db/AE5VG">QRZ page for AE5VG</a>.</p>
+      <p>Email: <span class="email-here">stefan at this domain</span></p>
+    </div>
+  </div>
+</footer>
+<script src="site.js"></script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Watering holes · AE5VG</title>
+<meta name="description" content="The internationally coordinated digital calling frequencies by band and mode, the data fldigi-mcp's band guidance uses.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<style>
+.freq td{font-family:var(--mono);font-size:13.5px;white-space:nowrap}
+.freq td:first-child{font-weight:700}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="badge" href="../index.html">AE5VG</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site" id="site-nav" aria-label="Site">
+      <a href="../index.html">Home</a>
+      <a href="../products/index.html">Products</a>
+      <a href="../downloads.html">Downloads</a>
+      <a href="../getting-started.html">Getting Started</a>
+      <a href="../user-guide/index.html">User Guide</a>
+      <a href="../development.html">Development</a>
+      <a href="../references/index.html" aria-current="page">References</a>
+      <a href="../about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="label">Reference · band_plans.yaml · updated June 2026</p>
+    <h1>Watering holes</h1>
+    <p class="lead">The internationally coordinated digital calling frequencies, in MHz, the same data fldigi-mcp's band guidance uses (<code>src/fldigi_mcp/data/band_plans.yaml</code>).</p>
+  </div>
+</section>
+
+<main id="main">
+  <div class="wrap">
+    <div class="table-scroll">
+    <table class="freq">
+      <tr><th scope="col">Band</th><th scope="col">FT8</th><th scope="col">FT4</th><th scope="col">JT65</th><th scope="col">JT9</th><th scope="col">WSPR</th><th scope="col">PSK31</th><th scope="col">RTTY</th><th scope="col">Olivia</th><th scope="col">MT63</th><th scope="col">JS8Call</th></tr>
+      <tr><td>160 m</td><td>1.840</td><td></td><td>1.838</td><td>1.839</td><td>1.8366</td><td>1.838</td><td>1.838</td><td>1.838</td><td>1.807</td><td>1.842</td></tr>
+      <tr><td>80 m</td><td>3.573</td><td>3.575</td><td>3.570</td><td>3.572</td><td>3.5686</td><td>3.580</td><td>3.590</td><td>3.583</td><td>3.585</td><td>3.578</td></tr>
+      <tr><td>40 m</td><td>7.074</td><td>7.0475</td><td>7.076</td><td>7.078</td><td>7.0386</td><td>7.070</td><td>7.043</td><td>7.072</td><td>7.035</td><td>7.078</td></tr>
+      <tr><td>30 m</td><td>10.136</td><td>10.140</td><td>10.138</td><td>10.140</td><td>10.1387</td><td>10.142</td><td>10.143</td><td>10.141</td><td>10.137</td><td>10.130</td></tr>
+      <tr><td>20 m</td><td>14.074</td><td>14.080</td><td>14.076</td><td>14.078</td><td>14.0956</td><td>14.070</td><td>14.080</td><td>14.077</td><td>14.109</td><td>14.078</td></tr>
+      <tr><td>17 m</td><td>18.100</td><td>18.104</td><td>18.102</td><td>18.104</td><td>18.1046</td><td>18.097</td><td>18.105</td><td>18.103</td><td>18.100</td><td>18.104</td></tr>
+      <tr><td>15 m</td><td>21.074</td><td>21.140</td><td>21.076</td><td>21.078</td><td>21.0946</td><td>21.080</td><td>21.080</td><td>21.086</td><td>21.070</td><td>21.078</td></tr>
+      <tr><td>12 m</td><td>24.915</td><td>24.919</td><td>24.917</td><td>24.919</td><td>24.9246</td><td>24.920</td><td>24.925</td><td>24.921</td><td>24.920</td><td>24.922</td></tr>
+      <tr><td>10 m</td><td>28.074</td><td>28.180</td><td>28.076</td><td>28.078</td><td>28.1246</td><td>28.120</td><td>28.080</td><td>28.076</td><td>28.130</td><td>28.078</td></tr>
+      <tr><td>6 m</td><td>50.313</td><td></td><td></td><td></td><td>50.293</td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>2 m</td><td>144.174</td><td></td><td></td><td></td><td>144.489</td><td></td><td></td><td></td><td></td><td></td></tr>
+    </table>
+    </div>
+
+    <h2>Notes</h2>
+    <ul>
+      <li>These are voluntary IARU band plans and widely used conventions, not regulations, and they differ by region, so verify against your national rules.</li>
+      <li>The weak-signal modes are globally harmonised.</li>
+      <li>On 20 m the traditional RTTY hole at 14.080 now sits under FT4, and real RTTY activity is found about 3 kHz higher.</li>
+      <li>Keyboard-mode traffic clusters within a few kHz above the PSK31 hole, and about 10 kHz up for RTTY and the other data modes.</li>
+    </ul>
+
+    <h2>Sources</h2>
+    <p>IARU Region 1 HF band plan (2020), ARRL Considerate Operator's Frequency Guide, IARU Region 3 band plan (2019). Corrections welcome on the <a href="https://github.com/sbrunner-atx/fldigi-mcp/issues">fldigi-mcp issues page</a>.</p>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <p class="label">AE5VG · Austin, TX</p>
+      <p>Site text CC BY 4.0; software under the license named in each repository.</p>
+      <p class="sk">GL es 73 de AE5VG sk</p>
+    </div>
+    <div>
+      <p class="label">Contact</p>
+      <p>Software: open an issue on the relevant repository at <a href="https://github.com/sbrunner-atx">github.com/sbrunner-atx</a>.</p>
+      <p>Radio matters: the <a href="https://www.qrz.com/db/AE5VG">QRZ page for AE5VG</a>.</p>
+      <p>Email: <span class="email-here">stefan at this domain</span></p>
+    </div>
+  </div>
+</footer>
+<script src="../site.js"></script>
+</body>
+</html>

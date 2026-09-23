@@ -1,159 +1,149 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AE5VG — Claude for hams: fldigi-mcp, wsjtx-mcp, n3fjp-mcp and the QSO resolver</title>
-<meta name="description" content="Open-source MCP connectors that let an AI assistant operate fldigi, WSJT-X and N3FJP, an operating Field Guide, and a small language model for digital-mode QSOs. By Stefan Brunner, AE5VG, Austin, Texas.">
+<title>Home · AE5VG</title>
+<meta name="description" content="Open-source MCP connectors that put fldigi, WSJT-X and N3FJP under the control of an AI assistant, plus a growing toolset for AI-assisted amateur radio.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<header class="top">
-  <div class="wrap">
-    <a class="badge" href="#top">AE5VG</a>
-    <nav>
-      <a href="#software">Software</a>
-      <a href="#guide">Field Guide</a>
-      <a href="live.html">Live</a>
-      <a href="decoded.html">Decoded</a>
-      <a href="#model">The model</a>
-      <a href="#about">About</a>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="badge" href="index.html">AE5VG</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site" id="site-nav" aria-label="Site">
+      <a href="index.html" aria-current="page">Home</a>
+      <a href="products/index.html">Products</a>
+      <a href="downloads.html">Downloads</a>
+      <a href="getting-started.html">Getting Started</a>
+      <a href="user-guide/index.html">User Guide</a>
+      <a href="development.html">Development</a>
+      <a href="references/index.html">References</a>
+      <a href="about.html">About</a>
     </nav>
   </div>
 </header>
 
-<div class="hero" id="top">
+<section class="hero">
   <div class="wrap">
-    <div class="eyebrow">Amateur radio · digital modes · open source</div>
+    <p class="label">AE5VG · Austin, TX · Amateur Radio + AI</p>
     <h1>An AI assistant that can work the bands with you.</h1>
-    <div class="rule"></div>
-    <p><strong>Three small connectors</strong> put fldigi, WSJT-X and N3FJP under the control of an assistant such as Claude, through the Model Context Protocol. Say "find me someone calling CQ on 20 metres and work them", and it tunes, reads, replies and logs. <strong>A Field Guide</strong> writes down how to operate that way without embarrassing yourself on the air. And <strong>a small language model</strong>, still in the making, is learning to read a contest exchange through the noise the way an experienced operator does.</p>
-    <a class="btn" href="#software">See the software</a>
-    <a class="btn ghost" href="https://github.com/sbrunner-atx">GitHub</a>
-    <div class="morse" aria-hidden="true">
-      <span class="dit"></span><span class="dah"></span><span class="gap"></span>
-      <span class="dit"></span><span class="gap"></span>
-      <span class="dit"></span><span class="dit"></span><span class="dit"></span><span class="dit"></span><span class="dit"></span><span class="gap"></span>
-      <span class="dit"></span><span class="dit"></span><span class="dit"></span><span class="dah"></span><span class="gap"></span>
-      <span class="dah"></span><span class="dah"></span><span class="dit"></span>
+    <p class="lead">Open-source MCP connectors put fldigi, WSJT-X and N3FJP under the control of an AI assistant such as Claude: a growing toolset for AI-assisted amateur radio communication.</p>
+    <div class="btn-row">
+      <a class="btn" href="products/index.html">Products</a>
+      <a class="btn ghost" href="https://github.com/sbrunner-atx">GitHub</a>
+    </div>
+    <p class="meta" style="margin-top:30px">From Field Day 2026: a BPSK31 exchange as decoded, garble included, callsigns anonymized. The assistant was at the keyboard; the notes in gray are what it observed.</p>
+    <div class="exchange" role="figure" aria-label="BPSK31 Field Day exchange transcript">
+<span class="tx">TX  CQ FD CQ FD de K6ABC K6ABC pse k</span>
+RX  K6ABC de W7XYZ 1D AZ; 1D AZ  PSE K
+    <span class="note">caller sent callsign and full exchange up front; no need to ask</span>
+<span class="tx">TX  W7XYZ de K6ABC K6ABC · Pse copy 2A 2A STX STX · de K6ABC BK</span>
+RX  K6ABC QSL TU 73 de W7XYZ · GL es 73 · sk
+<span class="tx">TX  QSL 1D AZ TU W7XYZ de K6ABC GL FD sk sk</span>
+    <span class="note">logged while the TU was still transmitting</span>
     </div>
   </div>
-</div>
+</section>
 
-<section id="software">
+<main id="main">
   <div class="wrap">
-    <h2>Software</h2>
-    <div class="h2rule"></div>
-    <p class="lead">Each connector is an MCP server: a small Python program that speaks the radio application's own control protocol on one side and the Model Context Protocol on the other. Install it in Claude Desktop, type your callsign, and the assistant can see and drive the program. Without a callsign every one of them is receive-only; nothing can key a transmitter.</p>
-    <div class="grid">
+    <h2>Why</h2>
+    <p>One of the most interesting things AI can do is operate autonomously in fuzzy environments. We have self-driving cars in messy city traffic, drones that find their own targets, lawn mowers that know where the lawn ends and the flower bed begins.</p>
+    <p>Radio communication is fuzzy by its very nature. Humans talk outside of fixed schemas, and antennas, power, band conditions and QRM all alter what the receiver sees. Wireless communication has used error correction for decades, but that works by transmitting redundant information and using math to reconstruct the message, or to request it again. The challenge here is different: have an AI carry a QSO the way a human does, preferably in a way that appears human on the receiving end.</p>
+    <p>Skeptics will say Part 97 requires human operators. Not quite: it requires operator supervision, and machine communication has plenty of precedent, from Wi-Fi to FT8 to self-announcing beacons. Does autonomous operation not defeat the point of a hobby built on human operators? Anyone who has been in this hobby for decades knows it is mostly about the tinkering: once the new rig is going and the antenna is perfect, we move on to the next shiny thing. This project is not about replacing human operators. It is about experimenting and demonstrating what is possible.</p>
+    <p>I started this project in 2026, preparing for Field Day, as a simple proof of concept. It worked: we operated the very first autonomous QSO in history, with me as the licensed operator at the radio, ready to take over at any moment.</p>
+
+    <h2>Agentic Connectors</h2>
+    <p>At its core are three Model Context Protocol (MCP) connectors. MCP servers are for AI what drivers are for hardware: they let an AI talk to the real world, to software, or even to a radio.</p>
+    <div class="cards">
       <div class="card">
-        <div class="ct">Operate · fldigi</div>
+        <span class="label">Connector · GPL-3.0</span>
         <h3>fldigi-mcp</h3>
-        <p>The whole of fldigi's XML-RPC interface, all 174 methods, as a handful of grouped tools: modem, frequency, rig, log, text, transmit. Adds <em>signal hunting</em>, which names each signal in the receiver audio from its shape, ranks the station calling CQ, and tunes to it; and reads fldigi's Signal Browser, every station the decoder bank has locked to, through a patch offered upstream.</p>
-        <div class="links"><a href="https://github.com/sbrunner-atx/fldigi-mcp">GitHub</a><a href="https://pypi.org/project/fldigi-mcp/">PyPI</a><a href="https://github.com/sbrunner-atx/fldigi-mcp/releases">Claude Desktop bundle</a></div>
-        <div class="meta">0.3.0 · GPL-3.0-or-later · fldigi 4.2.13</div>
+        <p>The most powerful of the three. An AI can control every aspect of fldigi, in both directions, and by proxy any rig fldigi is set up to control. Safeguarded against accidental AI-initiated transmissions.</p>
+        <a class="more" href="products/fldigi-mcp.html">fldigi-mcp →</a>
       </div>
       <div class="card">
-        <div class="ct">Operate · WSJT-X</div>
+        <span class="label">Connector · MIT</span>
         <h3>wsjtx-mcp</h3>
-        <p>FT8, FT4, JT65, MSK144, Q65 and WSPR through WSJT-X's UDP message protocol. The assistant reads every decode in the cycle, picks a station, replies, and follows the exchange through to the logged contact. The weak-signal leg of the trio.</p>
-        <div class="links"><a href="https://github.com/sbrunner-atx/wsjtx-mcp">GitHub</a><a href="https://pypi.org/project/wsjtx-mcp/">PyPI</a></div>
-        <div class="meta">0.1.3 · MIT</div>
+        <p>The little sister. FT8 and its siblings are automated protocols to begin with, but now an AI can run the whole process of initiating and completing QSOs through WSJT-X.</p>
+        <a class="more" href="products/wsjtx-mcp.html">wsjtx-mcp →</a>
       </div>
       <div class="card">
-        <div class="ct">Log · N3FJP</div>
+        <span class="label">Connector · MIT</span>
         <h3>n3fjp-mcp</h3>
-        <p>Logging to Amateur Contact Log and the hundred-plus N3FJP contest loggers over their shared TCP API. Log a contact in one call, run a dupe check, read the log back, set band and mode. Written against the protocol directly, no third-party wrapper.</p>
-        <div class="links"><a href="https://github.com/sbrunner-atx/n3fjp-mcp">GitHub</a><a href="https://pypi.org/project/n3fjp-mcp/">PyPI</a></div>
-        <div class="meta">0.3.1 · MIT</div>
+        <p>The logging counterpart. It connects to Amateur Contact Log and any of Scott's 200+ contest loggers.</p>
+        <a class="more" href="products/n3fjp-mcp.html">n3fjp-mcp →</a>
       </div>
       <div class="card">
-        <div class="ct">Plumbing</div>
+        <span class="label">Connector · MIT</span>
+        <h3>serial-console-mcp</h3>
+        <p>Originally meant to control the rig directly via serial or USB from the AI. That proved unnecessary: fldigi has rig control built in, and flrig covers the rest. But it can put AI on any device with a serial protocol, from an alarm panel to a large telecom router.</p>
+        <a class="more" href="products/serial-console-mcp.html">serial-console-mcp →</a>
+      </div>
+      <div class="card">
+        <span class="label">Utility · MIT</span>
         <h3>mcp-host-bridge</h3>
-        <p>A loopback-to-remote TCP and UDP relay so a sandboxed assistant can reach fldigi, WSJT-X or N3FJP running on another computer, for instance the Windows machine in the shack while Claude runs on the Mac. Standard library only.</p>
-        <div class="links"><a href="https://github.com/sbrunner-atx/mcp-host-bridge">GitHub</a></div>
-        <div class="meta">MIT</div>
+        <p>AI agents run in a sandbox, isolated from the host. If fldigi, WSJT-X or N3FJP run on the same host as the AI, we control them via loopback; if they run on another host, we need to pinch a hole into the sandbox, which is what this tool does.</p>
+        <a class="more" href="products/mcp-host-bridge.html">mcp-host-bridge →</a>
       </div>
     </div>
+    <p>With these tools and some agentic plumbing, an AI can initiate or answer a QSO and log it automatically, all day, while you supervise and enjoy whiskey and cigars.</p>
+
     <div class="callout">
-      <div class="ct">One shape, three programs</div>
-      <p>Operate with fldigi-mcp or wsjtx-mcp, log with n3fjp-mcp. The connectors know nothing about each other; the assistant carries the QSO from one to the next. That separation is deliberate: each program's protocol is small, documented, and testable on its own.</p>
+      <span class="label">Receive-only by default</span>
+      <p>Without a callsign in the settings, none of the connectors can key a transmitter. The assistant can listen, decode and log, but transmitting requires you to put your callsign in the configuration first. You remain the control operator.</p>
     </div>
-  </div>
-</section>
 
-<section id="guide">
-  <div class="wrap">
-    <h2>Operating Field Guide</h2>
-    <div class="h2rule"></div>
-    <p class="lead">Software that can key a transmitter needs operating discipline written down. The Field Guide is that document: three skills an assistant follows on the air, worked examples from Field Day, and the special cases that trip up new operators, human or otherwise.</p>
-    <table>
-      <tr><th>Skill</th><th>What it governs</th><th>What you get</th></tr>
-      <tr><td class="strong">fldigi-operating</td><td>Keying the transmitter, returning to receive the instant an over ends, never ignoring a caller, identifying on schedule.</td><td>Instant TX-to-RX handoff and a caller never missed.</td></tr>
-      <tr><td class="strong">contest-operating</td><td>The QSO state machine from CQ to logged contact, the special-case playbook, and verified N3FJP logging.</td><td>Completed exchanges and a clean, duplicate-free log.</td></tr>
-      <tr><td class="strong">signal-hunting</td><td>Naming each signal's mode from the audio, ranking the station that sits still and calls CQ, tuning to it, confirming in twenty seconds.</td><td>The right station found, named and tuned before you call.</td></tr>
-    </table>
-    <p>From the Field Day worked examples, a BPSK31 contact as decoded, garble included, callsigns anonymised:</p>
-    <div class="qso">
-<span class="tx">TX</span>  CQ FD CQ FD de K6ABC K6ABC pse k
-<span class="rx">RX</span>  K6ABC de W7XYZ 1D AZ; 1D AZ  PSE K
-<span class="note">     caller sent callsign and full exchange up front; no need to ask</span>
-<span class="tx">TX</span>  W7XYZ de K6ABC K6ABC · Pse copy 2A 2A STX STX · de K6ABC BK
-<span class="rx">RX</span>  K6ABC QSL TU 73 de W7XYZ · GL es 73 · sk
-<span class="tx">TX</span>  QSL 1D AZ TU W7XYZ de K6ABC GL FD sk sk
-<span class="note">     logged while the TU was still transmitting</span>
-    </div>
-    <p style="margin-top:22px"><a class="btn" href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-mcp%20Operating%20Field%20Guide.pdf">Download the Field Guide (PDF)</a> <a class="btn ghost" href="https://github.com/sbrunner-atx/fldigi-mcp/blob/main/docs/fldigi-api.md">fldigi XML-RPC reference</a></p>
-    <p style="font-size:15px;color:var(--muted)">The XML-RPC reference is its own document: every method fldigi 4.2.13 serves, enumerated live, with the gotchas found on the air. It is about fldigi, not about the connector, and Dave Freese W1HKJ's project is welcome to it.</p>
-  </div>
-</section>
+    <div class="morse" aria-hidden="true">·&#8202;&#9644; &nbsp; · &nbsp; ····· &nbsp; ···&#8202;&#9644; &nbsp; &#9644;&#8202;&#9644;&#8202;·</div>
 
-<section id="model">
-  <div class="wrap">
-    <h2>The model</h2>
-    <div class="h2rule"></div>
-    <p class="lead">A contest exchange rarely arrives clean. It comes through band noise, fading, and another station transmitting over the top. An experienced operator still reads it, because the vocabulary is closed: there are 86 legal section tokens, a small set of classes, and callsigns follow a pattern. The project is a small language model that reads the way that operator does, for any keyboard digital mode, the way FT8 already does for one.</p>
-    <div class="grid">
+    <h2>What is next</h2>
+    <p>During Field Day, the agentic plumbing was a frontier model, cloud-hosted, which requires an always-on Internet connection. That has three disadvantages: you have to be connected to the Internet to communicate via a radio, which rather defeats the purpose; you are eating up tokens; and frontier models are powerful but slow.</p>
+    <p>Instead of running a trillion-parameter model, the goal is a small billion-parameter model that can run in the field, on a modern CPU with AI extensions or on an inference processor like those some drones carry. What we need is a purpose-built ham-radio model. Its sole purpose is to understand how humans communicate on the digital modes and to do smart error correction, very much the way our human mind reads the right message out of a partially garbled decode. The first step in building a model from scratch is collecting training data. More on <a href="products/qso-resolver.html">the Ham Radio Model</a> page.</p>
+
+    <div class="cards" style="margin-top:44px">
       <div class="card">
-        <div class="ct">Reference layer</div>
-        <h3>Look up, never learn</h3>
-        <p>ARRL and RAC sections, Field Day classes, callsign structure and the contest exchange grammar are closed vocabularies. They are looked up, not learned, so the model cannot invent a section that does not exist.</p>
+        <span class="label">Install</span>
+        <h3>Downloads</h3>
+        <p>The latest release of every module, with the manuals and release notes.</p>
+        <a class="more" href="downloads.html">Downloads →</a>
       </div>
       <div class="card">
-        <div class="ct">Real copy, not synthetic</div>
-        <h3>Off-air pairs</h3>
-        <p>Training data is real received text paired with what was actually sent: W1AW bulletins against their published text, weather RTTY against the same, and repeated CQ loops recorded from public KiwiSDR receivers where the best copy stands in for the truth. Every recording is our own, of the public airwaves, and marked as such.</p>
+        <span class="label">Set up</span>
+        <h3>Getting Started</h3>
+        <p>For a ham who has never used an assistant: from install to the first QSO on a dummy load.</p>
+        <a class="more" href="getting-started.html">Getting Started →</a>
       </div>
       <div class="card">
-        <div class="ct">Honest numbers</div>
-        <h3>No accuracy claim yet</h3>
-        <p>The evaluation harness runs against a held-out set of real QSOs that does not exist yet in sufficient size. Until it does, no percentage is published, synthetic or otherwise. A synthetic score presented as accuracy would be exactly what this project exists to be better than.</p>
+        <span class="label">Read</span>
+        <h3>User Guide</h3>
+        <p>The Field Guides and the API references, online and as PDF.</p>
+        <a class="more" href="user-guide/index.html">User Guide →</a>
       </div>
     </div>
-    <div class="callout">
-      <div class="ct">Status · September 2026</div>
-      <p>The deterministic half is built: reference layer, an edit-distance resolver with no model in the path, and the harness. The capture rig runs unattended, collecting pairs. The model itself is not trained yet. The code is not public until there is a number to stand behind.</p>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <p class="label">AE5VG · Austin, TX</p>
+      <p>Site text CC BY 4.0; software under the license named in each repository.</p>
+      <p class="sk">GL es 73 de AE5VG sk</p>
     </div>
-  </div>
-</section>
-
-<section id="about">
-  <div class="wrap">
-    <h2>About</h2>
-    <div class="h2rule"></div>
-    <p class="lead">Stefan Brunner, AE5VG, Austin, Texas. Digital modes on HF, and a long career in infrastructure and security software that makes writing protocol connectors feel like home.</p>
-    <p>This started at Field Day 2026, running a station with an assistant at the keyboard and finding out what it did well and where it needed rules. The software is the result; the Field Guide is the rules. Everything here is private, personal work, not affiliated with fldigi, WSJT-X, N3FJP, ARRL or any employer. fldigi-mcp is GPL-3.0-or-later, the same licence as fldigi, so its work can flow back; the others are MIT.</p>
-    <p>Questions, bug reports and patches go to the GitHub repositories. On the air, look for AE5VG around the PSK watering holes.</p>
-  </div>
-</section>
-
-<footer>
-  <div class="wrap">
-    <div class="mono">AE5VG · Austin, TX</div>
-    <p>© 2026 Stefan Brunner. Site content CC BY 4.0; software under the licence named in each repository. GL es 73 de AE5VG sk.</p>
+    <div>
+      <p class="label">Contact</p>
+      <p>Software: open an issue on the relevant repository at <a href="https://github.com/sbrunner-atx">github.com/sbrunner-atx</a>.</p>
+      <p>Radio matters: the <a href="https://www.qrz.com/db/AE5VG">QRZ page for AE5VG</a>.</p>
+      <p>Email: <span class="email-here">stefan at this domain</span></p>
+    </div>
   </div>
 </footer>
-
+<script src="site.js"></script>
 </body>
 </html>
