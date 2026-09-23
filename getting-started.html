@@ -70,17 +70,29 @@
           <li>Repeat for n3fjp-mcp. Host and port default to <code>127.0.0.1:1100</code>.</li>
         </ol>
         <p>No terminal, no Python: Claude Desktop's runtime supplies both.</p>
-        <p>For Claude Code, Cowork and other MCP clients, run the connector from PyPI with <code>uvx fldigi-mcp</code>. Set the variables <code>FLDIGI_HOST</code>, <code>FLDIGI_PORT</code> and <code>FLDIGI_CALLSIGN</code>. To run it from source instead, use this config block:</p>
+        <h3 id="other-clients">Other AI assistants</h3>
+        <div class="callout">
+          <span class="label">Not needed for Claude Desktop</span>
+          <p>If you use Claude Desktop, skip this part: the two extensions above are all it needs, and Cowork sessions in the Claude Desktop app use the same connectors.</p>
+        </div>
+        <p>Other assistants that support MCP, such as Claude Code or a third-party MCP client, cannot install a <code>.mcpb</code> file. They start each connector themselves from PyPI with <code>uvx</code>, which comes with <a href="https://docs.astral.sh/uv/">uv</a>. In Claude Code it is one command per connector; put your own callsign in place of <code>YOURCALL</code>:</p>
+        <pre><code>claude mcp add fldigi -e FLDIGI_CALLSIGN=YOURCALL -- uvx fldigi-mcp
+claude mcp add n3fjp -- uvx n3fjp-mcp</code></pre>
+        <p>Other clients take the same information as a configuration block:</p>
         <pre><code>{
   "mcpServers": {
     "fldigi": {
-      "command": "uv",
-      "args": ["--directory", "/absolute/path/to/fldigi-mcp", "run", "fldigi-mcp"],
-      "env": { "FLDIGI_CALLSIGN": "AE5VG" }
+      "command": "uvx",
+      "args": ["fldigi-mcp"],
+      "env": { "FLDIGI_CALLSIGN": "YOURCALL" }
+    },
+    "n3fjp": {
+      "command": "uvx",
+      "args": ["n3fjp-mcp"]
     }
   }
 }</code></pre>
-        <p>Then copy the skill directories (<code>skills/&lt;name&gt;/</code>) into <code>~/.claude/skills/</code>, or a project's <code>.claude/skills/</code>.</p>
+        <p>Settings are environment variables: <code>FLDIGI_HOST</code>, <code>FLDIGI_PORT</code> and <code>FLDIGI_CALLSIGN</code> for fldigi-mcp, <code>N3FJP_HOST</code> and <code>N3FJP_PORT</code> for n3fjp-mcp. Leave <code>FLDIGI_CALLSIGN</code> out to stay receive-only. For Claude Code, also copy the skill directories (<code>skills/&lt;name&gt;/</code>) from each repository into <code>~/.claude/skills/</code>, or into a project's <code>.claude/skills/</code>.</p>
 
         <h2 id="session">Start a session</h2>
         <p>Open a new chat, or a Cowork session, and type: <code>What is the fldigi status?</code> Mode, frequency and T/R state come back. If not, <code>run the fldigi diagnostics</code> tells you whether it is a network problem before you blame fldigi.</p>
