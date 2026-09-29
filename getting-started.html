@@ -58,7 +58,7 @@
         <h2 id="what" style="margin-top:0">What you need</h2>
         <p>Claude is an AI assistant. You type to it in plain English, the way you would write a text message, and it answers. Two small extensions let it work your station. Think of them as rig interface cables: one connects Claude to fldigi, the other connects it to N3FJP. Your fldigi and N3FJP setup does not change. The technical name for these extensions is MCP server. You will see that name on the Downloads page, and that is all you need to know about it.</p>
         <ul>
-          <li>A Mac or a Windows PC where fldigi already decodes and transmits on your radio.</li>
+          <li>A Mac or a Windows PC where fldigi already decodes and transmits on your radio. Step 2 shows how to check that.</li>
           <li>N3FJP, if you want Claude to log your contacts. Logging is optional.</li>
           <li>Your callsign.</li>
           <li>A Claude account. A paid plan is recommended. On the free plan you can run out of messages in the middle of a QSO.</li>
@@ -74,7 +74,9 @@
 
         <h2 id="prepare">2 · Prepare fldigi and N3FJP</h2>
         <ol class="steps">
-          <li>Start fldigi the way you always do. There is nothing to change. Claude talks to fldigi through its XML-RPC interface, which is on by default.</li>
+          <li>Start fldigi the way you always do. Claude talks to fldigi through its XML-RPC interface, which is on by default.</li>
+          <li>Make sure fldigi can key your radio. Claude never touches the radio itself. It asks fldigi to transmit, and fldigi keys the rig the way you set it up, under <strong>Configure → Config Dialog → Rig Control</strong>. With an interface such as a RigBlaster, that is usually <strong>Hardware PTT</strong>: tick <strong>Use separate serial port PTT</strong>, choose the interface's serial port, tick <strong>Use RTS</strong> or <strong>Use DTR</strong> (your interface's manual says which), and click <strong>Initialize</strong>. Some interfaces, such as a SignaLink, key the radio on their own when audio plays, and then there is nothing to set. To test, click <strong>T/R</strong> in fldigi: the radio should go to transmit. Click it again to go back to receive.</li>
+          <li>If your radio also has CAT control through Hamlib, flrig or RigCAT, set that up in the same place. Then Claude can read and change the frequency and mode. Without CAT, Claude works on whatever band the radio is on, and you change bands by hand.</li>
           <li>If you log with N3FJP, start it and open <strong>Settings → Application Program Interface</strong>. Tick <strong>TCP API Enabled</strong> and leave the port at 1100.</li>
         </ol>
 
