@@ -94,9 +94,10 @@
           <li><strong>Install the bundles.</strong> Double-click <code>fldigi-mcp.mcpb</code> and <code>n3fjp-mcp.mcpb</code>, or add them under Settings → Extensions. Each bundle carries its skill at <code>skills/&lt;name&gt;/SKILL.md</code> plus this guide.</li>
           <li><strong>Set the transmit gate.</strong> In the fldigi-mcp extension settings, enter your callsign. With no callsign set, the station is receive-only and nothing can key the radio.</li>
         </ol>
-        <h3>In Claude Code / Cowork</h3>
+        <p>Cowork and Claude Code sessions inside the Claude Desktop app use these same extensions. Nothing else to install.</p>
+        <h3>In Claude Code in a terminal, or another MCP client</h3>
         <ol class="steps">
-          <li><strong>Copy the skill directories</strong> from each repo into <code>~/.claude/skills/</code>, or a project's <code>.claude/skills/</code>: <code>skills/fldigi-operating/</code> and <code>skills/contest-operating/</code>.</li>
+          <li><strong>Copy the skill directories</strong> from each repo into <code>~/.claude/skills/</code>, or a project's <code>.claude/skills/</code>: <code>skills/fldigi-operating/</code>, <code>skills/signal-hunting/</code> and <code>skills/contest-operating/</code>.</li>
           <li><strong>Connect the MCP servers</strong> (<code>uvx fldigi-mcp</code>, <code>uvx n3fjp-mcp</code>, or from the repos) so the tools the skills reference are available.</li>
         </ol>
         <h3>Check that it works (thirty seconds)</h3>
