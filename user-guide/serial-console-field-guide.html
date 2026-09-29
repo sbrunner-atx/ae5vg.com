@@ -102,12 +102,17 @@
           <li><strong>Install it.</strong> In Claude Desktop, go to <strong>Settings → Extensions → Advanced settings → Install Extension</strong> and choose the file. You do not need a terminal or a Python install.</li>
           <li><strong>Settings, if you want them.</strong> The form offers read-only mode and a timeout that closes a forgotten port. Both are off unless you turn them on.</li>
         </ol>
-        <h3>From PyPI (uv or pipx)</h3>
+        <h3>From PyPI (uv or pipx), for advanced users</h3>
+        <p>This is for advanced users. If you use Claude Desktop, the extension above is all you need.</p>
         <pre><code>uvx serial-console-mcp configure --command uvx --arg serial-console-mcp
 # or
 pipx install serial-console-mcp
 serial-console-mcp configure --command "$(which serial-console-mcp)"</code></pre>
         <p>This needs Python 3.10 or newer. <code>configure</code> writes the Claude Desktop entry. It keeps the servers already listed there and backs up the old file. <code>serial-console-mcp configure --remove</code> undoes it. Any MCP client can launch the same command over stdio. Developers: <code>git clone</code>, <code>uv sync</code>, <code>uv run pytest</code>.</p>
+        <div class="callout">
+          <span class="label">Untested outside Claude</span>
+          <p>MCP is an open standard, so other assistants and agentic harnesses such as OpenClaw should work too. They have not been tested, and there are no ready-made configurations for them yet.</p>
+        </div>
         <h3>Check that it works (thirty seconds)</h3>
         <ol class="steps">
           <li><strong>Ask for the ports.</strong> "What serial ports do you see?" A list with USB descriptions means the server is running and the OS sees your adapter. "No serial ports found" with the device plugged in almost always means a charge-only USB cable or a missing driver (FTDI, CP210x, CH340).</li>

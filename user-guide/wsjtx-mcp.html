@@ -84,7 +84,12 @@
           <span class="label">Enables transmit</span>
           <p>Entering your callsign, together with Accept UDP requests in WSJT-X, lets wsjtx-mcp key the transmitter through <code>reply</code> and <code>free_text</code> with <code>send=true</code>. Leave the callsign blank until you have read the transmit gate chapter.</p>
         </div>
-        <h3>2b · From PyPI, any MCP client</h3>
+        <h3>2b · From PyPI, any MCP client (advanced)</h3>
+        <p>This is for advanced users. If you use Claude Desktop, the extension in 2a is all you need.</p>
+        <div class="callout">
+          <span class="label">Untested outside Claude</span>
+          <p>MCP is an open standard, so other assistants and agentic harnesses such as OpenClaw should work too. They have not been tested, and there are no ready-made configurations for them yet.</p>
+        </div>
         <pre><code>uvx wsjtx-mcp        # or: pipx run wsjtx-mcp</code></pre>
         <p>Add it to your client's MCP configuration with the environment variables from the table under How it works. For example:</p>
         <pre><code>{
@@ -112,6 +117,7 @@
 <span class="tx">stop</span>
     <span class="note">transmit halt; always allowed</span>
         </div>
+        <p>N3FJP runs only on Windows. On a Mac it runs in a Windows virtual machine or on a Windows PC, as <a href="../getting-started.html#remote">Where everything runs</a> shows.</p>
         <div class="callout warn">
           <span class="label">Keys the transmitter</span>
           <p>Answering a CQ puts the station on the air. If <code>WSJTX_CALLSIGN</code> is blank, wsjtx-mcp refuses the request. Under Part 97 you are still the control operator. Stay where you can step in, and say "stop" to halt.</p>
