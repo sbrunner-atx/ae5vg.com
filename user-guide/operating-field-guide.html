@@ -95,11 +95,16 @@
           <li><strong>Set the transmit gate.</strong> In the fldigi-mcp extension settings, enter your callsign. With no callsign set, the station is receive-only and nothing can key the radio.</li>
         </ol>
         <p>Cowork and Claude Code sessions inside the Claude Desktop app use these same extensions. Nothing else to install.</p>
-        <h3>In Claude Code in a terminal, or another MCP client</h3>
+        <h3>For advanced users: Claude Code in a terminal, or another MCP client</h3>
         <ol class="steps">
           <li><strong>Copy the skill directories</strong> from each repo into <code>~/.claude/skills/</code>, or a project's <code>.claude/skills/</code>: <code>skills/fldigi-operating/</code>, <code>skills/signal-hunting/</code> and <code>skills/contest-operating/</code>.</li>
           <li><strong>Connect the MCP servers</strong> (<code>uvx fldigi-mcp</code>, <code>uvx n3fjp-mcp</code>, or from the repos) so the tools the skills reference are available.</li>
         </ol>
+        <p>The MCP servers and skills are not tied to Claude. MCP is an open standard, so other assistants and agentic harnesses such as OpenClaw should work too.</p>
+        <div class="callout">
+          <span class="label">Untested outside Claude</span>
+          <p>Other assistants and harnesses have not been tested, and there are no ready-made configurations for them yet.</p>
+        </div>
         <h3>Check that it works (thirty seconds)</h3>
         <ol class="steps">
           <li><strong>Check the radio link.</strong> Ask "What is the fldigi status?" Mode, frequency and T/R state should come back. If not, the <code>diagnostics</code> tool tells you whether it is a network problem before you blame fldigi.</li>
@@ -120,7 +125,7 @@
         <h3>Setup, once</h3>
         <ol class="steps">
           <li><strong>Install the Claude Desktop app.</strong> Download it from <code>claude.ai/download</code>, install it like any other program, and sign in (you can create the account on the same page). A paid plan is recommended, because the free tier can run out of messages in the middle of a QSO.</li>
-          <li><strong>Run your shack software as usual.</strong> Start fldigi (its XML-RPC interface is on by default). If you want contest logging, start N3FJP and enable its TCP API (Settings → Application Program Interface → checked).</li>
+          <li><strong>Run your shack software as usual.</strong> Start fldigi (its XML-RPC interface is on by default). If you want contest logging, start N3FJP and enable its TCP API (Settings → Application Program Interface → checked). fldigi must key the radio the usual way, under Configure → Config Dialog → Rig Control: Hardware PTT for an interface such as a RigBlaster, nothing for a VOX interface such as a SignaLink. If fldigi's T/R button keys the radio, Claude can too. The N3FJP loggers run only on Windows. On a Mac, run N3FJP in a Windows virtual machine or on a Windows PC, and connect it with mcp-host-bridge, as <a href="../getting-started.html#remote">Getting Started</a> shows.</li>
           <li><strong>Add the two extensions.</strong> Double-click <code>fldigi-mcp.mcpb</code>, click Install when Claude Desktop opens, and enter your callsign when asked. That callsign is the transmit gate. Repeat with <code>n3fjp-mcp.mcpb</code>. You only do this once.</li>
           <li><strong>Say hello.</strong> Open a new chat and type: "What is the fldigi status?" If mode, frequency and T/R state come back, your station is connected.</li>
         </ol>
@@ -262,6 +267,8 @@
         <h2 id="hunt">Skill 03 · signal-hunting</h2>
         <p class="meta">Ships with fldigi-mcp</p>
         <p>This skill finds a station worth working, the same way an operator reads the waterfall. It names what is there and ranks the station that sits still and calls CQ highest. Then it tunes to that station and confirms it within twenty seconds.</p>
+        <h3>Two ways to hunt</h3>
+        <p>The preferred way reads fldigi's own Signal Browser. It needs no audio setup, but it needs a patched fldigi (see <a href="#hunt-browser">With the Signal Browser patch</a>, proposed and not yet in fldigi). Until the patch is in fldigi, use the sound bridge: <code>signal_hunt</code> listens to the same receiver audio as fldigi. With the radio on a sound card cable (an iMic, a SignaLink, the radio's USB port), set Audio input device to the device fldigi uses, because two programs can read one input at once. When the receiver audio plays on the computer (an SDR program, a web receiver, wfview), split it with a virtual sound card: BlackHole 2ch and a Multi-Output Device on a Mac, or VB-Audio Virtual Cable on Windows. <a href="../getting-started.html#sound-bridge">Getting Started</a> has the steps.</p>
         <h3>What the tool sees</h3>
         <p>fldigi's XML-RPC interface does not give access to the spectrum. So <code>signal_hunt</code> listens to the same audio fldigi is listening to (the Audio input device setting names it) and returns a ranked list of candidates. It needs the optional extra <code>fldigi-mcp[hunt]</code> (numpy and sounddevice). Each candidate tells you where the cursor goes, what modem to run, and why it ranks where it does.</p>
         <div class="table-scroll">
@@ -277,7 +284,7 @@
           </tbody>
         </table>
         </div>
-        <h3>With the Signal Browser patch</h3>
+        <h3 id="hunt-browser">With the Signal Browser patch</h3>
         <div class="callout">
           <span class="label">Proposed, not yet in fldigi</span>
           <p>The <code>browser</code> tool and <code>signal_hunt method="browser"</code> call two XML-RPC methods that stock fldigi does not have: <code>browser.get_channels</code> (one struct per channel: channel, freq, active, text) and <code>browser.clear</code>. They come from a four-file patch offered to Dave W1HKJ on 11 September 2026 (w1hkj/fldigi issue 55) and shipped in fldigi-mcp under <code>patches/</code>. Until he merges it, the names and fields are a proposal and may change. On an unpatched fldigi both calls answer with a hint, and nothing else in this chapter changes.</p>
