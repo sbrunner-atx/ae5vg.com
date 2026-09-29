@@ -50,7 +50,7 @@
         <li><a href="#qso">5 · Your first QSO</a></li>
         <li><a href="#help">If something does not work</a></li>
         <li><a href="#hunt">Hunting for a station</a></li>
-        <li><a href="#remote">Another computer</a></li>
+        <li><a href="#remote">N3FJP on a Mac</a></li>
         <li><a href="#other-clients">Other AI assistants</a></li>
         <li><a href="#next">Where to go next</a></li>
       </ul></nav>
@@ -59,7 +59,7 @@
         <p>Claude is an AI assistant. You type to it in plain English, the way you would write a text message, and it answers. Two small extensions let it work your station. Think of them as rig interface cables: one connects Claude to fldigi, the other connects it to N3FJP. Your fldigi and N3FJP setup does not change. The technical name for these extensions is MCP server. You will see that name on the Downloads page, and that is all you need to know about it.</p>
         <ul>
           <li>A Mac or a Windows PC where fldigi already decodes and transmits on your radio. Step 2 shows how to check that.</li>
-          <li>N3FJP, if you want Claude to log your contacts. Logging is optional.</li>
+          <li>N3FJP, if you want Claude to log your contacts. Logging is optional. N3FJP runs only on Windows. On a Mac, run it in a Windows virtual machine (for example Parallels, VMware Fusion or UTM) or on a Windows PC on your network, and see <a href="#remote">N3FJP on a Mac, or another computer</a>.</li>
           <li>Your callsign.</li>
           <li>A Claude account. A paid plan is recommended. On the free plan you can run out of messages in the middle of a QSO.</li>
         </ul>
@@ -77,7 +77,7 @@
           <li>Start fldigi the way you always do. Claude talks to fldigi through its XML-RPC interface, which is on by default.</li>
           <li>Make sure fldigi can key your radio. Claude never touches the radio itself. It asks fldigi to transmit, and fldigi keys the rig the way you set it up, under <strong>Configure → Config Dialog → Rig Control</strong>. With an interface such as a RigBlaster, that is usually <strong>Hardware PTT</strong>: tick <strong>Use separate serial port PTT</strong>, choose the interface's serial port, tick <strong>Use RTS</strong> or <strong>Use DTR</strong> (your interface's manual says which), and click <strong>Initialize</strong>. Some interfaces, such as a SignaLink, key the radio on their own when audio plays, and then there is nothing to set. To test, click <strong>T/R</strong> in fldigi: the radio should go to transmit. Click it again to go back to receive.</li>
           <li>If your radio also has CAT control through Hamlib, flrig or RigCAT, set that up in the same place. Then Claude can read and change the frequency and mode. Without CAT, Claude works on whatever band the radio is on, and you change bands by hand.</li>
-          <li>If you log with N3FJP, start it and open <strong>Settings → Application Program Interface</strong>. Tick <strong>TCP API Enabled</strong> and leave the port at 1100.</li>
+          <li>If you log with N3FJP, start it and open <strong>Settings → Application Program Interface</strong>. Tick <strong>TCP API Enabled</strong> and leave the port at 1100. If Windows asks whether N3FJP may use the network, allow it on private networks.</li>
         </ol>
 
         <h2 id="load">3 · Add the radio extensions</h2>
@@ -85,7 +85,7 @@
           <li>On the <a href="downloads.html">Downloads</a> page, click <code>fldigi-mcp.mcpb</code>, and <code>n3fjp-mcp.mcpb</code> if you log with N3FJP. Your browser saves them in your Downloads folder.</li>
           <li>In Claude, open <strong>Settings → Extensions → Advanced settings → Install Extension</strong> and choose <code>fldigi-mcp.mcpb</code>.</li>
           <li>Claude then shows the extension's settings. If it does not, click <strong>Configure</strong> next to fldigi-mcp under <strong>Settings → Extensions</strong>. Type your callsign in <strong>Callsign</strong> and leave everything else as it is. Without a callsign, Claude can listen but it will never transmit.</li>
-          <li>Do the same with <code>n3fjp-mcp.mcpb</code>. There is nothing to type for it unless N3FJP runs on another computer.</li>
+          <li>Do the same with <code>n3fjp-mcp.mcpb</code>. There is nothing to type for it. If N3FJP runs in a virtual machine or on another PC, which is always the case on a Mac, also set up the bridge described under <a href="#remote">N3FJP on a Mac, or another computer</a>.</li>
         </ol>
 
         <h2 id="session">4 · Check the connection</h2>
@@ -211,9 +211,10 @@
         <p>So far the mode naming has been tested on five recordings of known mode, and it named all five correctly.</p>
         <p>If Claude runs where it cannot reach the sound card, such as in a Cowork session or on a different computer from fldigi, run <code>fldigi-mcp-tap --device iMic</code> on the computer that runs fldigi. This needs a terminal. Then set <strong>Signal-hunt tap URL</strong> to <code>http://127.0.0.1:7365</code>, or to that computer's address. With no audio at all, Claude can still step fldigi across the band with fldigi's own search. That is slow, and it cannot tell one mode from another.</p>
 
-        <h2 id="remote">fldigi or N3FJP on another computer</h2>
+        <h2 id="remote">N3FJP on a Mac, or another computer</h2>
+        <p>N3FJP runs only on Windows. fldigi runs on Mac, Windows and Linux. So if Claude runs on a Mac, N3FJP is always somewhere else: in a Windows virtual machine on the same Mac, or on a Windows PC on your network. A virtual machine counts as another computer here, because it has its own network address. The same applies to fldigi when it runs on a different computer from Claude.</p>
         <figure class="diagram">
-          <svg viewBox="0 0 720 190" role="img" aria-label="Diagram: a Mac running Claude Desktop, the connector and mcp-host-bridge, joined over the LAN to a Windows PC running N3FJP or fldigi, which connects to the radio." font-family="JetBrains Mono,monospace">
+          <svg viewBox="0 0 720 190" role="img" aria-label="Diagram: a Mac running Claude Desktop, the connector and mcp-host-bridge, joined over the LAN to a Windows PC or virtual machine running N3FJP or fldigi, which connects to the radio." font-family="JetBrains Mono,monospace">
             <rect x="15" y="28" width="360" height="140" fill="none" stroke="#d0d7de" stroke-dasharray="5 4"/>
             <text x="25" y="20" fill="#57606a" font-size="10">MAC</text>
             <rect x="35" y="45" width="140" height="44" fill="#f6f8fa" stroke="#d0d7de"/>
@@ -224,7 +225,7 @@
             <text x="285" y="94" fill="#0550ae" font-size="11" text-anchor="middle">mcp-host-</text>
             <text x="285" y="109" fill="#0550ae" font-size="11" text-anchor="middle">bridge</text>
             <rect x="440" y="28" width="200" height="140" fill="none" stroke="#d0d7de" stroke-dasharray="5 4"/>
-            <text x="450" y="20" fill="#57606a" font-size="10">WINDOWS PC</text>
+            <text x="450" y="20" fill="#57606a" font-size="10">WINDOWS PC OR VM</text>
             <rect x="460" y="76" width="160" height="44" fill="#f6f8fa" stroke="#d0d7de"/>
             <text x="540" y="102" fill="#1f2328" font-size="12" text-anchor="middle">N3FJP · fldigi</text>
             <rect x="660" y="73" width="50" height="50" fill="#0969da"/>
@@ -237,11 +238,16 @@
             </g>
             <text x="407" y="88" fill="#57606a" font-size="10" text-anchor="middle">LAN</text>
           </svg>
-          <figcaption>The connector still talks to 127.0.0.1 on the Mac. mcp-host-bridge carries that connection across the LAN to the PC.</figcaption>
+          <figcaption>The connector still talks to 127.0.0.1 on the Mac. mcp-host-bridge carries that connection across the LAN to the PC or virtual machine.</figcaption>
         </figure>
-        <p>This part needs a terminal. For fldigi, start it on the other computer with <code>--xmlrpc-server-address 0.0.0.0</code> so that it accepts connections from the LAN. Claude Desktop runs extensions in a sandbox that can only reach <code>127.0.0.1</code>, the computer Claude is on. To get past that, install <a href="products/mcp-host-bridge.html">mcp-host-bridge</a> on the computer that runs Claude and run the command below, with your other computer's address in place of 192.168.1.50. Leave the extension's host set to <code>127.0.0.1</code>.</p>
+        <p>This part needs a terminal. Claude Desktop runs extensions in a sandbox that can only reach <code>127.0.0.1</code>, the computer Claude is on. <a href="products/mcp-host-bridge.html">mcp-host-bridge</a> carries that connection to the other computer. Its page shows how to install it, with no Python needed.</p>
+        <ol class="steps">
+          <li>Find the other computer's address. In Windows, open Command Prompt, type <code>ipconfig</code>, and note the <strong>IPv4 Address</strong>.</li>
+          <li>On the computer that runs Claude, install mcp-host-bridge and run the command below, with that address in place of 192.168.1.50. It keeps running after a restart.</li>
+          <li>Leave the extension's host set to <code>127.0.0.1</code>.</li>
+        </ol>
         <pre><code>mcp-host-bridge install n3fjp --to 192.168.1.50</code></pre>
-        <p>The same command works with <code>fldigi</code> or <code>wsjtx</code> in place of <code>n3fjp</code>. Keep the link on a trusted LAN, or tunnel it over SSH. The connection is not encrypted, and fldigi's XML-RPC interface does not ask for any login.</p>
+        <p>The same command works with <code>fldigi</code> or <code>wsjtx</code> in place of <code>n3fjp</code>. If fldigi is the program on the other computer, also start it there with <code>--xmlrpc-server-address 0.0.0.0</code> so that it accepts connections from the network. Keep the link on a trusted LAN, or tunnel it over SSH. The connection is not encrypted, and fldigi's XML-RPC interface does not ask for any login.</p>
 
         <h2 id="other-clients">Other AI assistants</h2>
         <div class="callout">
