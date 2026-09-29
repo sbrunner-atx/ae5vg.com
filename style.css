@@ -82,7 +82,7 @@ table{border-collapse:collapse;width:100%;font-size:15px;margin:18px 0}
 th{font-family:var(--mono);font-size:11.5px;text-transform:uppercase;letter-spacing:1.5px;text-align:left;color:var(--link);padding:8px 14px 8px 0;border-bottom:2px solid var(--text)}
 td{padding:8px 14px 8px 0;border-bottom:1px solid var(--line);vertical-align:top}
 td:first-child,th:first-child{font-family:var(--mono);font-size:13.5px}
-td:first-child{white-space:nowrap}
+td:first-child code{white-space:nowrap}
 .table-scroll{overflow-x:auto;margin:0}
 .table-scroll td:first-child,.table-scroll th:first-child{position:sticky;left:0;background:var(--paper)}
 /* code block */
@@ -132,6 +132,6 @@ footer.site p{margin:6px 0;max-width:none}
 }
 @media (max-width:600px){
   td:first-child{white-space:normal;min-width:7.5em;max-width:10.5em}
-  td:first-child code{overflow-wrap:anywhere}
+  td:first-child code{white-space:normal;overflow-wrap:anywhere}
   th,td{padding-right:10px}
 }
