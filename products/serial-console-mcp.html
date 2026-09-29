@@ -42,7 +42,7 @@
       <div><span class="label">Version</span><strong class="fill-version">…</strong></div>
       <div><span class="label">Released</span><strong class="fill-released">…</strong></div>
       <div><span class="label">License</span><strong>MIT</strong></div>
-      <div><span class="label">Ships as</span><strong>.pkg · .exe · PyPI</strong></div>
+      <div><span class="label">Ships as</span><strong>.mcpb bundle · PyPI</strong></div>
     </div>
   </div>
 </section>
@@ -90,7 +90,7 @@
             <tr><td>Read-only mode</td><td><code>SERIAL_CONSOLE_READ_ONLY=1</code> refuses writes except read-style commands and refuses control-line changes; named keys are allowed, literal text is refused.</td></tr>
             <tr><td>Idle auto-close</td><td><code>SERIAL_CONSOLE_IDLE_MINUTES</code> closes a port left idle, so a forgotten connection stops blocking WSJT-X. Off by default.</td></tr>
             <tr><td>Bounded memory</td><td>The receive buffer is capped at 4 MB per port; if a device streams for hours unread, the oldest bytes are dropped and status says how many.</td></tr>
-            <tr><td>Installers that do the setup</td><td>The .pkg and .exe installers copy one binary and register it in <code>claude_desktop_config.json</code>, merging with what is already there and backing the old file up first. From PyPI, <code>serial-console-mcp configure</code> does the same, and <code>--remove</code> undoes it.</td></tr>
+            <tr><td>Desktop extension</td><td>One <code>.mcpb</code> file installs in Claude Desktop like the other connectors, with a settings form for read-only mode and the idle timeout. From PyPI, <code>serial-console-mcp configure</code> writes the Claude Desktop entry instead, and <code>--remove</code> undoes it.</td></tr>
             <tr><td>Three skills</td><td><code>serial-console</code>, <code>junos-operating</code> and <code>ios-operating</code> teach the discipline, the modes and the everyday commands.</td></tr>
           </tbody>
         </table>
@@ -201,7 +201,7 @@
     <div>
       <p class="label">Contact</p>
       <p>Software: open an issue on the relevant repository at <a href="https://github.com/sbrunner-atx">github.com/sbrunner-atx</a>.</p>
-      <p>Radio matters: the <a href="https://www.qrz.com/db/AE5VG">QRZ page for AE5VG</a>.</p>
+      <p>LinkedIn: <a href="https://www.linkedin.com/in/stefanbrunner/">Stefan Brunner</a>.</p>
       <p>Email: <span class="email-here">stefan at this domain</span></p>
     </div>
   </div>

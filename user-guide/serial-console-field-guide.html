@@ -95,11 +95,12 @@
         </div>
 
         <h2 id="install">B · Installing</h2>
-        <p>The server runs as a host process next to Claude Desktop, not inside its sandbox. That is the whole reason it can see <code>/dev/cu.*</code>, <code>COM4</code> or <code>/dev/ttyUSB0</code>.</p>
-        <h3>With the installer (recommended)</h3>
+        <p>The server runs on your own computer, started by Claude Desktop, so it can see <code>/dev/cu.*</code>, <code>COM4</code> or <code>/dev/ttyUSB0</code>.</p>
+        <h3>As a desktop extension (recommended)</h3>
         <ol class="steps">
-          <li><strong>Run the installer.</strong> Download the <code>.exe</code> (Windows) or the <code>.pkg</code> (Mac) from <a href="../downloads.html#serial-console-mcp">Downloads</a> and click through it. It copies one binary and registers it in <code>claude_desktop_config.json</code>, merging with any servers already there and backing up the old file. The installers are unsigned, so expect a Gatekeeper or SmartScreen warning.</li>
-          <li><strong>Fully quit Claude Desktop, then reopen it.</strong> Closing the window is not enough. Windows: right-click the tray icon, Quit. Mac: ⌘Q. Servers are read at launch.</li>
+          <li><strong>Download the bundle.</strong> Get <code>serial-console-mcp.mcpb</code> from <a href="../downloads.html#serial-console-mcp">Downloads</a>. The same file works on Mac, Windows and Linux.</li>
+          <li><strong>Install it.</strong> In Claude Desktop, go to <strong>Settings → Extensions → Advanced settings → Install Extension</strong> and choose the file. No terminal and no Python to install.</li>
+          <li><strong>Settings, if you want them.</strong> The form offers read-only mode and a timeout that closes a forgotten port. Both are off unless you turn them on.</li>
         </ol>
         <h3>From PyPI (uv or pipx)</h3>
         <pre><code>uvx serial-console-mcp configure --command uvx --arg serial-console-mcp
@@ -561,7 +562,7 @@ READ  query_text("C") → +0045 → azimuth 45°
           <thead><tr><th scope="col">Resource</th><th scope="col">Where</th></tr></thead>
           <tbody>
             <tr><td>serial-console-mcp</td><td><a href="https://github.com/sbrunner-atx/serial-console-mcp">github.com/sbrunner-atx/serial-console-mcp</a></td></tr>
-            <tr><td>Installers</td><td>GitHub Releases: the <code>.exe</code> for Windows and the <code>.pkg</code> for Mac, listed on <a href="../downloads.html#serial-console-mcp">Downloads</a></td></tr>
+            <tr><td>Desktop extension</td><td><code>serial-console-mcp.mcpb</code> on GitHub Releases, listed on <a href="../downloads.html#serial-console-mcp">Downloads</a></td></tr>
             <tr><td>PyPI</td><td><a href="https://pypi.org/project/serial-console-mcp/">pypi.org/project/serial-console-mcp</a> · <code>uvx serial-console-mcp</code></td></tr>
             <tr><td>Server and tests</td><td><code>src/serial_console_mcp/</code> (server, presets, terminal, cat, civ, rotator) · <code>tests/test_serial_console.py</code></td></tr>
             <tr><td>Operating skills</td><td><code>skills/serial-console</code> · <code>skills/junos-operating</code> · <code>skills/ios-operating</code> (<code>SKILL.md</code> each)</td></tr>
@@ -591,7 +592,7 @@ READ  query_text("C") → +0045 → azimuth 45°
     <div>
       <p class="label">Contact</p>
       <p>Software: open an issue on the relevant repository at <a href="https://github.com/sbrunner-atx">github.com/sbrunner-atx</a>.</p>
-      <p>Radio matters: the <a href="https://www.qrz.com/db/AE5VG">QRZ page for AE5VG</a>.</p>
+      <p>LinkedIn: <a href="https://www.linkedin.com/in/stefanbrunner/">Stefan Brunner</a>.</p>
       <p>Email: <span class="email-here">stefan at this domain</span></p>
     </div>
   </div>
