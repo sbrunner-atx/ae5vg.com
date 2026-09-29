@@ -217,7 +217,7 @@
         <h3 id="all-windows">All on one Windows PC</h3>
         <p>This is the simplest station. Claude, fldigi, N3FJP and the radio are all on one Windows PC. Every connection stays on <code>127.0.0.1</code>, so no bridge is needed and nothing is open to the network.</p>
         <figure class="diagram">
-          <svg viewBox="0 0 720 356" role="img" aria-label="Diagram, with example addresses. One Windows PC at 192.168.1.50 runs Claude Desktop, fldigi-mcp, n3fjp-mcp, fldigi and N3FJP. Each MCP server runs in its own sandbox that can only reach 127.0.0.1. fldigi-mcp talks to fldigi at 127.0.0.1 port 7362. n3fjp-mcp talks to N3FJP at 127.0.0.1 port 1100. fldigi connects to N3FJP at 127.0.0.1 port 1100 to set band and mode automatically. fldigi runs the radio over USB, or through a RigBlaster and a USB audio adapter. No bridge is needed." font-family="JetBrains Mono,monospace">
+          <svg viewBox="0 0 550 356" style="max-width:596px" role="img" aria-label="Diagram, with example addresses. One Windows PC at 192.168.1.50 runs Claude Desktop, fldigi-mcp, n3fjp-mcp, fldigi and N3FJP. Each MCP server runs in its own sandbox that can only reach 127.0.0.1. fldigi-mcp talks to fldigi at 127.0.0.1 port 7362. n3fjp-mcp talks to N3FJP at 127.0.0.1 port 1100. fldigi connects to N3FJP at 127.0.0.1 port 1100 to set band and mode automatically. fldigi runs the radio over USB, or through a RigBlaster and a USB audio adapter. No bridge is needed." font-family="JetBrains Mono,monospace">
             <defs><marker id="w-arrow" viewBox="0 0 6 6" refX="6" refY="3" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#0969da"/></marker></defs>
             <rect x="15" y="28" width="520" height="242" fill="none" stroke="#d0d7de" stroke-dasharray="5 4"/>
             <text x="25" y="20" fill="#57606a" font-size="10">WINDOWS PC · 192.168.1.50</text>
@@ -261,9 +261,6 @@
               <text x="415" y="150">API 127.0.0.1:1100</text>
               <text x="287" y="129">127.0.0.1:1100</text>
               <text x="130" y="333">or the radio's own USB</text>
-              <text x="628" y="140">no bridge,</text>
-              <text x="628" y="154">nothing open to</text>
-              <text x="628" y="168">the network</text>
             </g>
             <g font-size="9" fill="#57606a" text-anchor="middle">
               <text x="100" y="246">listens 127.0.0.1:7362</text>
