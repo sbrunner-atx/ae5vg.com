@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Ham Radio Model · AE5VG</title>
-<meta name="description" content="A small language model for digital-mode QSOs, in development: reading a contest exchange through noise the way an experienced operator does.">
+<meta name="description" content="A small language model for digital-mode QSOs, still in development, meant to read a contest exchange through noise the way an experienced operator does.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -33,14 +33,14 @@
   <div class="wrap">
     <p class="label">Product · in development</p>
     <h1>A small language model for digital-mode QSOs</h1>
-    <p class="lead">A contest exchange rarely arrives clean. It comes through band noise, fading, and another station transmitting over the top. An experienced operator still reads it, because the vocabulary is closed. The goal: FT8-style reliability of exchange on any keyboard mode, with a model small enough to run beside fldigi on a CPU.</p>
+    <p class="lead">A contest exchange rarely arrives clean. It comes through band noise, fading, and another station transmitting over the top. An experienced operator can still read it, because an exchange uses a small, fixed vocabulary. I want exchanges on any keyboard mode to get through as reliably as they do on FT8. The model has to be small enough to run beside fldigi on a CPU. This is a goal. Nothing has been measured yet.</p>
     <div class="btn-row">
       <a class="btn" href="dashboard.html">Capture rig dashboard</a>
     </div>
     <div class="strip">
       <div><span class="label">Status</span><strong>In development</strong></div>
       <div><span class="label">Components</span><strong>qso-resolver · qso-mcp</strong></div>
-      <div><span class="label">Published numbers</span><strong>none, on purpose</strong></div>
+      <div><span class="label">Published numbers</span><strong>None</strong></div>
     </div>
   </div>
 </section>
@@ -51,31 +51,31 @@
     <div class="cards">
       <div class="card">
         <span class="label">01 · Reference layer</span>
-        <h3>Looked up, never learned</h3>
-        <p>All 85 ARRL and RAC sections plus the Field Day pseudo-section DX, the class grammar, the ITA2 lost-shift table, MASTER.SCP fetched at build time. The model cannot invent a section that does not exist, because sections are not something it predicts.</p>
+        <h3>Fixed reference lists</h3>
+        <p>The reference layer holds all 85 ARRL and RAC sections, plus DX, the Field Day pseudo-section. It also holds the grammar for the class, the ITA2 table for lost shifts, and MASTER.SCP, which is fetched at build time. The sections come from this fixed list. The model picks from that list, so it cannot make up a section that does not exist.</p>
       </div>
       <div class="card">
         <span class="label">02 · Training data</span>
-        <h3>Real copy, not synthetic</h3>
-        <p>Training pairs come from real received copy: stations recorded through public KiwiSDR receivers sending the same thing more than once, or copied by two Signal Browser channels, with W1AW bulletins and DWD weather RTTY as further sources. The clean side of each pair is inferred from the best copy, not from published text, so the pairs train the model; they do not measure it. Contributed material is tracked with permission.</p>
+        <h3>Training pairs from received copy</h3>
+        <p>The training pairs come from text received on the air. Some come from stations that send the same thing more than once, recorded through public KiwiSDR receivers. Some come from a station copied by two Signal Browser channels. W1AW bulletins and DWD weather RTTY are further sources. The clean side of each pair is worked out from the best copy, not taken from a published text. So the pairs are training data. They are not an evaluation set and cannot measure the model. Contributed material is tracked with its contributor's permission.</p>
       </div>
       <div class="card">
         <span class="label">03 · Evaluation</span>
-        <h3>Honest numbers</h3>
-        <p>The harness runs against a held-out set of real QSOs, which does not yet exist in sufficient size. Until it does, no accuracy percentage is published, synthetic or otherwise.</p>
+        <h3>No accuracy figures yet</h3>
+        <p>The evaluation harness runs against a held-out set of real QSOs, kept apart from the training pairs. That set is not yet big enough. Until it is, I do not publish any accuracy percentage, whether from synthetic data or from anything else.</p>
       </div>
     </div>
 
     <h2>Two modes on one base model</h2>
-    <p>Contest mode runs a LoRA adapter over a closed output space: the exchange grammar constrains what the model may emit, so a busted section becomes a near-neighbor lookup, not a hallucination. Rag-chew mode runs without the adapter for free text. In both, confidence is the weakest field: when the model is not sure, ambiguity is handed back as <code>needs_human</code>, never guessed.</p>
+    <p>Contest mode adds a LoRA adapter, and the exchange grammar limits what the model may output. A busted section is then matched to the nearest valid section in the list, so the model does not make one up. Rag-chew mode runs without the adapter, for free text. In both modes, an exchange is only as certain as its least certain field. When the model is not sure, it hands the exchange back marked <code>needs_human</code> and does not guess.</p>
 
     <div class="callout">
       <span class="label">Status · September 2026</span>
-      <p>The deterministic half is built: the reference layer, an edit-distance resolver with no model in the path, and the evaluation harness, which prints null instead of a rate until a real held-out set exists. A capture rig runs unattended collecting pairs; its dashboard is public. The model is not trained yet. The code is not public until there is a number to stand behind.</p>
+      <p>The reference layer, the resolver and the evaluation harness are built. The resolver works by lookup and edit distance, with no model in it. Until a real held-out set exists, the harness prints null instead of a rate. A capture rig runs unattended and collects training pairs. Its dashboard is public. The model is not trained yet. The code will not be public until the model has been measured on a real held-out set.</p>
     </div>
 
     <h2>How to help</h2>
-    <p>If you enable text capture in fldigi during a contest and keep your log, you have exactly the pairs this needs: what your screen showed against what the log says was sent. What a contribution looks like, and where to send it, is on the <a href="../development.html">Development</a> page.</p>
+    <p>If you turn on text capture in fldigi during a contest and keep your log, you have the pairs this project needs. Each pair is what your screen showed, next to what your log says was sent. The <a href="../development.html">Development</a> page shows what a contribution looks like and where to send it.</p>
   </div>
 </main>
 

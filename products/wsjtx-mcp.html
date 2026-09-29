@@ -33,7 +33,7 @@
   <div class="wrap">
     <p class="label">Product · MIT</p>
     <h1>wsjtx-mcp</h1>
-    <p class="lead">An MCP server that controls WSJT-X, the weak-signal program for FT8, FT4, JT65, MSK144, Q65 and WSPR, from MCP clients such as Claude Desktop. It is the weak-signal leg of an operate-then-log trio: fldigi-mcp operates the broad digital modes, n3fjp-mcp logs, wsjtx-mcp operates the FT8 and FT4 world.</p>
+    <p class="lead">wsjtx-mcp is an MCP server. It lets an MCP client such as Claude Desktop control WSJT-X, the weak-signal program for FT8, FT4, JT65, MSK144, Q65 and WSPR. It is one of three servers that work together to operate and then log. fldigi-mcp operates the many digital modes in fldigi. wsjtx-mcp operates FT8, FT4 and the other WSJT-X modes. n3fjp-mcp logs the contacts.</p>
     <div class="btn-row">
       <a class="btn" href="../downloads.html#wsjtx-mcp">Download</a>
       <a class="btn ghost" href="https://github.com/sbrunner-atx/wsjtx-mcp">GitHub</a>
@@ -63,13 +63,13 @@
       </ul></nav>
       <div>
         <h2 id="what" style="margin-top:0">What it does</h2>
-        <p>WSJT-X does not offer a request-and-response API. It broadcasts state over UDP (Status, Decode, QSOLogged, Heartbeat) and honors a small set of inbound control messages. This server runs a background UDP listener that continuously parses datagrams. It keeps the latest status, a buffer of decodes and the completed QSOs; you read those, and nudge WSJT-X with control messages.</p>
-        <p>Some consequences are worth knowing up front. There is no dial-frequency control over UDP. You can read the dial from Status and set mode, sub-mode, Rx DF and T/R period via <code>configure</code>, but QSY is a rig-control concern (Hamlib, CAT or the UI). You can start and halt Tx, but you cannot toggle Enable Tx. Transmission is started by answering a CQ (<code>reply</code>) or by <code>free_text</code> with <code>send=true</code>, and stopped by <code>transmit halt</code>. The Enable Tx, Auto Seq, Call 1st and Hold Tx Freq checkboxes stay UI settings.</p>
-        <p>That makes it best for search and pounce and weak for RUN. The API is built to answer CQ and QRZ decodes, so search and pounce is fully automatable. A repeating call-CQ cycle needs WSJT-X's own Enable Tx in the UI, or a <code>free_text</code> CQ re-sent each period.</p>
-        <p>The protocol is schema 3 / Qt_5_4, stable across WSJT-X 2.1 through 3.x, verified live against WSJT-X 3.0.2.</p>
+        <p>WSJT-X has no API where you send a request and get an answer back. It broadcasts its state over UDP in messages such as Status, Decode, QSOLogged and Heartbeat. It also accepts a small set of control messages. wsjtx-mcp runs a UDP listener in the background that reads each datagram as it arrives. It keeps the latest status, a buffer of decodes and the completed QSOs. You read those, and you send WSJT-X control messages.</p>
+        <p>This has some consequences. UDP cannot change the dial frequency. You can read the dial from Status, and <code>configure</code> can set the mode, sub-mode, Rx DF and T/R period. To QSY you use rig control: Hamlib, CAT or the WSJT-X window. You can start and halt Tx, but you cannot turn Enable Tx on or off. A transmission starts when you answer a CQ with <code>reply</code>, or when you use <code>free_text</code> with <code>send=true</code>. <code>transmit halt</code> stops it. The Enable Tx, Auto Seq, Call 1st and Hold Tx Freq checkboxes can only be set in the WSJT-X window.</p>
+        <p>So wsjtx-mcp works well for search and pounce and is not well suited to RUN. The API is built to answer CQ and QRZ decodes, so search and pounce can be fully automated. To call CQ over and over, you need the Enable Tx checkbox in the WSJT-X window, or a <code>free_text</code> CQ sent again each period.</p>
+        <p>The protocol is schema 3 / Qt_5_4. It has not changed from WSJT-X 2.1 through 3.x. The server was tested live against WSJT-X 3.0.2.</p>
         <div class="callout">
           <span class="label">Experimental</span>
-          <p>wsjtx-mcp is experimental. Transmit is gated behind your callsign, and you remain the operator in command; read Safety before you set the callsign.</p>
+          <p>wsjtx-mcp is experimental. It will not transmit until you set your callsign, and you remain the operator in command. Read the Safety section before you set the callsign.</p>
         </div>
 
         <h2 id="features">Features and benefits</h2>
@@ -78,18 +78,18 @@
           <thead><tr><th scope="col">Feature</th><th scope="col">What it gives you</th></tr></thead>
           <tbody>
             <tr><td>UDP listener model</td><td>A background listener keeps the latest status, a decode buffer and the completed QSOs. You read that state instead of querying WSJT-X.</td></tr>
-            <tr><td>Decode and log buffers</td><td>Read, drain (poll new), clear or replay the decode stream. Completed QSOs are buffered from QSOLogged and LoggedADIF, ready to feed N3FJP.</td></tr>
+            <tr><td>Decode and log buffers</td><td>Read, drain (poll for new decodes), clear or replay the decode stream. Completed QSOs are kept from QSOLogged and LoggedADIF, ready to pass to N3FJP.</td></tr>
             <tr><td>Reply with Auto Seq</td><td>A <code>reply</code> is equivalent to double-clicking a CQ. With Auto Seq on, WSJT-X sequences the whole exchange to QSOLogged with no further calls. With Auto Seq off, it starts only the first transmission.</td></tr>
             <tr><td>Free text</td><td>Set the Tx5 free-text message. <code>send=true</code> keys the radio and is callsign gated.</td></tr>
-            <tr><td>Halt-only transmit</td><td>The <code>transmit</code> tool only stops a transmission (<code>halt</code> or <code>halt_auto</code>). UDP has no command for Enable Tx; transmission starts only through the gated <code>reply</code> or <code>free_text</code> with <code>send=true</code>.</td></tr>
-            <tr><td>Callsign transmit gate</td><td>With <code>WSJTX_CALLSIGN</code> blank the server is receive-only and refuses every transmit-initiating message. Halt and all reads stay available.</td></tr>
-            <tr><td>Configure without dial frequency</td><td>Mode, sub-mode, Rx DF, T/R period, frequency tolerance, DX call and grid. The dial stays with rig control (Hamlib, CAT or the UI).</td></tr>
+            <tr><td>Halt-only transmit</td><td>The <code>transmit</code> tool only stops a transmission (<code>halt</code> or <code>halt_auto</code>). UDP has no command for Enable Tx. A transmission starts only through the callsign-gated <code>reply</code> or <code>free_text</code> with <code>send=true</code>.</td></tr>
+            <tr><td>Callsign transmit gate</td><td>With <code>WSJTX_CALLSIGN</code> blank the server is receive-only and refuses every message that would start a transmission. Halt and all reads still work.</td></tr>
+            <tr><td>Configure without dial frequency</td><td>Set the mode, sub-mode, Rx DF, T/R period, frequency tolerance, DX call and grid. The dial frequency is set by rig control: Hamlib, CAT or the WSJT-X window.</td></tr>
             <tr><td>Window and station control</td><td>Clear the Band Activity and Rx Frequency windows, color or clear a callsign, override the Maidenhead grid, switch to a named configuration, set a Fox/Hound annotation.</td></tr>
             <tr><td>Multicast coexistence</td><td>Set <code>WSJTX_MULTICAST</code> to join a multicast group, so JTAlert, GridTracker or N1MM can listen alongside this server.</td></tr>
-            <tr><td>Instance targeting</td><td><code>WSJTX_INSTANCE</code> targets a specific WSJT-X Id when several instances broadcast. Control replies go back to the address each datagram came from.</td></tr>
-            <tr><td>Remote host</td><td>Sandboxed MCP clients reach only loopback. <code>mcp-host-bridge install wsjtx --to &lt;rig-host&gt;</code> does the LAN hop; set <code>WSJTX_PORT=2238</code>.</td></tr>
-            <tr><td>Escape hatch</td><td><code>wsjtx_call</code> builds and sends any message type by name; the transmit gate still applies.</td></tr>
-            <tr><td>Standard-library codec</td><td>The protocol codec is pure standard library and covers all 17 WSJT-X message types. It is unit-tested against byte fixtures, so the tests need no running WSJT-X.</td></tr>
+            <tr><td>Instance targeting</td><td>When several copies of WSJT-X broadcast, <code>WSJTX_INSTANCE</code> picks one by its Id. Control replies go back to the address each datagram came from.</td></tr>
+            <tr><td>Remote host</td><td>Sandboxed MCP clients can only reach loopback addresses. <code>mcp-host-bridge install wsjtx --to &lt;rig-host&gt;</code> carries the connection across the LAN. Then set <code>WSJTX_PORT=2238</code>.</td></tr>
+            <tr><td>Any message by name</td><td><code>wsjtx_call</code> builds and sends any message type by name. The transmit gate still applies.</td></tr>
+            <tr><td>Standard-library codec</td><td>The protocol codec uses only Python's standard library and covers all 17 WSJT-X message types. Its unit tests run against fixed byte sequences, so they do not need a running WSJT-X.</td></tr>
           </tbody>
         </table>
         </div>
@@ -115,11 +115,11 @@
             <text x="415" y="50" fill="#57606a" font-size="10" text-anchor="middle">status, decodes</text>
             <text x="415" y="96" fill="#57606a" font-size="10" text-anchor="middle">control replies</text>
           </svg>
-          <figcaption>WSJT-X broadcasts in; control messages go back. The listener keeps the buffers.</figcaption>
+          <figcaption>WSJT-X broadcasts status and decodes to the server, and the server sends control messages back. The listener keeps the buffers.</figcaption>
         </figure>
-        <p>In WSJT-X, set Settings → Reporting → UDP Server to the host running this server, port 2237. Turn Accept UDP requests on to allow control; it is off by default. Observing decodes and status works without it.</p>
-        <p>Only one process can normally own UDP 2237 on a host. If JTAlert, GridTracker or N1MM already consume it, point WSJT-X's secondary UDP server here, use a multicast group so several listeners coexist, or run this server on a different host.</p>
-        <p>To reach a WSJT-X on another machine, install <a href="mcp-host-bridge.html">mcp-host-bridge</a> on the computer that runs this server: <code>mcp-host-bridge install wsjtx --to &lt;rig-host&gt;</code>. Then set <code>WSJTX_PORT=2238</code>. Sandboxed MCP clients reach only loopback, and the bridge does the LAN hop.</p>
+        <p>In WSJT-X, set Settings → Reporting → UDP Server to the host running this server, port 2237. To allow control, turn on Accept UDP requests. It is off by default. Reading decodes and status works without it.</p>
+        <p>Normally only one program on a computer can listen on UDP port 2237. If JTAlert, GridTracker or N1MM already use it, you have three choices. Point WSJT-X's secondary UDP server at this server. Use a multicast group so several programs can listen at once. Or run this server on a different computer.</p>
+        <p>To reach WSJT-X on another computer, install <a href="mcp-host-bridge.html">mcp-host-bridge</a> on the computer that runs this server with <code>mcp-host-bridge install wsjtx --to &lt;rig-host&gt;</code>. Then set <code>WSJTX_PORT=2238</code>. Sandboxed MCP clients can only reach loopback addresses, so the bridge carries the connection across the LAN.</p>
 
         <h2 id="ask">Ask it</h2>
         <div class="exchange" role="figure" aria-label="Example requests and what happens">
@@ -134,7 +134,7 @@
         </div>
         <div class="callout warn">
           <span class="label">Keys the transmitter</span>
-          <p>Answering a CQ puts the station on the air. With <code>WSJTX_CALLSIGN</code> blank the request is refused. You remain the control operator under Part 97: stay where you can intervene, and say "stop" to halt.</p>
+          <p>Answering a CQ puts the station on the air. With <code>WSJTX_CALLSIGN</code> blank, the server refuses the request. You remain the control operator under Part 97. Stay where you can intervene, and say "stop" to halt.</p>
         </div>
 
         <h2 id="tools">Tools</h2>
@@ -142,20 +142,20 @@
         <table>
           <thead><tr><th scope="col">Tool</th><th scope="col">Kind</th><th scope="col">What it does</th></tr></thead>
           <tbody>
-            <tr><td><code>status</code></td><td>observe</td><td>Latest <code>Status</code> snapshot + listener/instance health.</td></tr>
-            <tr><td><code>diagnostics</code></td><td>observe</td><td>Host/network + bind status + datagram counts + gate state.</td></tr>
-            <tr><td><code>decodes</code></td><td>observe/nudge</td><td><code>read</code> / <code>drain</code> (poll new) / <code>clear_local</code> / <code>replay</code>. The RX plane.</td></tr>
-            <tr><td><code>log</code></td><td>observe</td><td>Buffered completed QSOs (<code>QSOLogged</code> + <code>LoggedADIF</code>) → feed N3FJP.</td></tr>
-            <tr><td><code>reply</code></td><td><strong>transmit</strong></td><td>Answer a buffered CQ/QRZ decode (auto-sequences the QSO when WSJT-X "Auto Seq" is on).</td></tr>
-            <tr><td><code>free_text</code></td><td><strong>transmit</strong> if <code>send</code></td><td>Set the Tx5 free-text message; <code>send=true</code> keys the radio.</td></tr>
-            <tr><td><code>transmit</code></td><td>control</td><td><code>halt</code> / <code>halt_auto</code>, stop transmitting (UDP cannot <em>enable</em> Tx).</td></tr>
-            <tr><td><code>configure</code></td><td>control</td><td>Mode/sub-mode/Rx DF/T-R period/freq-tol/DX call+grid. <strong>No dial freq.</strong></td></tr>
-            <tr><td><code>clear</code></td><td>control</td><td>Clear the Band Activity / Rx Frequency windows.</td></tr>
+            <tr><td><code>status</code></td><td>observe</td><td>Latest <code>Status</code> snapshot, and the health of the listener and of each WSJT-X instance.</td></tr>
+            <tr><td><code>diagnostics</code></td><td>observe</td><td>Host and network details, whether the UDP port is bound, datagram counts, and whether the transmit gate is open.</td></tr>
+            <tr><td><code>decodes</code></td><td>observe/nudge</td><td><code>read</code>, <code>drain</code> (poll for new decodes), <code>clear_local</code> and <code>replay</code> for the received decodes.</td></tr>
+            <tr><td><code>log</code></td><td>observe</td><td>Completed QSOs buffered from <code>QSOLogged</code> and <code>LoggedADIF</code>, ready to pass to N3FJP.</td></tr>
+            <tr><td><code>reply</code></td><td><strong>transmit</strong></td><td>Answer a buffered CQ or QRZ decode. When "Auto Seq" is on, WSJT-X sequences the rest of the QSO.</td></tr>
+            <tr><td><code>free_text</code></td><td><strong>transmit</strong> if <code>send</code></td><td>Set the Tx5 free-text message. <code>send=true</code> keys the radio.</td></tr>
+            <tr><td><code>transmit</code></td><td>control</td><td><code>halt</code> or <code>halt_auto</code> stops a transmission. UDP cannot <em>enable</em> Tx.</td></tr>
+            <tr><td><code>configure</code></td><td>control</td><td>Mode, sub-mode, Rx DF, T/R period, frequency tolerance, DX call and grid. <strong>Not the dial frequency.</strong></td></tr>
+            <tr><td><code>clear</code></td><td>control</td><td>Clear the Band Activity and Rx Frequency windows.</td></tr>
             <tr><td><code>highlight</code></td><td>control</td><td>Color or clear a callsign in Band Activity.</td></tr>
             <tr><td><code>location</code></td><td>control</td><td>Override the session Maidenhead grid.</td></tr>
             <tr><td><code>switch_config</code></td><td>control</td><td>Switch to a named WSJT-X configuration.</td></tr>
-            <tr><td><code>annotate</code></td><td>control</td><td>Set a Fox/Hound sort-order annotation for a DX call (niche, DXpedition).</td></tr>
-            <tr><td><code>wsjtx_call</code></td><td>escape hatch</td><td>Build &amp; send any message type by name (gate still applies).</td></tr>
+            <tr><td><code>annotate</code></td><td>control</td><td>Set a Fox/Hound sort-order annotation for a DX call. Mainly for DXpeditions.</td></tr>
+            <tr><td><code>wsjtx_call</code></td><td>escape hatch</td><td>Build and send any message type by name. The transmit gate still applies.</td></tr>
           </tbody>
         </table>
         </div>
@@ -167,18 +167,18 @@
           <tbody>
             <tr><td><code>WSJTX_HOST</code></td><td><code>127.0.0.1</code></td><td>UDP address to bind and listen on.</td></tr>
             <tr><td><code>WSJTX_PORT</code></td><td><code>2237</code></td><td>WSJT-X UDP Server port.</td></tr>
-            <tr><td><code>WSJTX_CALLSIGN</code></td><td>empty</td><td>Operator callsign, the single transmit gate. Blank is receive-only.</td></tr>
-            <tr><td><code>WSJTX_MULTICAST</code></td><td>off</td><td>Optional multicast group to join, to coexist with other UDP consumers.</td></tr>
+            <tr><td><code>WSJTX_CALLSIGN</code></td><td>empty</td><td>Operator callsign. This is the only transmit gate. Blank means receive-only.</td></tr>
+            <tr><td><code>WSJTX_MULTICAST</code></td><td>off</td><td>Optional multicast group to join, so other programs can listen to WSJT-X at the same time.</td></tr>
             <tr><td><code>WSJTX_INSTANCE</code></td><td>auto</td><td>Target a specific WSJT-X Id when several instances broadcast.</td></tr>
           </tbody>
         </table>
         </div>
-        <p>Host and port are where this server listens; control replies are sent back to the address each datagram arrived from.</p>
+        <p>Host and port are where this server listens. Control replies go back to the address each datagram came from.</p>
 
         <h2 id="safety">Safety</h2>
         <div class="callout warn">
           <span class="label">Can key a transmitter</span>
-          <p>The callsign is the single transmit gate, exactly as in fldigi-mcp. With <code>WSJTX_CALLSIGN</code> blank the server is receive-only. It refuses <code>reply</code>, <code>free_text</code> with <code>send=true</code>, and any keying message via <code>wsjtx_call</code>. Halt, clear, configure, highlight, location, replay and all reads are always available; they do not put you on the air, and halt takes you off. Per-transmit approval comes from the client's tool-permission prompt. WSJT-X's own Tx Watchdog and the Tx Enabled and Transmitting flags, surfaced in <code>status</code>, are extra safety signals. Operating under Part 97 automatic or remote control is the operator's responsibility: ensure station identification and a control operator who can intervene.</p>
+          <p>The callsign is the only transmit gate, as in fldigi-mcp. With <code>WSJTX_CALLSIGN</code> blank the server is receive-only. It refuses <code>reply</code>, <code>free_text</code> with <code>send=true</code>, and any keying message sent through <code>wsjtx_call</code>. Halt, clear, configure, highlight, location, replay and all reads always work. None of them put you on the air, and halt takes you off. The client's tool permission prompt asks you to approve each transmission. <code>status</code> also shows WSJT-X's own Tx Watchdog and the Tx Enabled and Transmitting flags, as further safety signals. If you operate under Part 97 automatic or remote control, that is your responsibility as the operator. Make sure the station identifies and that a control operator can intervene.</p>
         </div>
 
         <h2 id="docs">Documents</h2>

@@ -60,7 +60,7 @@ td.num,th.num{text-align:right;font-family:var(--mono)}
   <div class="wrap">
     <p class="label">The Ham Radio Model · capture rig</p>
     <h1>Capture rig dashboard</h1>
-    <p class="lead">One KiwiSDR channel at a time, rotating the digital watering holes, decoded through fldigi one segment behind real time, paired into training data for <a href="qso-resolver.html">the model</a>. Own recordings of the public amateur bands through public KiwiSDR receivers; no decoded text leaves the rig except what this page shows; nothing edited, noise left out.</p>
+    <p class="lead">The capture rig listens to one KiwiSDR channel at a time and moves around the digital-mode watering holes. fldigi decodes the audio one segment behind real time. The rig then pairs the decoded lines into training data for <a href="qso-resolver.html">the model</a>. These are our own recordings of the public amateur bands, made through public KiwiSDR receivers. No decoded text leaves the rig except what this page shows. Nothing is edited. Lines that are only noise are left out.</p>
     <p id="stamp" class="small">Loading…</p>
   </div>
 </section>
@@ -72,14 +72,14 @@ td.num,th.num{text-align:right;font-family:var(--mono)}
 
     <h2 id="day">Last 24 hours</h2>
     <div id="day-body"></div>
-    <p class="small">Pairs are lines of the same station received more than once, aligned against the best copy. The clean side is inferred from the best copy, not from published text, so pairs are training data and not an evaluation set.</p>
+    <p class="small">A pair is a line from one station that the rig received more than once, lined up against the best copy. The clean side of the pair is worked out from that best copy, not taken from a published text. So the pairs are training data. They are not an evaluation set.</p>
 
     <h2 id="recent">Recent segments</h2>
     <div id="recent-body"></div>
 
     <h2 id="decoded">Decoded, the last three days</h2>
-    <p>Every line the rig decoded that reads as traffic, segment by segment, garble included and nothing edited. A line counts as traffic when it holds several recognizable words or ham shorthand in sequence, or a callsign with an allocated prefix next to DE or CQ or repeated, in a line that is mostly not junk. A decoder on an empty channel prints single letters with a callsign-shaped token now and then; that is left out, so a quiet segment shows nothing. Each card names the KiwiSDR and the dial frequency; the slice is the 3 kHz above it, where the watering hole sits.</p>
-    <p>These are our own recordings of the public amateur bands through public KiwiSDR receivers, and they may be shared; amateur transmissions carry no expectation of privacy. Material contributed by other hams is handled case by case.</p>
+    <p>These are all the lines the rig decoded that read as traffic, shown segment by segment. Garbled text is included and nothing is edited. A line counts as traffic if most of it is not junk and it has one of two things. One is several recognizable words or pieces of ham shorthand in a row. The other is a callsign with an allocated prefix that appears next to DE or CQ, or appears more than once. On an empty channel, a decoder prints single letters and, now and then, something shaped like a callsign. That is left out, so a quiet segment shows nothing. Each card names the KiwiSDR and the dial frequency. The rig listens to the 3 kHz above the dial, where the watering hole sits.</p>
+    <p>These are our own recordings of the public amateur bands, made through public KiwiSDR receivers, and they may be shared. Amateur transmissions carry no expectation of privacy. Material contributed by other hams is handled case by case.</p>
     <div class="tabs" id="tabs" role="group" aria-label="Pick a UTC day"></div>
     <div class="filters">
       <select id="band" aria-label="Filter by band"><option value="">all bands</option></select>
@@ -89,7 +89,7 @@ td.num,th.num{text-align:right;font-family:var(--mono)}
     </div>
     <p class="count" id="count"></p>
     <div id="list"></div>
-    <p class="small">Source: a status file the rig publishes every two minutes, and day files rewritten on the same schedule, republished through a cache; a line can be up to five minutes behind.</p>
+    <p class="small">The rig publishes a status file every two minutes and rewrites the day files on the same schedule. Both are served through a cache, so a line can show up to five minutes late.</p>
   </div>
 </main>
 
@@ -133,7 +133,7 @@ function renderStatus(st) {
       ${kv("Decoder", `${d.lag_minutes ?? 0} min behind`, `${d.segments_pending ?? 0} segment(s) pending${d.backlog_flag ? ", backlog" : ""}`)}
     </div>
     <div class="bar"><i style="width:${Math.round((c.segment_progress||0)*100)}%"></i></div>
-    <p class="small">Segments cut on the clock every ${Math.round(c.segment_s/60)} minutes; each is decoded as soon as it closes.</p>`;
+    <p class="small">The rig cuts a new segment by the clock every ${Math.round(c.segment_s/60)} minutes. Each segment is decoded as soon as it closes.</p>`;
   } else if (st.state === "stopped") {
     now += `<p>The passive loop is not running. Last stream: ${c.label ? esc(c.label) : "unknown"}.</p>`;
   }
@@ -146,7 +146,7 @@ function renderStatus(st) {
     ${kv("Pairs", l.pairs ?? 0, `${l.pairs_exact ?? 0} exact`)}
   </div>
   <p class="small">Pairs by kind: ${Object.keys(l.pairs_by_kind||{}).length ? esc(Object.entries(l.pairs_by_kind).map(([k,v])=>`${k} ${v}`).join(", ")) : "none yet"} · by mode: ${Object.keys(l.pairs_by_mode||{}).length ? esc(Object.entries(l.pairs_by_mode).map(([k,v])=>`${k} ${v}`).join(", ")) : "none yet"} · by band: ${Object.keys(l.pairs_by_band||{}).length ? esc(Object.entries(l.pairs_by_band).map(([k,v])=>`${k} ${v}`).join(", ")) : "none yet"}</p>
-  <p class="small">"repeat" is the station sending the same thing again; "browser-neighbour" (the rig's own label) is two Signal Browser channels copying one transmission, a second demodulator's copy rather than a repeat. Both are counted, never mixed.</p>`;
+  <p class="small">"repeat" means the station sent the same thing again. "browser-neighbour" is the rig's own label. It means two Signal Browser channels copied one transmission, so the second copy comes from a second demodulator and is not a repeat. Both kinds are counted, and they are kept apart.</p>`;
   const rs = st.recent_segments || [];
   $("recent-body").innerHTML = rs.length ? `<div style="overflow-x:auto"><table><thead><tr><th scope="col">Decoded</th><th scope="col">Band</th><th scope="col">Mode</th><th scope="col">KiwiSDR</th><th scope="col" class="num">Lines</th><th scope="col" class="num">Stations</th><th scope="col" class="num">Pairs</th></tr></thead><tbody>
     ${rs.map(r => `<tr><td>${esc(r.utc.slice(5,16))}Z</td><td>${esc(r.band)}</td><td>${esc(r.mode)}</td><td>${esc(r.receiver)}</td><td class="num">${r.lines}</td><td class="num">${r.stations}</td><td class="num">${r.pairs}</td></tr>`).join("")}</tbody></table></div>` : "<p class='small'>No segments decoded yet.</p>";
@@ -162,7 +162,7 @@ async function loadStatus() {
     if (!st) { const r = await fetch(RAW_STATUS + "?t=" + Date.now()); st = await r.json(); }
     renderStatus(st);
   } catch (e) {
-    $("stamp").textContent = "Could not load the status file. The source may be rate-limited for this network; try again in a minute.";
+    $("stamp").textContent = "Could not load the status file. The source may be rate-limited for this network. Try again in a minute.";
   }
 }
 loadStatus(); setInterval(loadStatus, 60000);

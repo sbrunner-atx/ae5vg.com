@@ -33,7 +33,7 @@
   <div class="wrap">
     <p class="label">From zero to the first QSO</p>
     <h1>Getting Started</h1>
-    <p class="lead">For a ham who has never used an assistant. The full operating standard is the <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-mcp%20Operating%20Field%20Guide.pdf">Operating Field Guide (PDF)</a>, also <a href="user-guide/operating-field-guide.html">readable online</a>.</p>
+    <p class="lead">This page is for a ham who has never used an AI assistant. The full operating standard is the <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-mcp%20Operating%20Field%20Guide.pdf">Operating Field Guide (PDF)</a>. You can also <a href="user-guide/operating-field-guide.html">read it online</a>.</p>
   </div>
 </section>
 
@@ -53,11 +53,11 @@
       </ul></nav>
       <div>
         <h2 id="what" style="margin-top:0">What you are installing</h2>
-        <p>Claude is an assistant. It runs in the Claude Desktop app, which looks like a messaging window. The two MCP servers are rig-interface cables: one plugs Claude into fldigi, the other into N3FJP. You type plain English; nothing about your fldigi or N3FJP setup changes.</p>
+        <p>Claude is an AI assistant. You use it in the Claude Desktop app, which looks like a messaging window. The two MCP servers work like rig interface cables. One connects Claude to fldigi, and the other connects it to N3FJP. You type to Claude in plain English. Your fldigi and N3FJP setup does not change.</p>
 
         <h2 id="setup">Set up once</h2>
         <ol class="steps">
-          <li>Install Claude Desktop from <a href="https://claude.ai/download">claude.ai/download</a> and sign in. A paid plan is recommended; the free tier can run out of messages mid-QSO.</li>
+          <li>Install Claude Desktop from <a href="https://claude.ai/download">claude.ai/download</a> and sign in. A paid plan is recommended. On the free plan you can run out of messages in the middle of a QSO.</li>
           <li>Start fldigi. Its XML-RPC interface is on by default at <code>127.0.0.1:7362</code>.</li>
           <li>For logging, start N3FJP and enable <strong>Settings → Application Program Interface → TCP API Enabled</strong> (port 1100).</li>
         </ol>
@@ -65,17 +65,17 @@
         <h2 id="load">Load the MCP servers</h2>
         <ol class="steps">
           <li>Download <code>fldigi-mcp.mcpb</code> and <code>n3fjp-mcp.mcpb</code> from <a href="downloads.html">Downloads</a>.</li>
-          <li>In Claude Desktop: <strong>Settings → Extensions → Advanced settings → Install Extension</strong>, choose the file.</li>
-          <li>Enter your callsign in the fldigi-mcp settings. It is the transmit gate; blank keeps the station receive-only.</li>
-          <li>Repeat for n3fjp-mcp. Host and port default to <code>127.0.0.1:1100</code>.</li>
+          <li>In Claude Desktop, open <strong>Settings → Extensions → Advanced settings → Install Extension</strong> and choose the file you downloaded.</li>
+          <li>Enter your callsign in the fldigi-mcp settings. fldigi-mcp will not transmit without it. If you leave it blank, the station can only receive.</li>
+          <li>Do the same for n3fjp-mcp. Its host and port default to <code>127.0.0.1:1100</code>.</li>
         </ol>
-        <p>No terminal, no Python: Claude Desktop's runtime supplies both.</p>
+        <p>You do not need to open a terminal or install Python. Claude Desktop's runtime takes care of that.</p>
         <h3 id="other-clients">Other AI assistants</h3>
         <div class="callout">
           <span class="label">Not needed for Claude Desktop</span>
-          <p>If you use the Claude Desktop app, skip this part. The two extensions above are all it needs, and Cowork and Claude Code sessions in the app use the same connectors.</p>
+          <p>If you use the Claude Desktop app, skip this part. The two extensions above are all it needs. Cowork and Claude Code sessions in the app use the same connectors.</p>
         </div>
-        <p>Other assistants that support MCP, such as Claude Code in a terminal or a third-party MCP client, cannot install a <code>.mcpb</code> file. They start each connector themselves from PyPI with <code>uvx</code>, which comes with <a href="https://docs.astral.sh/uv/">uv</a>. In Claude Code in a terminal it is one command per connector; put your own callsign in place of <code>YOURCALL</code>:</p>
+        <p>Other assistants that support MCP, such as Claude Code in a terminal or a third-party MCP client, cannot install a <code>.mcpb</code> file. They start each connector themselves from PyPI with <code>uvx</code>, which comes with <a href="https://docs.astral.sh/uv/">uv</a>. In Claude Code in a terminal, you run one command for each connector. Put your own callsign in place of <code>YOURCALL</code>.</p>
         <pre><code>claude mcp add fldigi -e FLDIGI_CALLSIGN=YOURCALL -- uvx fldigi-mcp
 claude mcp add n3fjp -- uvx n3fjp-mcp</code></pre>
         <p>Other clients take the same information as a configuration block:</p>
@@ -92,10 +92,10 @@ claude mcp add n3fjp -- uvx n3fjp-mcp</code></pre>
     }
   }
 }</code></pre>
-        <p>Settings are environment variables: <code>FLDIGI_HOST</code>, <code>FLDIGI_PORT</code> and <code>FLDIGI_CALLSIGN</code> for fldigi-mcp, <code>N3FJP_HOST</code> and <code>N3FJP_PORT</code> for n3fjp-mcp. Leave <code>FLDIGI_CALLSIGN</code> out to stay receive-only. For Claude Code in a terminal, also copy the skill directories (<code>skills/&lt;name&gt;/</code>) from each repository into <code>~/.claude/skills/</code>, or into a project's <code>.claude/skills/</code>.</p>
+        <p>Here the settings are environment variables. fldigi-mcp uses <code>FLDIGI_HOST</code>, <code>FLDIGI_PORT</code> and <code>FLDIGI_CALLSIGN</code>. n3fjp-mcp uses <code>N3FJP_HOST</code> and <code>N3FJP_PORT</code>. Leave <code>FLDIGI_CALLSIGN</code> out and the station can only receive. For Claude Code in a terminal, also copy the skill directories (<code>skills/&lt;name&gt;/</code>) from each repository into <code>~/.claude/skills/</code>, or into a project's <code>.claude/skills/</code>.</p>
 
         <h2 id="session">Start a session</h2>
-        <p>Open a new chat, or a Cowork session, and type: <code>What is the fldigi status?</code> Mode, frequency and T/R state come back. If not, <code>run the fldigi diagnostics</code> tells you whether it is a network problem before you blame fldigi.</p>
+        <p>Open a new chat or a Cowork session and type <code>What is the fldigi status?</code> Claude should answer with the mode, the frequency and the T/R state. If it does not, type <code>run the fldigi diagnostics</code>. That tells you whether the problem is the network connection, before you go looking for a fault in fldigi.</p>
 
         <h2 id="qso">Your first QSO, on a dummy load</h2>
         <figure class="diagram">
@@ -127,12 +127,12 @@ claude mcp add n3fjp -- uvx n3fjp-mcp</code></pre>
           <figcaption>The four-state loop from the Field Guide: CQ, Exchange, TU, Log, then QRZ and back to CQ.</figcaption>
         </figure>
         <div class="callout warn">
-          <span class="label">This keys the transmitter: you are the control operator</span>
-          <p>With the radio on a dummy load, type: <code>Call CQ Field Day until someone answers. Work them, our exchange is 2A STX, log the contact to N3FJP, then keep calling.</code> Watch one full cycle: the TX drop, the listen window, the log entry. Then connect the antenna. <code>stop</code> works at any moment. Under Part 97 you remain the control operator; stay at the station while it transmits.</p>
+          <span class="label">This keys the transmitter. You are the control operator.</span>
+          <p>Put the radio on a dummy load and type <code>Call CQ Field Day until someone answers. Work them, our exchange is 2A STX, log the contact to N3FJP, then keep calling.</code> Watch one full cycle. You should see the transmitter drop, then the listening period, then the entry in the log. Only then connect the antenna. You can type <code>stop</code> at any moment. Under Part 97 you are still the control operator, so stay at the station while it transmits.</p>
         </div>
 
         <h2 id="hunt">Hunting for a station</h2>
-        <p>signal_hunt taps the audio fldigi listens to, names each signal's mode from its shape (RTTY, CW, BPSK31/63/125, Olivia, MFSK16, DominoEX, MT63), ranks the station that sits still and calls CQ, and tunes to it. It needs the <code>fldigi-mcp[hunt]</code> extra (numpy, sounddevice); the <code>.mcpb</code> runtime installs it for you. Set <strong>Audio input device</strong> to the device fldigi uses; part of its name is enough, for example <code>iMic</code>. macOS asks once for microphone permission. Type: <code>Find me someone calling CQ on 20 meters PSK31.</code></p>
+        <p>The signal_hunt tool listens to the same audio that fldigi hears. It names the mode of each signal from its shape: RTTY, CW, BPSK31/63/125, Olivia, MFSK16, DominoEX or MT63. It puts a station that holds one frequency and calls CQ at the top of the list, and tunes to it. It needs the <code>fldigi-mcp[hunt]</code> extra, which adds numpy and sounddevice. If you installed the <code>.mcpb</code> file, the runtime installs the extra for you. In the fldigi-mcp settings, set <strong>Audio input device</strong> to the sound device fldigi uses. Part of its name is enough, for example <code>iMic</code>. On a Mac, macOS asks once for permission to use the microphone. Then type <code>Find me someone calling CQ on 20 meters PSK31.</code></p>
         <figure class="diagram">
           <svg viewBox="0 0 380 326" role="img" aria-label="Diagram: the signal hunt loop. Hunt with signal_hunt over 20 seconds of audio, rank the candidates highest score first, tune with tune_to, read 20 seconds of text. If the station calls CQ with a callsign twice, hand off to fldigi-operating; if not, go back and tune the next candidate." font-family="JetBrains Mono,monospace">
             <g fill="none" stroke="#0969da" stroke-width="1">
@@ -159,13 +159,13 @@ claude mcp add n3fjp -- uvx n3fjp-mcp</code></pre>
           </svg>
           <figcaption>The hunt loop from skill 03: hunt, rank, tune, read twenty seconds, then hand off to fldigi-operating or try the next candidate.</figcaption>
         </figure>
-        <p>In a Cowork session, a container, or with fldigi on another computer, the server cannot open the sound card. Run <code>fldigi-mcp-tap --device iMic</code> beside fldigi and set <strong>Signal-hunt tap URL</strong> to <code>http://127.0.0.1:7365</code>, or that computer's address. With no audio at all, <code>signal_hunt</code> with <code>method="api"</code> steps fldigi's own <code>search_up</code>: slow, and blind to mode.</p>
-        <p>Two more ways to hunt need a patched fldigi. <code>signal_hunt method="browser"</code> reads fldigi's Signal Browser: up to 30 PSK, RTTY or CW stations at once, with their text. The <code>rsid</code> tool lists the RSID bursts fldigi heard, by mode and frequency, without switching the modem.</p>
+        <p>fldigi-mcp cannot open the sound card in a Cowork session, in a container, or when fldigi runs on another computer. In those cases, run <code>fldigi-mcp-tap --device iMic</code> on the computer that runs fldigi. Then set <strong>Signal-hunt tap URL</strong> to <code>http://127.0.0.1:7365</code>, or to that computer's address. If there is no audio at all, <code>signal_hunt</code> with <code>method="api"</code> calls fldigi's own <code>search_up</code> over and over. That is slow, and it cannot tell one mode from another.</p>
+        <p>Two more ways to hunt need a patched fldigi. <code>signal_hunt method="browser"</code> reads fldigi's Signal Browser. That shows up to 30 PSK, RTTY or CW stations at once, with the text from each. The <code>rsid</code> tool lists the RSID bursts fldigi heard, with their mode and frequency. It does this without switching the modem.</p>
         <div class="callout">
           <span class="label">Proposed, not yet in fldigi</span>
-          <p>The Signal Browser and RSID patches were offered to the fldigi maintainer on 11 and 16 September 2026 (w1hkj/fldigi issue 55). Neither is merged. On an unpatched fldigi both tools answer with a hint and nothing else changes.</p>
+          <p>The Signal Browser and RSID patches were offered to the fldigi maintainer on 11 and 16 September 2026 (w1hkj/fldigi issue 55). Neither is merged. On an unpatched fldigi, both tools answer with a hint. Nothing else changes.</p>
         </div>
-        <p>Limits, stated: mode naming is verified on five recordings of known mode, 5 of 5. The hunt is receive only.</p>
+        <p>So far the mode naming has been tested on five recordings of known mode, and it named all five correctly. Hunting only listens. It never transmits.</p>
 
         <h2 id="remote">fldigi or N3FJP on another computer</h2>
         <figure class="diagram">
@@ -193,14 +193,14 @@ claude mcp add n3fjp -- uvx n3fjp-mcp</code></pre>
             </g>
             <text x="407" y="88" fill="#57606a" font-size="10" text-anchor="middle">LAN</text>
           </svg>
-          <figcaption>The shack split: the connector keeps talking to loopback; the bridge carries it across the LAN.</figcaption>
+          <figcaption>The connector still talks to 127.0.0.1 on the Mac. mcp-host-bridge carries that connection across the LAN to the PC.</figcaption>
         </figure>
-        <p>For fldigi, start it on the other computer with <code>--xmlrpc-server-address 0.0.0.0</code> so it accepts LAN connections. Claude Desktop's sandbox reaches only <code>127.0.0.1</code>. Install <a href="products/mcp-host-bridge.html">mcp-host-bridge</a> on the computer that runs Claude, run one command, and leave the connector host at <code>127.0.0.1</code>. Trusted LAN only.</p>
+        <p>For fldigi, start it on the other computer with <code>--xmlrpc-server-address 0.0.0.0</code> so that it accepts connections from the LAN. Claude Desktop runs connectors in a sandbox that can only reach <code>127.0.0.1</code>, the computer Claude is on. To get past that, install <a href="products/mcp-host-bridge.html">mcp-host-bridge</a> on the computer that runs Claude and run the command below, with your other computer's address in place of 192.168.1.50. Leave the connector host set to <code>127.0.0.1</code>. Use this only on a trusted LAN.</p>
         <pre><code>mcp-host-bridge install n3fjp --to 192.168.1.50</code></pre>
-        <p>The same works for <code>fldigi</code> and <code>wsjtx</code>. Keep the link on a trusted LAN or tunnel it over SSH; the connection is not encrypted and fldigi's XML-RPC interface is unauthenticated.</p>
+        <p>The same command works with <code>fldigi</code> or <code>wsjtx</code> in place of <code>n3fjp</code>. Keep the link on a trusted LAN, or tunnel it over SSH. The connection is not encrypted, and fldigi's XML-RPC interface does not ask for any login.</p>
 
         <h2 id="next">Where to go next</h2>
-        <p>The <a href="user-guide/index.html">User Guide</a> has the full Field Guides. The <a href="products/fldigi-mcp.html">fldigi-mcp product page</a> has the tools, the settings and the fldigi XML-RPC reference. See <a href="downloads.html">Downloads</a> for every file; <a href="development.html">Development</a> if you want to help.</p>
+        <p>The <a href="user-guide/index.html">User Guide</a> has the full Field Guides. The <a href="products/fldigi-mcp.html">fldigi-mcp product page</a> lists the tools and the settings, and has the fldigi XML-RPC reference. <a href="downloads.html">Downloads</a> has every file. If you want to help with the software, start at <a href="development.html">Development</a>.</p>
       </div>
     </div>
   </div>

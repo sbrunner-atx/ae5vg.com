@@ -33,7 +33,7 @@
   <div class="wrap">
     <p class="label">Product · MIT</p>
     <h1>mcp-host-bridge</h1>
-    <p class="lead">A configurable loopback-to-remote TCP/UDP relay so a sandboxed MCP client can reach a service running on another computer. Standard library only at runtime; binaries for macOS, Windows and Linux need no Python at all.</p>
+    <p class="lead">A TCP and UDP relay that forwards from loopback to another computer, so a sandboxed MCP client can reach a service running there. You configure one relay per service. At runtime it uses only the Python standard library. The binaries for macOS, Windows and Linux need no Python at all.</p>
     <div class="btn-row">
       <a class="btn" href="../downloads.html#mcp-host-bridge">Download</a>
       <a class="btn ghost" href="https://github.com/sbrunner-atx/mcp-host-bridge">GitHub</a>
@@ -55,7 +55,7 @@
         <li><a href="#what">What it does</a></li>
         <li><a href="#features">Features and benefits</a></li>
         <li><a href="#how">How it works</a></li>
-        <li><a href="#ask">Ask it</a></li>
+        <li><a href="#ask">Install it</a></li>
         <li><a href="#tools">Tools</a></li>
         <li><a href="#settings">Settings</a></li>
         <li><a href="#safety">Safety</a></li>
@@ -63,22 +63,22 @@
       </ul></nav>
       <div>
         <h2 id="what" style="margin-top:0">What it does</h2>
-        <p>Some MCP clients, Claude Desktop is the notable one, run their connectors sandboxed so the connector can only reach <code>127.0.0.1</code>, not LAN addresses. This holds even with macOS Local Network permission turned on; it is a deliberate security boundary, not a bug. A LAN IP for fldigi or N3FJP therefore times out, even though <code>telnet</code> to the same IP works. The relay runs outside the sandbox on the same machine as the client. It listens on loopback and forwards to the remote service. You point the connector at <code>127.0.0.1</code>, and the bridge does the LAN hop.</p>
-        <p>This is a client-environment workaround, not anything specific to a given MCP server, which is exactly why it lives in its own generic tool instead of inside any one server.</p>
+        <p>Some MCP clients, Claude Desktop among them, run their connectors in a sandbox. A connector in that sandbox can reach <code>127.0.0.1</code> but not LAN addresses. This is true even with the macOS Local Network permission turned on. The sandbox is a security boundary by design, not a bug. If you give the connector a LAN IP for fldigi or N3FJP, it times out, even though <code>telnet</code> to the same IP works. The relay runs outside the sandbox, on the same computer as the client. It listens on loopback and forwards to the remote service. You point the connector at <code>127.0.0.1</code>, and the bridge makes the hop to the LAN.</p>
+        <p>The problem comes from the client's environment, not from any one MCP server. That is why the workaround is a separate tool that works with any server, instead of being built into one of them.</p>
 
         <h2 id="features">Features and benefits</h2>
         <div class="table-scroll">
         <table>
           <thead><tr><th scope="col">Feature</th><th scope="col">What it gives you</th></tr></thead>
           <tbody>
-            <tr><td>Loopback-to-LAN relay</td><td>TCP and UDP, one command per service. Multiple bridges coexist side by side; the service name is the instance key.</td></tr>
+            <tr><td>Loopback-to-LAN relay</td><td>Relays TCP and UDP, with one command per service. Several bridges can run side by side. Each one is identified by its service name.</td></tr>
             <tr><td>Standard library only at runtime</td><td>The relay has no third-party dependencies. It does not modify or inspect traffic.</td></tr>
             <tr><td>Presets</td><td><code>n3fjp</code> = 1100 (TCP), <code>fldigi</code> = 7362 (TCP), <code>wsjtx</code> = 2237 (UDP). Add your own in <code>~/.mcp-host-bridge/services.ini</code>.</td></tr>
             <tr><td>Custom services</td><td>A program with no preset needs only a port: <code>mcp-host-bridge install myapp --port 5000 --to 192.168.1.9</code>.</td></tr>
             <tr><td>Status check</td><td><code>mcp-host-bridge status &lt;service&gt;</code> checks the bridge and tests the connection.</td></tr>
-            <tr><td>UDP listen-and-deliver</td><td>UDP is connectionless and bidirectional, so the topology inverts: the bridge listens on the LAN side and delivers to loopback, and control replies are routed back to the datagram's source, auto-learned.</td></tr>
-            <tr><td>Persistence per OS</td><td>macOS: launchd LaunchAgent, per-user, <code>RunAtLoad</code> and <code>KeepAlive</code>. Windows: <code>netsh interface portproxy</code> for TCP, no Python required; UDP uses a Scheduled Task running the relay, and TCP falls back to one if <code>netsh</code> is unavailable. Linux: systemd <code>--user</code> service with <code>Restart=always</code>. The same commands work on every OS.</td></tr>
-            <tr><td>Binaries with no Python</td><td>One file per OS from the releases; the installed service invokes that binary directly.</td></tr>
+            <tr><td>UDP listen-and-deliver</td><td>UDP has no connections and runs in both directions, so the bridge works the other way round. It listens on the LAN side and delivers to loopback. Control replies go back to the address the datagram came from, which the bridge learns by itself.</td></tr>
+            <tr><td>Persistence per OS</td><td>macOS: launchd LaunchAgent, per-user, <code>RunAtLoad</code> and <code>KeepAlive</code>. Windows: <code>netsh interface portproxy</code> for TCP, with no Python required. UDP uses a Scheduled Task running the relay, and TCP falls back to one if <code>netsh</code> is unavailable. Linux: systemd <code>--user</code> service with <code>Restart=always</code>. The same commands work on every OS.</td></tr>
+            <tr><td>Binaries with no Python</td><td>Download one file for your OS from the releases. The installed service runs that binary directly.</td></tr>
           </tbody>
         </table>
         </div>
@@ -117,9 +117,9 @@
           </svg>
           <figcaption>Top: the TCP relay. Bottom: the inverted UDP variant, where datagrams arrive from the LAN and replies are routed back to their source.</figcaption>
         </figure>
-        <p>For TCP, the bridge listens on loopback and connects out to the remote program. For UDP the topology is inverted: WSJT-X broadcasts datagrams in, and control replies must return to the address each datagram came from. The bridge learns the remote peer from the first inbound datagram, or you pin it with <code>--to</code>.</p>
+        <p>For TCP, the bridge listens on loopback and connects out to the remote program. For UDP it works the other way round. WSJT-X broadcasts datagrams in, and control replies must go back to the address each datagram came from. The bridge learns the remote address from the first datagram it receives, or you set it with <code>--to</code>.</p>
 
-        <h2 id="ask">Ask it</h2>
+        <h2 id="ask">Install it</h2>
         <p>mcp-host-bridge is not an MCP server, so there is nothing to ask the assistant. You install it once, from a terminal on the same computer as your MCP client.</p>
         <h3>Get the bridge</h3>
         <p>Download the single file for your OS from <a href="../downloads.html#mcp-host-bridge">Downloads</a>: <code>mcp-host-bridge-macos</code>, <code>mcp-host-bridge.exe</code> or <code>mcp-host-bridge-linux</code>. No Python is needed. Or install it with Python:</p>
@@ -132,7 +132,7 @@ cd mcp-host-bridge &amp;&amp; uv sync &amp;&amp; uv run mcp-host-bridge --help</
           <p>The release binaries are not code-signed. On macOS, right-click the file and choose Open once, or run <code>xattr -d com.apple.quarantine ./mcp-host-bridge-macos</code>. On Windows, choose More info, then Run anyway.</p>
         </div>
         <h3>Install a bridge</h3>
-        <p>One command per program; the service survives a reboot.</p>
+        <p>Run one command per program. The service starts again after a reboot.</p>
         <pre><code>mcp-host-bridge install n3fjp  --to 192.168.1.50      # TCP  127.0.0.1:1100 -&gt; 192.168.1.50:1100
 mcp-host-bridge install fldigi --to 192.168.1.50      # TCP  127.0.0.1:7362 -&gt; 192.168.1.50:7362
 mcp-host-bridge install wsjtx  --to 192.168.1.111     # UDP  0.0.0.0:2237  -&gt; deliver 127.0.0.1:2238</code></pre>
@@ -153,13 +153,13 @@ mcp-host-bridge install wsjtx  --to 192.168.1.111     # UDP  0.0.0.0:2237  -&gt;
         </table>
         </div>
         <h3>Built-in OS alternatives</h3>
-        <p>This is a standard networking primitive. If you would rather not install anything, the same loopback-to-LAN hop can be done by hand:</p>
+        <p>Forwarding a port like this is a standard networking task. If you would rather not install anything, you can set up the same hop from loopback to the LAN by hand:</p>
         <ul>
           <li>Windows: <code>netsh interface portproxy add v4tov4 listenaddress=127.0.0.1 listenport=1100 connectaddress=192.168.1.50 connectport=1100</code></li>
           <li>macOS and Linux: <code>socat TCP-LISTEN:1100,bind=127.0.0.1,fork,reuseaddr TCP:192.168.1.50:1100</code></li>
           <li>Anywhere with SSH: <code>ssh -N -L 127.0.0.1:1100:192.168.1.50:1100 user@host</code></li>
         </ul>
-        <p>mcp-host-bridge wraps this in one cross-platform command with presets and reboot persistence.</p>
+        <p>mcp-host-bridge does the same with one command that works on every OS. It adds presets, and it keeps the relay running after a reboot.</p>
 
         <h2 id="settings">Settings</h2>
         <div class="table-scroll">
@@ -173,13 +173,13 @@ mcp-host-bridge install wsjtx  --to 192.168.1.111     # UDP  0.0.0.0:2237  -&gt;
           </tbody>
         </table>
         </div>
-        <p>UDP services use a <code>--listen</code> (LAN-facing) and <code>--deliver</code> (loopback) pair instead. UDP listen defaults to <code>0.0.0.0:&lt;port&gt;</code> and deliver to <code>127.0.0.1:&lt;port+1&gt;</code>; override either side with <code>--listen</code> or <code>--deliver</code> if needed.</p>
-        <p>Custom presets live in <code>~/.mcp-host-bridge/services.ini</code>: <code>name = port</code> is TCP, <code>name = port udp</code> (or <code>port,udp</code>) is UDP. The file is optional; user entries override built-ins.</p>
+        <p>UDP services use a <code>--listen</code> (LAN-facing) and <code>--deliver</code> (loopback) pair instead. UDP listen defaults to <code>0.0.0.0:&lt;port&gt;</code> and deliver to <code>127.0.0.1:&lt;port+1&gt;</code>. You can override either side with <code>--listen</code> or <code>--deliver</code>.</p>
+        <p>Custom presets go in <code>~/.mcp-host-bridge/services.ini</code>. A line <code>name = port</code> defines a TCP service, and <code>name = port udp</code> (or <code>port,udp</code>) defines a UDP service. The file is optional. Your entries override the built-in presets.</p>
 
         <h2 id="safety">Safety</h2>
         <div class="callout warn">
           <span class="label">Trusted LAN only</span>
-          <p>This is a plain byte relay: no authentication, no encryption. Use it only on a trusted LAN, the same trust model as the device APIs it fronts (N3FJP, fldigi, WSJT-X). It does not modify or inspect traffic.</p>
+          <p>The bridge passes bytes through with no authentication and no encryption. Use it only on a trusted LAN. The device APIs it forwards to (N3FJP, fldigi, WSJT-X) make the same assumption. It does not modify or inspect traffic.</p>
         </div>
         <h2 id="docs">Documents</h2>
         <ul>

@@ -33,7 +33,7 @@
   <div class="wrap">
     <p class="label">Product · GPL-3.0-or-later</p>
     <h1>fldigi-mcp</h1>
-    <p class="lead">An MCP server for controlling fldigi, the amateur radio digital-modem application, from MCP-aware clients such as Claude Desktop. fldigi ships a built-in XML-RPC control interface; fldigi-mcp connects to it and exposes the whole API as a small set of logically grouped tools, so an assistant can read the radio's state and drive the modem, rig, log and transmitter through plain language.</p>
+    <p class="lead">fldigi-mcp is an MCP server. It lets an MCP client such as Claude Desktop control fldigi, the amateur radio digital modem program. fldigi has a built-in XML-RPC control interface. fldigi-mcp connects to it and offers the whole API as a small set of grouped tools. You ask in plain English, and the assistant reads the radio's state and runs the modem, rig, log and transmitter.</p>
     <div class="btn-row">
       <a class="btn" href="../downloads.html#fldigi-mcp">Download</a>
       <a class="btn ghost" href="https://github.com/sbrunner-atx/fldigi-mcp">GitHub</a>
@@ -63,37 +63,37 @@
       </ul></nav>
       <div>
         <h2 id="what" style="margin-top:0">What it does</h2>
-        <p>fldigi's XML-RPC interface is its official, OS-independent control API. fldigi-mcp talks to it directly rather than through an unmaintained wrapper. Every one of the 174 XML-RPC methods in fldigi 4.2.13 is reachable through a named operation in one of 17 grouped tools, one permission each. A coverage test fails the build if a method of the shipped catalog is not wired or an argument type disagrees with fldigi's signature. The Tools table below lists every tool the server offers, including those for diagnostics, band guidance, signal hunting and the proposed patches.</p>
-        <p>Beyond the API itself, the server adds signal hunting on the receiver audio, an advisory band-guidance feature, and two bundled operating skills distilled from live on-air use. On a fldigi built with two proposed patches, it also reads fldigi's Signal Browser and the RSID bursts its detector heard.</p>
+        <p>fldigi's XML-RPC interface is its official control API, and it works the same on every operating system. fldigi-mcp talks to it directly and does not depend on an unmaintained wrapper. All 174 XML-RPC methods in fldigi 4.2.13 can be reached. Each one is a named operation in one of 17 grouped tools, and each tool is one permission. The build fails a coverage test if any method in the shipped catalog is not wired up, or if an argument type does not match fldigi's signature. The Tools table below lists every tool the server offers. That includes the tools for diagnostics, band guidance, signal hunting and the proposed patches.</p>
+        <p>The server also does some things the API does not. It hunts for signals in the receiver audio. It gives advisory band guidance. It comes with two operating skills written from live on-air use. On a fldigi built with two proposed patches, it can also read fldigi's Signal Browser and the RSID bursts that fldigi's detector heard.</p>
         <div class="callout">
           <span class="label">Proposed, not yet in fldigi</span>
-          <p>The Signal Browser and RSID patches were offered to the fldigi maintainer on 11 and 16 September 2026 (w1hkj/fldigi issue 55). They are not merged and are in no released fldigi. Details are under <a href="#features">Features and benefits</a>.</p>
+          <p>The Signal Browser and RSID patches were offered to the fldigi maintainer on 11 and 16 September 2026 (w1hkj/fldigi issue 55). They have not been merged and are not in any released fldigi. Details are under <a href="#features">Features and benefits</a>.</p>
         </div>
-        <p>The project is in beta. It supports fldigi 4.2.13, verified live on 9 September 2026. It is an independent project, not affiliated with the fldigi / W1HKJ project.</p>
-        <p>The license is GPL-3.0-or-later, the same as fldigi, so code can flow both ways. It was MIT through 0.2.2; talking to fldigi over XML-RPC never required the change, porting its decoders does.</p>
+        <p>The project is in beta. It supports fldigi 4.2.13, checked live on 9 September 2026. It is an independent project and is not affiliated with the fldigi / W1HKJ project.</p>
+        <p>The license is GPL-3.0-or-later, the same as fldigi, so code can move in both directions. Versions up to 0.2.2 were MIT. Talking to fldigi over XML-RPC did not require the change. Porting fldigi's decoders does.</p>
 
         <h2 id="features">Features and benefits</h2>
         <div class="table-scroll">
         <table>
           <thead><tr><th scope="col">Feature</th><th scope="col">What it gives you</th></tr></thead>
           <tbody>
-            <tr><td>Complete API coverage</td><td>All 174 XML-RPC methods of fldigi 4.2.13 through grouped tools, one permission each; a coverage test fails the build if a method is not wired. The <code>fldigi_call</code> escape hatch covers methods a newer build may add.</td></tr>
-            <tr><td>Callsign transmit gate</td><td>With no callsign configured the station is receive-only; nothing can key the radio.</td></tr>
-            <tr><td>Names match fldigi</td><td>Tools and operations mirror fldigi's own API namespaces and on-screen labels: Op Mode, AFC, SQL, Rev, Lock, RxID and TxID, T/R.</td></tr>
-            <tr><td>Standard-library XML-RPC</td><td>Talks to fldigi with Python's <code>xmlrpc.client</code>, not an unmaintained wrapper. The only third-party runtime dependencies are the MCP SDK and PyYAML.</td></tr>
-            <tr><td>Signal hunting</td><td><code>signal_hunt</code> names each signal's mode from the receiver audio, ranks the station that sits still and calls CQ, and <code>tune_to</code> sets modem and carrier. Verified on five recordings of known mode, 5 of 5. Receive only.</td></tr>
-            <tr><td>Audio from where the receiver is</td><td>The Audio input device setting names the sound card fldigi uses. Where the server cannot open it (a sandbox, a remote fldigi), <code>fldigi-mcp-tap</code> runs beside the receiver and answers over HTTP at the Signal-hunt tap URL. With no audio at all, <code>method="api"</code> steps fldigi's own <code>search_up</code>: slow, and blind to mode.</td></tr>
-            <tr><td>Signal Browser over the API (proposed patch)</td><td>On a patched fldigi, the assistant reads every station fldigi's decoder bank holds, up to 30 PSK, RTTY or CW stations at once, each with its text.</td></tr>
+            <tr><td>Complete API coverage</td><td>All 174 XML-RPC methods of fldigi 4.2.13, reached through grouped tools with one permission per tool. A coverage test fails the build if a method is not wired up. The <code>fldigi_call</code> tool reaches methods that a newer build may add.</td></tr>
+            <tr><td>Callsign transmit gate</td><td>With no callsign set, the station is receive-only and nothing can key the radio.</td></tr>
+            <tr><td>Names match fldigi</td><td>Tools and operations use the names from fldigi's own API and its on-screen labels: Op Mode, AFC, SQL, Rev, Lock, RxID and TxID, T/R.</td></tr>
+            <tr><td>Standard-library XML-RPC</td><td>Talks to fldigi with the <code>xmlrpc.client</code> module in Python's standard library. It does not use an unmaintained wrapper. The only third-party runtime dependencies are the MCP SDK and PyYAML.</td></tr>
+            <tr><td>Signal hunting</td><td><code>signal_hunt</code> listens to the receiver audio and names the mode of each signal. It ranks a station higher when it holds one frequency and calls CQ. <code>tune_to</code> then sets the modem and carrier. So far the mode naming has been tested on five recordings of known mode, and it named all five correctly. Hunting only listens. It never transmits.</td></tr>
+            <tr><td>Audio from where the receiver is</td><td>The Audio input device setting names the sound card fldigi uses. Sometimes the server cannot open that sound card, for example inside a sandbox or when fldigi runs on another computer. Then you run <code>fldigi-mcp-tap</code> on the computer next to the receiver, and the server reaches it over HTTP at the Signal-hunt tap URL. With no audio at all, <code>method="api"</code> steps through fldigi's own <code>search_up</code>. That is slow, and it cannot tell what mode a signal is.</td></tr>
+            <tr><td>Signal Browser over the API (proposed patch)</td><td>On a patched fldigi, the assistant can read every station in fldigi's decoder bank, up to 30 PSK, RTTY or CW stations at once, with the decoded text for each.</td></tr>
             <tr><td>RSID hits over the API (proposed patch)</td><td>On a patched fldigi, with RxID set to notify-only, fldigi names the modes on the band from their RSID bursts without switching the modem. This separates Olivia from Contestia and THOR from DominoEX.</td></tr>
-            <tr><td>Band guidance</td><td>Advisory watering-hole suggestions and out-of-segment warnings, region aware, 160 m to 70 cm. Experimental and off by default.</td></tr>
-            <tr><td>Operating skills</td><td><code>fldigi-operating</code> and <code>signal-hunting</code> ship with the repo and the bundle, distilled from live on-air use.</td></tr>
-            <tr><td>Free API reference</td><td>The field-tested fldigi XML-RPC reference, every method verified against a live build, free whether or not you use this server: <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-api.pdf">PDF</a>, <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-api.md">Markdown</a>, and a <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-api-spec.md">machine-readable catalog</a> of all 174 methods.</td></tr>
+            <tr><td>Band guidance</td><td>Suggests watering holes and warns when a frequency is outside its band segment, using the band plan for your IARU region, from 160 m to 70 cm. It is advisory only. It is experimental and off by default.</td></tr>
+            <tr><td>Operating skills</td><td><code>fldigi-operating</code> and <code>signal-hunting</code> come with the repository and the bundle. Both were written from live on-air use.</td></tr>
+            <tr><td>Free API reference</td><td>A reference to fldigi's XML-RPC API, with every method checked against a running fldigi build. You can use it free whether or not you use this server. It comes as a <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-api.pdf">PDF</a>, <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-api.md">Markdown</a>, and a <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-api-spec.md">machine-readable catalog</a> of all 174 methods.</td></tr>
           </tbody>
         </table>
         </div>
         <div class="callout">
           <span class="label">Proposed, not yet in fldigi</span>
-          <p>Two patches were offered to the fldigi maintainer on w1hkj/fldigi issue 55; neither is merged. The Signal Browser patch (11 September 2026) touches four files and adds <code>browser.get_channels</code> and <code>browser.clear</code>. The RSID patch (16 September 2026) applies on top of it and adds <code>rsid.get_hits</code> and <code>rsid.clear</code>, which return each accepted burst as <code>{utc, mode, hz}</code>. Until they are merged, names and fields may change. The server detects the methods in <code>fldigi.list</code>, never from a version number, and caches the result for 30 seconds. On an unpatched fldigi the <code>browser</code> and <code>rsid</code> tools answer with a hint.</p>
+          <p>Two patches were offered to the fldigi maintainer on w1hkj/fldigi issue 55. Neither has been merged. The Signal Browser patch (11 September 2026) touches four files and adds <code>browser.get_channels</code> and <code>browser.clear</code>. The RSID patch (16 September 2026) applies on top of it and adds <code>rsid.get_hits</code> and <code>rsid.clear</code>, which return each accepted burst as <code>{utc, mode, hz}</code>. Until they are merged, names and fields may change. The server looks for the methods in <code>fldigi.list</code> and does not go by the version number. It caches the result for 30 seconds. On an unpatched fldigi the <code>browser</code> and <code>rsid</code> tools answer with a hint.</p>
         </div>
         <p>To try the Signal Browser patch now, build fldigi from source with it. The RSID patch, <code>patches/fldigi-4.2.13-rsid-hits.patch</code>, applies on top of the first in the same way.</p>
         <pre><code>tar xf fldigi-4.2.13.tar.gz &amp;&amp; cd fldigi-4.2.13
@@ -117,10 +117,10 @@ patch -p1 &lt; /path/to/fldigi-mcp/patches/fldigi-4.2.13-browser-xmlrpc.patch
             <text x="195" y="50" fill="#57606a" font-size="10" text-anchor="middle">MCP</text>
             <text x="415" y="50" fill="#57606a" font-size="10" text-anchor="middle">XML-RPC</text>
           </svg>
-          <figcaption>Everything on one computer: the assistant, the connector, fldigi, the radio.</figcaption>
+          <figcaption>Here the assistant, the connector and fldigi all run on the computer attached to the radio.</figcaption>
         </figure>
-        <p>fldigi's XML-RPC interface is its official, OS-independent control API, on by default at <code>127.0.0.1:7362</code>. The server talks to it directly and groups the 174 methods into tools by fldigi area, so "change the mode" is a single permission regardless of which underlying method runs.</p>
-        <p>fldigi need not run on the same machine. Point the server at it with <code>FLDIGI_HOST</code> and <code>FLDIGI_PORT</code>, and launch fldigi with <code>--xmlrpc-server-address 0.0.0.0</code>. The XML-RPC interface is unauthenticated, so keep the link on a trusted LAN or tunnel it over SSH. Sandboxed clients such as Claude Desktop reach only loopback; <a href="mcp-host-bridge.html">mcp-host-bridge</a> does the LAN hop.</p>
+        <p>fldigi's XML-RPC interface is on by default at <code>127.0.0.1:7362</code>. The server groups the 174 methods into tools by the part of fldigi they control. Changing the mode is then one permission, whichever method does the work.</p>
+        <p>fldigi can also run on another computer. Set <code>FLDIGI_HOST</code> and <code>FLDIGI_PORT</code> to point the server at it, and start fldigi with <code>--xmlrpc-server-address 0.0.0.0</code>. The XML-RPC interface has no authentication. Keep the link on a trusted LAN or tunnel it over SSH. Sandboxed clients such as Claude Desktop can only reach loopback addresses. <a href="mcp-host-bridge.html">mcp-host-bridge</a> carries the connection across the LAN.</p>
 
         <h2 id="ask">Ask it</h2>
         <div class="exchange" role="figure" aria-label="Example requests and what happens">
@@ -141,20 +141,20 @@ patch -p1 &lt; /path/to/fldigi-mcp/patches/fldigi-4.2.13-browser-xmlrpc.patch
         </div>
 
         <h2 id="tools">Tools</h2>
-        <p>Each tool is one permission and takes an <code>operation</code> argument, so "change the mode" is a single permission regardless of which underlying method runs.</p>
+        <p>Each tool is one permission. It takes an <code>operation</code> argument that says which method to run.</p>
         <div class="table-scroll">
         <table>
           <thead><tr><th scope="col">Tool</th><th scope="col">Controls (fldigi area)</th></tr></thead>
           <tbody>
             <tr><td>status</td><td>Quick snapshot: version, mode, frequency, T/R, callsign, band.</td></tr>
-            <tr><td>diagnostics</td><td>Host and network info for connectivity troubleshooting; needs no fldigi connection.</td></tr>
+            <tr><td>diagnostics</td><td>Host and network information for troubleshooting the connection. Works without a connection to fldigi.</td></tr>
             <tr><td>application</td><td>Program info, launch and stop the fldigi process (<code>fldigi.*</code>).</td></tr>
             <tr><td>modem</td><td>Op Mode and modem select, carrier, bandwidth, AFC range, Olivia.</td></tr>
             <tr><td>frequency</td><td>Dial frequency and waterfall sideband.</td></tr>
             <tr><td>controls</td><td>AFC, SQL, Rev, Lock, RxID, TxID, status fields.</td></tr>
             <tr><td>transmit</td><td>T/R, Tune, abort, disable and enable Tx, macros, send. Callsign gated.</td></tr>
             <tr><td>rig</td><td>CAT control: mode, frequency, bandwidth, notch, QSY, meters.</td></tr>
-            <tr><td>log</td><td>Logbook and contest fields; ADIF last and all records.</td></tr>
+            <tr><td>log</td><td>Logbook and contest fields. Reads the last ADIF record or all of them.</td></tr>
             <tr><td>text</td><td>RX and TX text and data streams.</td></tr>
             <tr><td>spot</td><td>Spotting and PSK Reporter.</td></tr>
             <tr><td>wefax</td><td>WEFAX (weather fax) mode.</td></tr>
@@ -163,19 +163,19 @@ patch -p1 &lt; /path/to/fldigi-mcp/patches/fldigi-4.2.13-browser-xmlrpc.patch
             <tr><td>io</td><td>ARQ / KISS I/O port selection.</td></tr>
             <tr><td>legacy</td><td>Deprecated methods fldigi still serves, each with its current equivalent named.</td></tr>
             <tr><td>band_guidance</td><td>Advisory band and watering-hole help. Experimental.</td></tr>
-            <tr><td>signal_hunt</td><td>Find and name the signals in the receiver audio; rank CQing stations. Experimental, needs the <code>[hunt]</code> extra.</td></tr>
+            <tr><td>signal_hunt</td><td>Find and name the signals in the receiver audio, and rank the stations calling CQ. Experimental. Needs the <code>[hunt]</code> extra.</td></tr>
             <tr><td>tune_to</td><td>Set modem and carrier to a signal_hunt candidate. Receive only.</td></tr>
             <tr><td>browser</td><td>fldigi's Signal Browser: every station the decoder bank holds, with its text. Needs the fldigi patch in <code>patches/</code>.</td></tr>
             <tr><td>rsid</td><td>RSID bursts heard in the passband, mode and frequency, without switching the modem. Needs the rsid-hits patch in <code>patches/</code>.</td></tr>
-            <tr><td>fldigi_call</td><td>Escape hatch: call any method by name, including future ones.</td></tr>
+            <tr><td>fldigi_call</td><td>Call any method by name, including methods a later fldigi adds.</td></tr>
           </tbody>
         </table>
         </div>
         <div class="callout">
           <span class="label">Proposed, not yet in fldigi</span>
-          <p>The patches that <code>browser</code> and <code>rsid</code> need are offered upstream on w1hkj/fldigi issue 55 and not merged. On a stock fldigi both tools answer with a hint.</p>
+          <p>The patches that <code>browser</code> and <code>rsid</code> need have been offered upstream on w1hkj/fldigi issue 55 and are not merged. On a stock fldigi, both tools answer with a hint.</p>
         </div>
-        <p>Use <code>application → list_methods</code> to enumerate every method the running build supports. On 4.2.13 all of them are surfaced in a group; <code>fldigi_call</code> is for methods a newer fldigi may add before this connector catches up.</p>
+        <p>To list every method the running fldigi supports, use <code>application → list_methods</code>. On 4.2.13, every method is already in one of the groups. <code>fldigi_call</code> is for methods a newer fldigi may add before this server is updated to match.</p>
 
         <h2 id="settings">Settings</h2>
         <div class="table-scroll">
@@ -184,25 +184,25 @@ patch -p1 &lt; /path/to/fldigi-mcp/patches/fldigi-4.2.13-browser-xmlrpc.patch
           <tbody>
             <tr><td>FLDIGI_HOST</td><td><code>127.0.0.1</code></td><td>fldigi XML-RPC host.</td></tr>
             <tr><td>FLDIGI_PORT</td><td><code>7362</code></td><td>fldigi XML-RPC port.</td></tr>
-            <tr><td>FLDIGI_CALLSIGN</td><td>empty</td><td>Operator callsign. The single transmit gate: set it to enable transmit; blank keeps the station receive-only.</td></tr>
-            <tr><td>FLDIGI_BAND_GUIDANCE</td><td><code>off</code></td><td>Experimental advisory band guidance; <code>on</code> to enable.</td></tr>
+            <tr><td>FLDIGI_CALLSIGN</td><td>empty</td><td>Operator callsign. This is the only transmit gate. Set it to allow transmit. Leave it blank and the station is receive-only.</td></tr>
+            <tr><td>FLDIGI_BAND_GUIDANCE</td><td><code>off</code></td><td>Experimental advisory band guidance. Set it to <code>on</code> to turn it on.</td></tr>
             <tr><td>FLDIGI_REGION</td><td><code>2</code></td><td>IARU region for band guidance: 1, 2 or 3.</td></tr>
             <tr><td>FLDIGI_PATH</td><td>auto</td><td>Explicit path to the fldigi executable, for <code>application launch</code>.</td></tr>
           </tbody>
         </table>
         </div>
-        <p>In the packaged desktop extension these appear as a settings form; most users only ever fill in the callsign.</p>
+        <p>In the packaged desktop extension these appear as a settings form. Most users only fill in the callsign.</p>
         <div class="callout">
           <span class="label">Signal-hunt settings</span>
-          <p>Two more settings serve <code>signal_hunt</code>. <code>FLDIGI_AUDIO_DEVICE</code> ("Audio input device") names the device fldigi listens to; part of its name is enough, for example <code>iMic</code>. <code>FLDIGI_HUNT_URL</code> ("Signal-hunt tap URL") points at <code>fldigi-mcp-tap</code> where the server cannot reach the sound card, for example <code>http://127.0.0.1:7365</code>.</p>
+          <p><code>signal_hunt</code> uses two more settings. <code>FLDIGI_AUDIO_DEVICE</code> ("Audio input device") names the sound device fldigi listens to. Part of its name is enough, for example <code>iMic</code>. <code>FLDIGI_HUNT_URL</code> ("Signal-hunt tap URL") points at <code>fldigi-mcp-tap</code> when the server cannot reach the sound card, for example <code>http://127.0.0.1:7365</code>.</p>
         </div>
 
         <h2 id="safety">Safety</h2>
         <div class="callout warn">
           <span class="label">Can key a transmitter</span>
-          <p>The callsign is the single transmit gate. Keying operations (transmit tx, tune, run_macro and send, the wefax and navtex send operations, and any keying method via <code>fldigi_call</code>) refuse unless <code>FLDIGI_CALLSIGN</code> is set. With it blank, the station is receive-only. <code>rx</code>, <code>abort</code> and <code>disable_tx</code> are always allowed because they take the station off the air. Any non-blank value is accepted: club, event, vanity, portable and international calls all work. You remain the control operator under Part 97.</p>
+          <p>The callsign is the only transmit gate. Keying operations (transmit tx, tune, run_macro and send, the wefax and navtex send operations, and any keying method via <code>fldigi_call</code>) refuse unless <code>FLDIGI_CALLSIGN</code> is set. With it blank, the station is receive-only. <code>rx</code>, <code>abort</code> and <code>disable_tx</code> are always allowed because they take the station off the air. Any value that is not blank is accepted, so club, event, vanity, portable and international calls all work. You remain the control operator under Part 97.</p>
         </div>
-        <p>A second layer sits in the client. The server marks read and status tools read-only and the keying tools destructive, so Claude Desktop asks for approval before each on-air action. You can tighten this to Ask or Block on the Tool permissions page. Nothing set there can loosen the callsign gate, which the server enforces.</p>
+        <p>The client adds a second check. The server marks the read and status tools as read-only and the keying tools as destructive. Claude Desktop then asks you to approve each on-air action. On the Tool permissions page you can set a tool to Ask or Block. Nothing you set there can loosen the callsign gate, because the server enforces it.</p>
 
         <h2 id="docs">Documents</h2>
         <ul>

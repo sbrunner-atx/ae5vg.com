@@ -33,7 +33,7 @@
   <div class="wrap">
     <p class="label">Product · MIT</p>
     <h1>serial-console-mcp</h1>
-    <p class="lead">AI for the configuration of telecommunication equipment, through the console port it already has. serial-console-mcp connects an assistant such as Claude to the serial console of the equipment that runs networks and radio stations, and of anything else with a serial port. You do not need to know any programming; after it is installed you talk to Claude normally.</p>
+    <p class="lead">serial-console-mcp lets an assistant such as Claude configure telecommunication equipment through the console port the equipment already has. It connects to the serial console of the equipment that runs networks and radio stations, and of anything else with a serial port. You do not need to know any programming. Once it is installed, you talk to Claude normally.</p>
     <div class="btn-row">
       <a class="btn" href="../downloads.html#serial-console-mcp">Download</a>
       <a class="btn ghost" href="https://github.com/sbrunner-atx/serial-console-mcp">GitHub</a>
@@ -63,11 +63,11 @@
       </ul></nav>
       <div>
         <h2 id="what" style="margin-top:0">What it does</h2>
-        <p>It is not tied to radio. Routers and switches: Juniper (Junos) and Cisco (IOS, IOS-XE) console and craft ports, to log in, read state, change configuration with a safety net (<code>commit confirmed</code> on Junos, <code>reload in</code> on IOS) and leave the console as it was found. Radio transceivers: Icom and Xiegu over CI-V; Kenwood, Yaesu and Elecraft over their text CAT protocols, to identify the rig and read and set frequency and mode. Antenna rotators: Yaesu GS-232 and the many controllers that speak it, to read the heading, turn and stop. And anything else with a serial port: IoT gateways, alarm and access-control panels, UPS and PDU menus, lab instruments, industrial controllers, Linux and BIOS consoles, microcontrollers.</p>
-        <p>You say what you want in plain language. The assistant drives the console through this server, Claude Desktop asks you to approve each step, and bundled operating skills teach it the Junos and IOS basics: which mode a prompt means, how to get in and out, which show commands answer everyday questions.</p>
+        <p>It is not tied to radio. On Juniper (Junos) and Cisco (IOS, IOS-XE) routers and switches, it uses the console and craft ports. There it can log in, read state, and change configuration with a safety net (<code>commit confirmed</code> on Junos, <code>reload in</code> on IOS). When it is done, it leaves the console the way it found it. It talks to Icom and Xiegu transceivers over CI-V, and to Kenwood, Yaesu and Elecraft over their text CAT protocols. On a rig it can identify the model and read and set frequency and mode. On antenna rotators it speaks Yaesu GS-232, which many other controllers also use, to read the heading, turn and stop. It also works with anything else that has a serial port: IoT gateways, alarm and access-control panels, UPS and PDU menus, lab instruments, industrial controllers, Linux and BIOS consoles, and microcontrollers.</p>
+        <p>You say what you want in plain language. The assistant drives the console through this server, and Claude Desktop asks you to approve each step. Operating skills that come with the server teach the assistant the Junos and IOS basics. They cover which mode a prompt means, how to get in and out of each mode, and which show commands answer everyday questions.</p>
         <div class="callout">
           <span class="label">Verified on this bench</span>
-          <p>Juniper support is verified on a real EX2200 console. Cisco, CI-V, CAT and rotator support follows the vendors' protocol references and has not yet met hardware on this bench. The other device types use the generic tools rather than device-specific helpers.</p>
+          <p>Juniper support is verified on a real EX2200 console. Cisco, CI-V, CAT and rotator support follows the vendors' protocol references, but I have not yet tested it on real hardware here. The other device types use the generic tools, not device-specific helpers.</p>
         </div>
 
         <h2 id="features">Features and benefits</h2>
@@ -75,22 +75,22 @@
         <table>
           <thead><tr><th scope="col">Feature</th><th scope="col">What it gives you</th></tr></thead>
           <tbody>
-            <tr><td>Background reader, read until prompt</td><td>The moment a port is open, a reader keeps draining it into a buffer; send writes only, then read until a prompt captures the whole reply without cutting it off, or read whatever is waiting for streaming output. The same model minicom and expect use.</td></tr>
-            <tr><td>Several ports at once</td><td>Ports are opened by name ("rig", "rotator"); tools default to the most recently used one, and status shows every open port with its control-line states.</td></tr>
+            <tr><td>Background reader, read until prompt</td><td>As soon as a port is open, a reader drains it into a buffer. Sending only writes. Reading until a prompt then captures the whole reply without cutting it off. For streaming output, you read whatever is waiting. minicom and expect work the same way.</td></tr>
+            <tr><td>Several ports at once</td><td>Ports are opened by name ("rig", "rotator"). Tools default to the most recently used port. status shows every open port and the state of its control lines.</td></tr>
             <tr><td>Remembered connections</td><td>reconnect_last reopens a port with the settings it had last time, by name, across sessions.</td></tr>
             <tr><td>Presets per device family</td><td>Twelve presets load the usual baud, framing, flow control, line ending and prompt: Cisco, Juniper and Linux consoles, Kenwood, Elecraft and Yaesu CAT, Icom and Xiegu CI-V, the Yaesu rotator, Arduino, NMEA GPS, and a full-screen console. Anything you say explicitly overrides the preset.</td></tr>
             <tr><td>Terminal modes</td><td><code>dumb</code> (raw bytes, the default), <code>ansi</code> (colors and escape sequences stripped, overwrites applied, prompts matched on the line as displayed), or <code>xterm</code>/<code>vt100</code> (a real screen you can read with <code>screen</code>, for BIOS, BMC and menu consoles).</td></tr>
-            <tr><td>Keys by name</td><td>send_keys presses Ctrl-C, Esc, Tab, arrows and F-keys, encoded as an xterm sends them: interrupt a ping, complete a command, walk a menu.</td></tr>
-            <tr><td>Expect scripts</td><td>A scripted list of send-and-wait steps in one call: logins, command sequences. <code>auto_reply</code> pages through <code>--More--</code>.</td></tr>
-            <tr><td>Configuration with a safety net</td><td>The Junos and IOS skills change configuration behind <code>commit confirmed</code> on Junos and <code>reload in</code> on IOS, and leave the console as it was found.</td></tr>
+            <tr><td>Keys by name</td><td>send_keys presses Ctrl-C, Esc, Tab, the arrow keys and F-keys, encoded the way an xterm sends them. You can interrupt a ping, complete a command or walk through a menu.</td></tr>
+            <tr><td>Expect scripts</td><td>Runs a list of send-and-wait steps in one call, such as a login or a sequence of commands. <code>auto_reply</code> pages through <code>--More--</code>.</td></tr>
+            <tr><td>Configuration with a safety net</td><td>The Junos and IOS skills change configuration behind <code>commit confirmed</code> on Junos and <code>reload in</code> on IOS. They leave the console the way they found it.</td></tr>
             <tr><td>Control lines and BREAK</td><td>Drive DTR and RTS (PTT, Arduino reset), pulse a line, send BREAK.</td></tr>
-            <tr><td>Capture and transcript</td><td>Log a session to a file, raw or timestamped TX/RX; re-read the rolling transcript.</td></tr>
-            <tr><td>Port and baud diagnostics</td><td>port_in_use_by names the program holding a port; detect_baud finds the baud rate that produces readable text.</td></tr>
+            <tr><td>Capture and transcript</td><td>Log a session to a file, raw or as timestamped TX/RX. You can also re-read the rolling transcript.</td></tr>
+            <tr><td>Port and baud diagnostics</td><td>port_in_use_by names the program holding a port. detect_baud finds the baud rate that produces readable text.</td></tr>
             <tr><td>CAT, CI-V and GS-232 helpers</td><td>Build and parse Kenwood, Elecraft and Yaesu <code>;</code> commands, Icom CI-V frames, and GS-232 rotator commands and replies.</td></tr>
-            <tr><td>Read-only mode</td><td><code>SERIAL_CONSOLE_READ_ONLY=1</code> refuses writes except read-style commands and refuses control-line changes; named keys are allowed, literal text is refused.</td></tr>
-            <tr><td>Idle auto-close</td><td><code>SERIAL_CONSOLE_IDLE_MINUTES</code> closes a port left idle, so a forgotten connection stops blocking WSJT-X. Off by default.</td></tr>
-            <tr><td>Bounded memory</td><td>The receive buffer is capped at 4 MB per port; if a device streams for hours unread, the oldest bytes are dropped and status says how many.</td></tr>
-            <tr><td>Desktop extension</td><td>One <code>.mcpb</code> file installs in Claude Desktop like the other connectors, with a settings form for read-only mode and the idle timeout. From PyPI, <code>serial-console-mcp configure</code> writes the Claude Desktop entry instead, and <code>--remove</code> undoes it.</td></tr>
+            <tr><td>Read-only mode</td><td>With <code>SERIAL_CONSOLE_READ_ONLY=1</code>, the server refuses all writes except read-style commands, and refuses control-line changes. Named keys are allowed. Literal text is refused.</td></tr>
+            <tr><td>Idle auto-close</td><td><code>SERIAL_CONSOLE_IDLE_MINUTES</code> closes a port that has sat idle, so a connection you forgot about does not keep blocking WSJT-X. It is off by default.</td></tr>
+            <tr><td>Bounded memory</td><td>The receive buffer is capped at 4 MB per port. If a device streams for hours and nothing reads it, the oldest bytes are dropped and status says how many.</td></tr>
+            <tr><td>Desktop extension</td><td>A single <code>.mcpb</code> file installs in Claude Desktop like the other connectors. It has a settings form for read-only mode and the idle timeout. If you install from PyPI, <code>serial-console-mcp configure</code> writes the Claude Desktop entry instead, and <code>--remove</code> undoes it.</td></tr>
             <tr><td>Three skills</td><td><code>serial-console</code>, <code>junos-operating</code> and <code>ios-operating</code> teach the discipline, the modes and the everyday commands.</td></tr>
           </tbody>
         </table>
@@ -117,10 +117,10 @@
             <text x="500" y="42" fill="#57606a" font-size="10" text-anchor="middle">TX · write only</text>
             <text x="215" y="97" fill="#57606a" font-size="10" text-anchor="middle">reply, whole</text>
           </svg>
-          <figcaption>The console model: send writes only; the background reader drains the port; read until prompt returns the complete reply.</figcaption>
+          <figcaption>Send only writes to the device. The background reader drains the port into the buffer. Read until prompt returns the complete reply.</figcaption>
         </figure>
-        <p>A serial console is not a simple question-and-answer channel. It echoes what you type, prints unsolicited messages on its own, and can dump pages of output. So the moment a port is open, a background reader keeps draining it into a buffer: the assistant sends a command, then reads until a prompt appears (<code># </code>, <code>&gt; </code>, <code>login:</code>) to capture the whole reply, or reads whatever is waiting for streaming output.</p>
-        <p>Ports are opened by name ("rig", "rotator"); tools default to the most recently used one. Several ports can be open at once. The receive buffer is capped at 4 MB per port; if a device streams for hours unread, the oldest bytes are dropped and status says how many.</p>
+        <p>A serial console does more than answer questions. It echoes what you type, prints messages nobody asked for, and can dump pages of output. So as soon as a port is open, a background reader drains it into a buffer. The assistant sends a command, then reads until a prompt appears (<code># </code>, <code>&gt; </code>, <code>login:</code>) to capture the whole reply. For streaming output, it reads whatever is waiting.</p>
+        <p>Ports are opened by name ("rig", "rotator"), and tools default to the most recently used port. Several ports can be open at once. The receive buffer is capped at 4 MB per port. If a device streams for hours and nothing reads it, the oldest bytes are dropped and status says how many.</p>
 
         <h2 id="ask">Ask it</h2>
         <div class="exchange" role="figure" aria-label="Example requests and what happens">
@@ -177,7 +177,7 @@
         <h2 id="safety">Safety</h2>
         <div class="callout warn">
           <span class="label">A console can reconfigure, reboot, or transmit</span>
-          <p>These tools send exactly what you, through Claude, ask them to send, to whatever device is on the cable. Claude Desktop asks you to approve each tool call, so you see every command before it runs. Read it. This server does not try to guess which commands are dangerous. If something looks wrong, decline it, and keep a real terminal handy for anything you would not want an assistant to type. For a cautious first run on a production console, set <code>SERIAL_CONSOLE_READ_ONLY=1</code>: the server then refuses anything but read-style commands and refuses control-line changes, so it cannot key PTT from RTS or DTR.</p>
+          <p>These tools send what you ask Claude to send, to whatever device is on the cable. Claude Desktop asks you to approve each tool call, so you see every command before it runs. Read it. This server does not try to guess which commands are dangerous. If something looks wrong, decline it. Keep a real terminal handy for anything you would not want an assistant to type. For a cautious first run on a production console, set <code>SERIAL_CONSOLE_READ_ONLY=1</code>. The server then refuses anything but read-style commands and refuses control-line changes, so it cannot key PTT from RTS or DTR.</p>
         </div>
 
         <h2 id="docs">Documents</h2>

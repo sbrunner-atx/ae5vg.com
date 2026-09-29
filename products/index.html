@@ -33,7 +33,7 @@
   <div class="wrap">
     <p class="label">The toolset</p>
     <h1>Products</h1>
-    <p class="lead">The connectors are rig-interface cables between an assistant and the programs you already run. Nothing about your fldigi, WSJT-X or N3FJP setup changes; the assistant plugs into the interfaces they already have.</p>
+    <p class="lead">Each connector works like a rig interface cable between the assistant and a program you already run. Your fldigi, WSJT-X and N3FJP setups do not change. The assistant connects to the control interfaces those programs already have.</p>
   </div>
 </section>
 
@@ -43,41 +43,41 @@
       <div class="card">
         <span class="label">Connector · GPL-3.0-or-later</span>
         <h3>fldigi-mcp</h3>
-        <p>Every one of the 174 XML-RPC methods of fldigi 4.2.13, reachable through grouped tools. Signal hunting from the receiver audio, the Signal Browser over a proposed patch, band guidance, and the callsign transmit gate.</p>
+        <p>All 174 XML-RPC methods of fldigi 4.2.13, grouped into tools. It also hunts for signals in the receiver audio, reads the Signal Browser on a fldigi with a proposed patch, and gives band guidance. It will not transmit until you set a callsign.</p>
         <a class="more" href="fldigi-mcp.html">fldigi-mcp →</a>
       </div>
       <div class="card">
         <span class="label">Connector · MIT</span>
         <h3>wsjtx-mcp</h3>
-        <p>WSJT-X over its UDP message protocol: read decodes, answer a CQ, hand completed QSOs to the logger. FT8, FT4, JT65, MSK144, Q65 and WSPR.</p>
+        <p>Controls WSJT-X through its UDP message protocol. It reads decodes, answers a CQ and collects completed QSOs for the logger. For FT8, FT4, JT65, MSK144, Q65 and WSPR.</p>
         <a class="more" href="wsjtx-mcp.html">wsjtx-mcp →</a>
       </div>
       <div class="card">
         <span class="label">Connector · MIT</span>
         <h3>n3fjp-mcp</h3>
-        <p>Logging to Amateur Contact Log and the 100-plus N3FJP contest loggers over their shared TCP API, with a verified log_qso flow and a tiered safety model for the log database.</p>
+        <p>Logs contacts to Amateur Contact Log and the more than 100 N3FJP contest loggers, through the TCP API they share. Its log_qso sequence has been verified, and tiered safety levels protect the log database.</p>
         <a class="more" href="n3fjp-mcp.html">n3fjp-mcp →</a>
       </div>
       <div class="card">
         <span class="label">Connector · MIT</span>
         <h3>serial-console-mcp</h3>
-        <p>AI on the serial console: routers and switches, transceivers over CI-V and CAT, rotators over GS-232, and anything else with a serial port. Verified live on a Juniper EX2200.</p>
+        <p>Lets the assistant work a serial console. That covers routers and switches, transceivers over CI-V and CAT, rotators over GS-232, and anything else with a serial port. Tested live on a Juniper EX2200.</p>
         <a class="more" href="serial-console-mcp.html">serial-console-mcp →</a>
       </div>
       <div class="card">
         <span class="label">Utility · MIT</span>
         <h3>mcp-host-bridge</h3>
-        <p>A loopback-to-remote TCP/UDP relay. It pinches a hole into the sandbox so a local MCP server can reach a program on another host.</p>
+        <p>A TCP and UDP relay. It pinches a hole into the sandbox so a local MCP server can reach a program on another computer.</p>
         <a class="more" href="mcp-host-bridge.html">mcp-host-bridge →</a>
       </div>
       <div class="card">
         <span class="label">Product · in development</span>
         <h3>The Ham Radio Model</h3>
-        <p>A small language model that reads a contest exchange through noise the way an experienced operator does: qso-resolver and qso-mcp, both still under development. The capture rig that collects its training data reports on the <a href="dashboard.html">dashboard</a>.</p>
+        <p>A small language model being built to read a contest exchange through noise, as an experienced operator does. It has two parts, qso-resolver and qso-mcp, and both are still under development. The capture rig that collects its training data reports on the <a href="dashboard.html">dashboard</a>.</p>
         <a class="more" href="qso-resolver.html">The Ham Radio Model →</a>
       </div>
     </div>
-    <div class="callout"><span class="label">Proposed, not yet in fldigi</span><p>The Signal Browser methods (<code>browser.get_channels</code>, <code>browser.clear</code>) and the RSID methods (<code>rsid.get_hits</code>, <code>rsid.clear</code>) are patches offered to the fldigi maintainer on w1hkj/fldigi issue 55 on 11 and 16 September 2026. They are not merged. On a stock fldigi the tools answer with a hint and nothing else changes.</p></div>
+    <div class="callout"><span class="label">Proposed, not yet in fldigi</span><p>The Signal Browser methods (<code>browser.get_channels</code>, <code>browser.clear</code>) and the RSID methods (<code>rsid.get_hits</code>, <code>rsid.clear</code>) are patches offered to the fldigi maintainer on w1hkj/fldigi issue 55 on 11 and 16 September 2026. They have not been merged. On a stock fldigi, the tools answer with a hint and nothing else changes.</p></div>
   </div>
 </main>
 
