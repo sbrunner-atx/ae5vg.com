@@ -142,8 +142,8 @@
           <p>Claude operates the station, but you hold the license. Part 97 responsibility remains yours: supervision, station identification, and staying in the band. It is the same as having a guest operator at your key. Stay at the station while it transmits. There are two built-in safeguards. With no callsign configured, the station physically cannot key up. And "stop" always works.</p>
         </div>
         <div class="callout warn">
-          <span class="label">First time? Dummy load.</span>
-          <p>Run your first full session into a dummy load. Type "call CQ and work whoever comes back" and watch one complete cycle: TX drop, listen window, log entry. Then connect the antenna. If anything misbehaves, type "run the fldigi diagnostics" and read the answer. It tells you whether the problem is in the network or in fldigi.</p>
+          <span class="label">First time? Dummy load, then the air.</span>
+          <p>Start on a dummy load and test only the transmit side. Type "call CQ once, then listen" and check that the rig keys, sends and drops back to receive, with no carrier left on. Nobody can answer a dummy load, so there is no QSO and no log entry yet. Then connect the antenna, start the loop, and watch the first contact all the way into the log. If anything misbehaves, type "run the fldigi diagnostics" and read the answer. It tells you whether the problem is in the network or in fldigi.</p>
         </div>
 
         <h2 id="how">D · How the system works</h2>
@@ -183,8 +183,8 @@
           <li><strong>The operator remains in command.</strong> Say "stop" at any time. That runs <code>transmit → abort</code>, which drops PTT immediately and discards queued text. Without a configured callsign, the station cannot transmit at all.</li>
         </ul>
         <div class="callout warn">
-          <span class="label">Watch one full cycle first</span>
-          <p>Try the full loop once before you trust it. Put fldigi on a dummy load, say "call CQ and work whoever comes back", and watch one full cycle before you connect the antenna: TX drop, listen window, log entry.</p>
+          <span class="label">Watch the first contact</span>
+          <p>Watch the loop once before you trust it. A dummy load only proves the transmit side: the CQ, the drop back to receive, and "stop". The rest needs a real station, so on the air watch the first complete QSO: TX drop, listen window, exchange, log entry.</p>
         </div>
 
         <h2 id="standard">E · The operating standard</h2>

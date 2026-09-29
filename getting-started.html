@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Getting Started · AE5VG</title>
-<meta name="description" content="For a ham who has never used an assistant: what you are installing, setting it up once, loading the MCP servers, and your first QSO on a dummy load.">
+<meta name="description" content="For a ham who has never used an assistant: what you are installing, setting it up once, loading the MCP servers, and your first QSO, tested on a dummy load before it goes on the air.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -97,7 +97,7 @@ claude mcp add n3fjp -- uvx n3fjp-mcp</code></pre>
         <h2 id="session">Start a session</h2>
         <p>Open a new chat or a Cowork session and type <code>What is the fldigi status?</code> Claude should answer with the mode, the frequency and the T/R state. If it does not, type <code>run the fldigi diagnostics</code>. That tells you whether the problem is the network connection, before you go looking for a fault in fldigi.</p>
 
-        <h2 id="qso">Your first QSO, on a dummy load</h2>
+        <h2 id="qso">Your first QSO: dummy load first, then the air</h2>
         <figure class="diagram">
           <svg viewBox="0 0 380 350" role="img" aria-label="Diagram: the four-state QSO loop. 1, CQ: CQ FD CQ FD de MYCALL MYCALL pse k. 2, Exchange: CALL de MYCALL, Pse copy 2A 2A STX STX, de MYCALL BK. 3, TU: QSL CLASS SECT TU CALL de MYCALL GL FD sk sk. 4, Log: log_qso, check logged: true. Then QRZ and back to CQ." font-family="JetBrains Mono,monospace">
             <g fill="none" stroke="#0969da" stroke-width="1">
@@ -126,9 +126,13 @@ claude mcp add n3fjp -- uvx n3fjp-mcp</code></pre>
           </svg>
           <figcaption>The four-state loop from the Field Guide: CQ, Exchange, TU, Log, then QRZ and back to CQ.</figcaption>
         </figure>
+        <ol class="steps">
+          <li><strong>On a dummy load, test the transmit side.</strong> Type <code>Call CQ Field Day once, then listen.</code> The rig should key, send the CQ and drop back to receive, with no carrier left on. Nobody can answer a dummy load, so there is no contact and nothing to log yet. Then ask for another CQ and type <code>stop</code> while it is sending. The transmitter should drop at once.</li>
+          <li><strong>On the air, watch the first contact.</strong> Connect the antenna and type <code>Call CQ Field Day until someone answers. Work them, our exchange is 2A STX, log the contact to N3FJP, then keep calling.</code> Follow the first QSO all the way through: the CQ, the listening period, the exchange, and the entry in the N3FJP log.</li>
+        </ol>
         <div class="callout warn">
-          <span class="label">This keys the transmitter. You are the control operator.</span>
-          <p>Put the radio on a dummy load and type <code>Call CQ Field Day until someone answers. Work them, our exchange is 2A STX, log the contact to N3FJP, then keep calling.</code> Watch one full cycle. You should see the transmitter drop, then the listening period, then the entry in the log. Only then connect the antenna. You can type <code>stop</code> at any moment. Under Part 97 you are still the control operator, so stay at the station while it transmits.</p>
+          <span class="label">Both steps key the transmitter. You are the control operator.</span>
+          <p>You can type <code>stop</code> at any moment. Under Part 97 you are still the control operator, so stay at the station while it transmits.</p>
         </div>
 
         <h2 id="hunt">Hunting for a station</h2>
