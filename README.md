@@ -16,6 +16,9 @@ about.html
 style.css               the component library
 site.js                 navigation, release and PyPI fetches, table of contents, email assembly
 CNAME                   custom domain
+robots.txt, sitemap.xml  for search engines; add a line to sitemap.xml for every new page
+og-image.png            the link preview image (1200 x 630) every page points to
+favicon.svg, favicon-48.png, apple-touch-icon.png
 ```
 
 ## Preview
@@ -40,6 +43,10 @@ A new release in any connector repository shows up here without a change to this
 ## Publishing
 
 GitHub Pages serves the `main` branch from the repository root. A push to `main` redeploys in about a minute. `CNAME` holds `ae5vg.com`; the apex needs A records to 185.199.108.153, 185.199.109.153, 185.199.110.153 and 185.199.111.153, and `www` a CNAME to `sbrunner-atx.github.io`.
+
+## Link previews and search
+
+Every page carries a canonical URL, Open Graph and Twitter card tags (its title and description, and `og-image.png`), and the favicons. A new page needs the same block in its head, copied from any existing page with the URL changed, and a line in `sitemap.xml`.
 
 ## Writing rules
 
