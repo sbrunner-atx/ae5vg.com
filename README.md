@@ -19,7 +19,7 @@ CNAME                   custom domain
 robots.txt, sitemap.xml  for search engines; sitemap.xml (with lastmod) is rebuilt from git at publish time
 506a95416dcc44bdcef40f884e9387f9.txt  the IndexNow key; keep it in the root
 og-image.png            the link preview image (1200 x 630) every page points to
-favicon.svg, favicon-48.png, apple-touch-icon.png
+favicon.ico, favicon.svg, favicon-48.png, apple-touch-icon.png
 ```
 
 ## Preview
