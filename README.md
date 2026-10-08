@@ -28,7 +28,7 @@ From the repository root:
 
     python3 -m http.server 8791
 
-then open http://localhost:8791/. `.claude/launch.json` starts the same server.
+then open http://localhost:8791/.
 
 ## How it stays current
 
