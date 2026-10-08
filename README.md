@@ -16,7 +16,8 @@ about.html
 style.css               the component library
 site.js                 navigation, release and PyPI fetches, table of contents, email assembly
 CNAME                   custom domain
-robots.txt, sitemap.xml  for search engines; add a line to sitemap.xml for every new page
+robots.txt, sitemap.xml  for search engines; sitemap.xml (with lastmod) is rebuilt from git at publish time
+506a95416dcc44bdcef40f884e9387f9.txt  the IndexNow key; keep it in the root
 og-image.png            the link preview image (1200 x 630) every page points to
 favicon.svg, favicon-48.png, apple-touch-icon.png
 ```
@@ -46,7 +47,7 @@ GitHub Pages serves the `main` branch from the repository root. A push to `main`
 
 ## Link previews and search
 
-Every page carries a canonical URL, Open Graph and Twitter card tags (its title and description, and `og-image.png`), and the favicons. A new page needs the same block in its head, copied from any existing page with the URL changed, and a line in `sitemap.xml`.
+Every page carries a canonical URL, Open Graph and Twitter card tags (its title and description, and `og-image.png`), and the favicons. A new page needs the same block in its head, copied from any existing page with the URL changed, and nothing else: the publish step adds it to `sitemap.xml` and announces changed pages to IndexNow (Bing and others; Google uses Search Console).
 
 ## Writing rules
 
