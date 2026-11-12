@@ -121,8 +121,8 @@
   function platform(name) {
     var n = name.toLowerCase();
     if (/\.mcpb$/.test(n)) return "Claude Desktop";
-    if (/-claude-plugin\.zip$/.test(n)) return "Claude plugin";
-    if (/-marketplace\.zip$/.test(n)) return "Claude, ChatGPT and Codex";
+    if (/-claude-plugin\.zip$/.test(n)) return "Claude";
+    if (/-chatgpt-plugin\.zip$/.test(n)) return "ChatGPT and Codex";
     if (/\.pkg$/.test(n) || /-macos$|mac|darwin|osx/.test(n)) return "macOS";
     if (/\.exe$|\.msi$|win/.test(n)) return "Windows";
     if (/-linux$|linux|\.deb$|\.rpm$|appimage/.test(n)) return "Linux";
@@ -185,7 +185,7 @@
       /* platforms this release does not cover: a .mcpb bundle covers all three */
       var have = {};
       (r.assets || []).forEach(function (a) { have[platform(a.name)] = true; });
-      var missing = (have["Claude Desktop"] || have["Claude plugin"]) ? [] : ["macOS", "Windows", "Linux"].filter(function (p) { return !have[p]; });
+      var missing = (have["Claude Desktop"] || have["Claude"]) ? [] : ["macOS", "Windows", "Linux"].filter(function (p) { return !have[p]; });
       if (!rows) {
         rows = "<tr><td colspan=\"4\">This release has no packaged files; install from PyPI: <code>uvx " + esc(pkg) + "</code></td></tr>";
       } else if (missing.length) {
