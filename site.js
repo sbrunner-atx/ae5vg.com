@@ -123,7 +123,7 @@
     var n = name.toLowerCase();
     if (/\.mcpb$/.test(n)) return "Claude Desktop";
     if (/-claude-plugin\.zip$/.test(n)) return "Claude";
-    if (/-chatgpt-plugin\.zip$/.test(n)) return "ChatGPT and Codex";
+    if (/-chatgpt-plugin\.zip$/.test(n)) return "ChatGPT, Codex and others";
     if (/\.pkg$/.test(n) || /-macos$|mac|darwin|osx/.test(n)) return "macOS";
     if (/\.exe$|\.msi$|win/.test(n)) return "Windows";
     if (/-linux$|linux|\.deb$|\.rpm$|appimage/.test(n)) return "Linux";
