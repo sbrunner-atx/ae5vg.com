@@ -79,7 +79,7 @@
 
   /* ---- live release data ---- */
   var GH = "https://api.github.com/repos/sbrunner-atx/";
-  var HOUR = 3600000;
+  var HOUR = 600000; /* cache GitHub and PyPI answers for ten minutes */
   function cached(key, url) {
     var hit = null;
     try { hit = JSON.parse(localStorage.getItem(key)); } catch (e) {}
@@ -99,7 +99,8 @@
       throw e;
     });
   }
-  function release(repo) { return cached("gh:" + repo, GH + repo + "/releases/latest"); }
+  /* "gh2:" retires the hour-long entries browsers saved before the cache went to ten minutes */
+  function release(repo) { return cached("gh2:" + repo, GH + repo + "/releases/latest"); }
   function pypi(pkg) { return cached("py:" + pkg, "https://pypi.org/pypi/" + pkg + "/json"); }
   function fmtDate(iso) {
     return new Date(iso).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
