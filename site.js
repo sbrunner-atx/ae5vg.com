@@ -180,7 +180,11 @@
     var pkg = tbody.getAttribute("data-pkg") || repo;
     release(repo).then(function (r) {
       var rows = "";
-      (r.assets || []).forEach(function (a) {
+      /* the extension first, then its skills, then anything else */
+      var rank = function (n) { return /\.mcpb$/i.test(n) ? 0 : /\.skill$/i.test(n) ? 1 : 2; };
+      (r.assets || []).slice().sort(function (x, y) {
+        return rank(x.name) - rank(y.name) || x.name.localeCompare(y.name);
+      }).forEach(function (a) {
         rows += "<tr><td><a download href=\"" + esc(a.browser_download_url) + "\">" + esc(a.name.replace(/\.zip$/i, "")) + "</a></td>" +
           "<td>" + platform(a.name) + "</td><td>" + fmtSize(a.size) + "</td><td>" + esc(r.tag_name) + "</td></tr>";
       });
