@@ -396,27 +396,62 @@
         </div>
         <p>This part is for advanced users. The MCP servers and their skills are not tied to Claude. MCP is an open standard, so in principle any AI assistant or agent harness that speaks it can use them, for example an agentic harness such as OpenClaw, which would make an interesting environment for a station.</p>
         <div class="callout">
-          <span class="label">Untested outside Claude</span>
-          <p>Other assistants and harnesses should work, but they have not been tested. If you get one running, please share your configuration in an issue on the relevant repository.</p>
+          <span class="label">Tested to start, not yet on the air</span>
+          <p>All four connectors start from PyPI and answer a standard MCP client with their full list of tools. Operating a station through an assistant other than Claude has not been tested yet. If you get one running, please share your configuration in an issue on the relevant repository.</p>
         </div>
-        <p>Other MCP clients cannot install a <code>.mcpb</code> file. They start each connector themselves from PyPI with <code>uvx</code>, which comes with <a href="https://docs.astral.sh/uv/">uv</a>. In Claude Code in a terminal, you run one command for each connector. Put your own callsign in place of <code>YOURCALL</code>.</p>
-        <pre><code>claude mcp add fldigi -e FLDIGI_CALLSIGN=YOURCALL -- uvx fldigi-mcp
-claude mcp add n3fjp -- uvx n3fjp-mcp</code></pre>
-        <p>Other clients take the same information as a configuration block:</p>
+        <p>Other MCP clients cannot install a <code>.mcpb</code> file. They start each connector themselves from PyPI with <code>uvx</code>, which comes with <a href="https://docs.astral.sh/uv/">uv</a>, so install uv first. Add only the connectors you use, and put your own callsign in place of <code>YOURCALL</code>.</p>
+        <h3 id="claude-code">Claude Code</h3>
+        <p>In a terminal, run one command for each connector:</p>
+        <pre><code>claude mcp add fldigi -e FLDIGI_CALLSIGN=YOURCALL -- uvx --from "fldigi-mcp[hunt]" fldigi-mcp
+claude mcp add n3fjp -- uvx n3fjp-mcp
+claude mcp add wsjtx -e WSJTX_CALLSIGN=YOURCALL -- uvx wsjtx-mcp
+claude mcp add serial-console -- uvx --from "serial-console-mcp[screen]" serial-console-mcp</code></pre>
+        <h3 id="codex">Codex</h3>
+        <p>Add these entries to <code>~/.codex/config.toml</code>:</p>
+        <pre><code>[mcp_servers.fldigi]
+command = "uvx"
+args = ["--from", "fldigi-mcp[hunt]", "fldigi-mcp"]
+env = { FLDIGI_CALLSIGN = "YOURCALL" }
+
+[mcp_servers.n3fjp]
+command = "uvx"
+args = ["n3fjp-mcp"]
+
+[mcp_servers.wsjtx]
+command = "uvx"
+args = ["wsjtx-mcp"]
+env = { WSJTX_CALLSIGN = "YOURCALL" }
+
+[mcp_servers.serial-console]
+command = "uvx"
+args = ["--from", "serial-console-mcp[screen]", "serial-console-mcp"]</code></pre>
+        <h3 id="json-clients">Cursor and other clients</h3>
+        <p>Most other clients take a JSON block, for Cursor in <code>~/.cursor/mcp.json</code>. VS Code uses the same block in its <code>mcp.json</code>, with <code>"servers"</code> in place of <code>"mcpServers"</code>.</p>
         <pre><code>{
   "mcpServers": {
     "fldigi": {
       "command": "uvx",
-      "args": ["fldigi-mcp"],
+      "args": ["--from", "fldigi-mcp[hunt]", "fldigi-mcp"],
       "env": { "FLDIGI_CALLSIGN": "YOURCALL" }
     },
     "n3fjp": {
       "command": "uvx",
       "args": ["n3fjp-mcp"]
+    },
+    "wsjtx": {
+      "command": "uvx",
+      "args": ["wsjtx-mcp"],
+      "env": { "WSJTX_CALLSIGN": "YOURCALL" }
+    },
+    "serial-console": {
+      "command": "uvx",
+      "args": ["--from", "serial-console-mcp[screen]", "serial-console-mcp"]
     }
   }
 }</code></pre>
-        <p>Here the settings are environment variables. fldigi-mcp uses <code>FLDIGI_HOST</code>, <code>FLDIGI_PORT</code> and <code>FLDIGI_CALLSIGN</code>. n3fjp-mcp uses <code>N3FJP_HOST</code> and <code>N3FJP_PORT</code>. Leave <code>FLDIGI_CALLSIGN</code> out and the station can only receive. The skills come separately here too: copy the skill directories (<code>skills/&lt;name&gt;/</code>) from each repository into your client's skills folder, for Claude Code <code>~/.claude/skills/</code> or a project's <code>.claude/skills/</code>.</p>
+        <h3 id="client-settings">Settings and skills</h3>
+        <p>Here the settings are environment variables, the same ones the Claude connector sets from its settings page. fldigi-mcp uses <code>FLDIGI_HOST</code>, <code>FLDIGI_PORT</code> and <code>FLDIGI_CALLSIGN</code>. n3fjp-mcp uses <code>N3FJP_HOST</code> and <code>N3FJP_PORT</code>. wsjtx-mcp uses <code>WSJTX_HOST</code>, <code>WSJTX_PORT</code> and <code>WSJTX_CALLSIGN</code>. serial-console-mcp uses <code>SERIAL_CONSOLE_READ_ONLY</code> and <code>SERIAL_CONSOLE_IDLE_MINUTES</code>. Leave the callsign out and that connector can only receive. Each product page lists every setting.</p>
+        <p>The skills come separately here too: copy the skill folders (<code>skills/&lt;name&gt;/</code>) from each repository into your client's skills folder, for Claude Code <code>~/.claude/skills/</code> or a project's <code>.claude/skills/</code>.</p>
 
         <h2 id="next">Where to go next</h2>
         <p>The full operating standard is the <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-mcp%20Operating%20Field%20Guide.pdf">Operating Field Guide (PDF)</a>, which you can also <a href="user-guide/operating-field-guide.html">read online</a>. The <a href="user-guide/index.html">User Guide</a> has the other guides. The <a href="products/fldigi-mcp.html">fldigi-mcp page</a> lists the tools and the settings. <a href="downloads.html">Downloads</a> has every file. If you want to help with the software, start at <a href="development.html">Development</a>.</p>
