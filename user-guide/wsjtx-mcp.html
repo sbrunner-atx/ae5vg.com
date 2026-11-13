@@ -89,11 +89,11 @@
         <h2 id="install">Installing</h2>
         <h3>1 · Enable WSJT-X's UDP Server</h3>
         <p>In WSJT-X, open <strong>Settings → Reporting → UDP Server</strong>. Set UDP Server to the host that runs wsjtx-mcp. If both run on the same computer, leave it at <code>127.0.0.1</code>. Leave the port at 2237, the default. <strong>Tick Accept UDP requests</strong> if you want wsjtx-mcp to control WSJT-X, for example to answer CQs, set free text or change the configuration. It is off by default. Without it, wsjtx-mcp can still read decodes and status, but it cannot send commands.</p>
-        <h3>2a · As a Claude Desktop extension</h3>
+        <h3>2a · As a desktop connector in Claude</h3>
         <ol class="steps">
           <li>Download <code>wsjtx-mcp.mcpb</code> from <a href="../downloads.html#wsjtx-mcp">Downloads</a>.</li>
-          <li>If you installed an older build before, remove it first. Go to Settings → Extensions, uninstall it, and wait for its tile to disappear. Then the new build can take its place.</li>
-          <li>Double-click the <code>.mcpb</code>, or drag it onto Claude Desktop → Settings → Extensions.</li>
+          <li>If you installed an older build before, remove it first. Go to <strong>Settings → Desktop app → Extensions</strong> (click <strong>Manage</strong>), uninstall it, and wait for its tile to disappear. Then the new build can take its place.</li>
+          <li>In Claude, open <strong>Settings → Desktop app</strong>, click <strong>Manage</strong> next to <strong>Extensions</strong>, and drag <code>wsjtx-mcp.mcpb</code> onto that page. If dragging does not work, click <strong>Advanced settings</strong>, then <strong>Install extension</strong>, and choose the file. The new connector then shows under <strong>Settings → Customize → Connectors</strong>.</li>
           <li>Fill in the settings form. Enter your operator callsign to allow transmitting, or leave it blank to receive only. The listen host and port are usually <code>127.0.0.1</code> and 2237.</li>
           <li>Quit and reopen Claude Desktop (⌘Q) so the new tools load.</li>
         </ol>
@@ -102,7 +102,7 @@
           <p>Entering your callsign, together with Accept UDP requests in WSJT-X, lets wsjtx-mcp key the transmitter through <code>reply</code> and <code>free_text</code> with <code>send=true</code>. Leave the callsign blank until you have read the transmit gate chapter.</p>
         </div>
         <h3>2b · From PyPI, any MCP client (advanced)</h3>
-        <p>This is for advanced users. If you use Claude Desktop, the extension in 2a is all you need.</p>
+        <p>This is for advanced users. If you use Claude Desktop, the connector in 2a is all you need.</p>
         <div class="callout">
           <span class="label">Untested outside Claude</span>
           <p>MCP is an open standard, so other assistants and agentic harnesses such as OpenClaw should work too. They have not been tested, and there are no ready-made configurations for them yet.</p>

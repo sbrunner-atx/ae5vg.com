@@ -105,15 +105,15 @@
         </div>
 
         <h2 id="install">B · Installing the skills</h2>
-        <p>The skills and the servers install separately. A desktop extension (<code>.mcpb</code>) installs only its server, so you add the skills yourself. You do this once.</p>
+        <p>The skills and the servers install separately. A desktop connector (<code>.mcpb</code>) installs only its server, so you add the skills yourself. You do this once.</p>
         <h3>In the Claude desktop app</h3>
         <ol class="steps">
           <li><strong>Download the files.</strong> On <a href="../downloads.html">Downloads</a>, under fldigi-mcp, click <code>fldigi-mcp.mcpb</code>, <code>fldigi-operating.skill</code> and <code>signal-hunting.skill</code>. Under n3fjp-mcp, click <code>n3fjp-mcp.mcpb</code> and <code>contest-operating.skill</code>.</li>
-          <li><strong>Install the extensions.</strong> In Claude, open <strong>Settings → Extensions → Advanced settings → Install Extension</strong> and choose <code>fldigi-mcp.mcpb</code>. Then do the same with <code>n3fjp-mcp.mcpb</code>.</li>
+          <li><strong>Install the connectors.</strong> In Claude, open <strong>Settings → Desktop app</strong>, click <strong>Manage</strong> next to <strong>Extensions</strong>, and drag <code>fldigi-mcp.mcpb</code> onto that page. If dragging does not work, click <strong>Advanced settings</strong>, then <strong>Install extension</strong>, and choose the file. The new connector then shows under <strong>Settings → Customize → Connectors</strong>. Then do the same with <code>n3fjp-mcp.mcpb</code>.</li>
           <li><strong>Set the transmit gate.</strong> In the fldigi-mcp settings, type your callsign in <strong>Callsign</strong>. With no callsign set, the station is receive-only and nothing can key the radio.</li>
           <li><strong>Add the skills.</strong> In Claude, open <strong>Customize → Skills</strong>. Click <strong>Add</strong>, then <strong>Upload skill</strong>, and choose <code>fldigi-operating.skill</code>, <code>signal-hunting.skill</code> and <code>contest-operating.skill</code> all at once (hold ⌘ on a Mac or Ctrl on Windows to select several). Click <strong>Upload</strong>.</li>
         </ol>
-        <p>Cowork in the Claude desktop app uses the same extensions and skills. Nothing else to install.</p>
+        <p>Cowork in the Claude desktop app uses the same connectors and skills. Nothing else to install.</p>
         <h3>For advanced users: Claude Code in a terminal, or another MCP client</h3>
         <ol class="steps">
           <li><strong>Copy the skill directories</strong> from each repo into the client's skills folder, for Claude Code <code>~/.claude/skills/</code> or a project's <code>.claude/skills/</code>: <code>skills/fldigi-operating/</code>, <code>skills/signal-hunting/</code> and <code>skills/contest-operating/</code>.</li>
@@ -145,7 +145,7 @@
         <ol class="steps">
           <li><strong>Install the Claude Desktop app.</strong> Download it from <code>claude.ai/download</code>, install it like any other program, and sign in (you can create the account on the same page). A paid plan is recommended, because the free tier can run out of messages in the middle of a QSO.</li>
           <li><strong>Run your shack software as usual.</strong> Start fldigi (its XML-RPC interface is on by default). If you want contest logging, start N3FJP and enable its TCP API (Settings → Application Program Interface → checked). fldigi must key the radio the usual way, under Configure → Config Dialog → Rig Control: Hardware PTT for an interface such as a RigBlaster, nothing for a VOX interface such as a SignaLink. If fldigi's T/R button keys the radio, Claude can too. The N3FJP loggers run only on Windows. On a Mac, run N3FJP in a Windows virtual machine or on a Windows PC, and connect it with mcp-host-bridge, as <a href="#where">Where everything runs</a> below shows.</li>
-          <li><strong>Add the two extensions.</strong> Double-click <code>fldigi-mcp.mcpb</code>, click Install when Claude Desktop opens, and enter your callsign when asked. That callsign is the transmit gate. Repeat with <code>n3fjp-mcp.mcpb</code>.</li>
+          <li><strong>Add the two connectors.</strong> Install <code>fldigi-mcp.mcpb</code> and <code>n3fjp-mcp.mcpb</code> as in <a href="#install">chapter B</a>, and enter your callsign in the fldigi settings. That callsign is the transmit gate.</li>
           <li><strong>Add the three skills.</strong> Upload <code>fldigi-operating.skill</code>, <code>signal-hunting.skill</code> and <code>contest-operating.skill</code> under <strong>Customize → Skills</strong>, as in <a href="#install">chapter B</a>. You only do this once.</li>
           <li><strong>Say hello.</strong> Open a new chat and choose <strong>Sonnet</strong> with the effort set to <strong>Medium</strong> in the model menu under the box where you type. That is the recommended setting: it answers quickly enough to keep up with a QSO, and it uses less of your plan's usage, so a long session costs less. Then type: "What is the fldigi status?" If mode, frequency and T/R state come back, your station is connected.</li>
         </ol>

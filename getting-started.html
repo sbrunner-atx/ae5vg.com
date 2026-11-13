@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Getting Started · AE5VG</title>
-<meta name="description" content="For a ham who has never used an AI assistant: install Claude, add the fldigi and N3FJP extensions, work a first QSO, and set up signal hunting.">
+<meta name="description" content="For a ham who has never used an AI assistant: install Claude, add the fldigi and N3FJP connectors, work a first QSO, and set up signal hunting.">
 <link rel="canonical" href="https://ae5vg.com/getting-started.html">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-48.png" type="image/png" sizes="48x48">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AE5VG">
 <meta property="og:title" content="Getting Started · AE5VG">
-<meta property="og:description" content="For a ham who has never used an AI assistant: install Claude, add the fldigi and N3FJP extensions, work a first QSO, and set up signal hunting.">
+<meta property="og:description" content="For a ham who has never used an AI assistant: install Claude, add the fldigi and N3FJP connectors, work a first QSO, and set up signal hunting.">
 <meta property="og:url" content="https://ae5vg.com/getting-started.html">
 <meta property="og:image" content="https://ae5vg.com/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -20,7 +20,7 @@
 <meta property="og:image:alt" content="AE5VG: An AI assistant that can work the bands with you. ae5vg.com">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Getting Started · AE5VG">
-<meta name="twitter:description" content="For a ham who has never used an AI assistant: install Claude, add the fldigi and N3FJP extensions, work a first QSO, and set up signal hunting.">
+<meta name="twitter:description" content="For a ham who has never used an AI assistant: install Claude, add the fldigi and N3FJP connectors, work a first QSO, and set up signal hunting.">
 <meta name="twitter:image" content="https://ae5vg.com/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -62,7 +62,7 @@
         <li><a href="#what">What you need</a></li>
         <li><a href="#install">1 · Install Claude</a></li>
         <li><a href="#prepare">2 · Prepare fldigi and N3FJP</a></li>
-        <li><a href="#load">3 · Add the extensions and skills</a></li>
+        <li><a href="#load">3 · Add the connectors and skills</a></li>
         <li><a href="#session">4 · Check the connection</a></li>
         <li><a href="#qso">5 · Your first QSO</a></li>
         <li><a href="#help">If something does not work</a></li>
@@ -73,7 +73,7 @@
       </ul></nav>
       <div>
         <h2 id="what" style="margin-top:0">What you need</h2>
-        <p>Claude is an AI assistant. You type to it in plain English, the way you would write a text message, and it answers. Two small extensions let it work your station. Think of them as rig interface cables: one connects Claude to fldigi, the other connects it to N3FJP. Small skill files teach Claude the operating procedure: when to transmit, how an exchange runs and when to log. Your fldigi and N3FJP setup does not change. The technical name for these extensions is MCP server. You will see that name on the Downloads page, and that is all you need to know about it.</p>
+        <p>Claude is an AI assistant. You type to it in plain English, the way you would write a text message, and it answers. Two small connectors let it work your station. Think of them as rig interface cables: one connects Claude to fldigi, the other connects it to N3FJP. Small skill files teach Claude the operating procedure: when to transmit, how an exchange runs and when to log. Your fldigi and N3FJP setup does not change. The technical name for these connectors is MCP server. You will see that name on the Downloads page, and that is all you need to know about it.</p>
         <ul>
           <li>A Mac or a Windows PC where fldigi already decodes and transmits on your radio. Step 2 shows how to check that.</li>
           <li>N3FJP, if you want Claude to log your contacts. Logging is optional. The N3FJP loggers run only on Windows. On a Mac, run it in a Windows virtual machine (for example Parallels, VMware Fusion or UTM) or on a Windows PC on your network, and see <a href="#remote">Where everything runs</a>.</li>
@@ -97,12 +97,12 @@
           <li>If you log with N3FJP, start it and open <strong>Settings → Application Program Interface</strong>. Tick <strong>TCP API Enabled</strong> and leave the port at 1100. If Windows asks whether N3FJP may use the network, allow it on private networks.</li>
         </ol>
 
-        <h2 id="load">3 · Add the extensions and skills</h2>
-        <p>The extensions connect Claude to fldigi and N3FJP. The skills teach Claude how to operate. The extensions do not install the skills, so you add both.</p>
+        <h2 id="load">3 · Add the connectors and skills</h2>
+        <p>The connectors link Claude to fldigi and N3FJP. The skills teach Claude how to operate. The connectors do not install the skills, so you add both.</p>
         <ol class="steps">
           <li>On the <a href="downloads.html">Downloads</a> page, under fldigi-mcp, click <code>fldigi-mcp.mcpb</code>, <code>fldigi-operating.skill</code> and <code>signal-hunting.skill</code>. If you log with N3FJP, also click <code>n3fjp-mcp.mcpb</code> and <code>contest-operating.skill</code> under n3fjp-mcp. Your browser saves the files in your Downloads folder.</li>
-          <li>In Claude, open <strong>Settings → Extensions → Advanced settings → Install Extension</strong> and choose <code>fldigi-mcp.mcpb</code>.</li>
-          <li>Claude then shows the extension's settings. If it does not, click <strong>Configure</strong> next to fldigi-mcp under <strong>Settings → Extensions</strong>. Type your callsign in <strong>Callsign</strong> and leave everything else as it is. Without a callsign, Claude can listen but it will never transmit.</li>
+          <li>In Claude, open <strong>Settings → Desktop app</strong>, click <strong>Manage</strong> next to <strong>Extensions</strong>, and drag <code>fldigi-mcp.mcpb</code> onto that page. If dragging does not work, click <strong>Advanced settings</strong>, then <strong>Install extension</strong>, and choose the file. The new connector then shows under <strong>Settings → Customize → Connectors</strong>.</li>
+          <li>Claude then shows the connector's settings. If it does not, click <strong>Configure</strong> next to fldigi (Amateur Radio) under <strong>Settings → Desktop app → Extensions</strong> (click <strong>Manage</strong>). Type your callsign in <strong>Callsign</strong> and leave everything else as it is. Without a callsign, Claude can listen but it will never transmit.</li>
           <li>Do the same with <code>n3fjp-mcp.mcpb</code>. There is nothing to type for it. If N3FJP runs in a virtual machine or on another PC, which is always the case on a Mac, also set up the bridge described under <a href="#remote">Where everything runs</a>.</li>
           <li>Now the skills. In Claude, open <strong>Customize → Skills</strong>. Click <strong>Add</strong>, then <strong>Upload skill</strong>.</li>
           <li>Choose <code>fldigi-operating.skill</code>, <code>signal-hunting.skill</code> and, if you log with N3FJP, <code>contest-operating.skill</code>, all at once. Hold <strong>⌘</strong> on a Mac or <strong>Ctrl</strong> on Windows to select more than one file. Click <strong>Upload</strong>. The skills now show under <strong>Customize → Skills</strong>, turned on.</li>
@@ -154,9 +154,9 @@
 
         <h2 id="help">If something does not work</h2>
         <p><strong>Claude says it cannot reach fldigi.</strong> Check that fldigi is running, then ask again. If it still fails, type <code>run the fldigi diagnostics</code>. Claude then tells you whether the problem is the connection or fldigi itself.</p>
-        <p><strong>Claude does not seem to know about fldigi.</strong> Open <strong>Settings → Extensions</strong> and check that fldigi-mcp is turned on. Then start a new chat.</p>
+        <p><strong>Claude does not seem to know about fldigi.</strong> Open <strong>Settings → Customize → Connectors</strong> and check that fldigi (Amateur Radio) is listed with a check mark. Then start a new chat.</p>
         <p><strong>Claude does not follow the operating procedure.</strong> The skills are missing or turned off. Open <strong>Customize → Skills</strong> and check that fldigi-operating, signal-hunting and contest-operating are there and turned on. If they are not, add them as in step 3. Then start a new chat.</p>
-        <p><strong>Claude will not transmit.</strong> The Callsign setting is empty. Open <strong>Settings → Extensions</strong>, click <strong>Configure</strong> next to fldigi-mcp, and enter your callsign.</p>
+        <p><strong>Claude will not transmit.</strong> The Callsign setting is empty. Open <strong>Settings → Desktop app → Extensions</strong> (click <strong>Manage</strong>) and click <strong>Configure</strong> next to fldigi (Amateur Radio), and enter your callsign.</p>
         <p><strong>The contact is not in the N3FJP log.</strong> Check that N3FJP is running and that <strong>TCP API Enabled</strong> is ticked, as in step 2.</p>
         <p><strong>Claude says you reached a usage limit.</strong> Wait until the limit resets, or move to a paid plan.</p>
 
@@ -180,7 +180,7 @@
         <p>This is the usual station: an iMic, a SignaLink, or the radio's own USB port. Two programs can listen to the same sound card at once, so Claude simply listens to the one fldigi uses.</p>
         <ol class="steps">
           <li>In fldigi, open <strong>Configure → Config Dialog → Soundcard → Devices</strong> and note the name next to <strong>Capture</strong>, for example <code>iMic USB audio system</code>.</li>
-          <li>In Claude, open <strong>Settings → Extensions</strong> and click <strong>Configure</strong> next to fldigi-mcp. Type that name, or part of it such as <code>iMic</code>, in <strong>Audio input device for signal hunting</strong>.</li>
+          <li>In Claude, open <strong>Settings → Desktop app → Extensions</strong> (click <strong>Manage</strong>) and click <strong>Configure</strong> next to fldigi (Amateur Radio). Type that name, or part of it such as <code>iMic</code>, in <strong>Audio input device for signal hunting</strong>.</li>
           <li>You keep hearing the band on the radio's speaker. To hear it on the computer instead, open <strong>View → Rx Audio Dialog</strong> in fldigi and turn the monitor on. It plays on the device chosen under <strong>Soundcard → Alerts</strong>.</li>
         </ol>
 
@@ -223,7 +223,7 @@
           <li>Open <strong>Audio MIDI Setup</strong>, which is in Applications → Utilities. Click <strong>+</strong> at the bottom left and choose <strong>Create Multi-Output Device</strong>. Tick your speakers or headphones and <strong>BlackHole 2ch</strong>. Set <strong>Primary Device</strong> to your speakers, and tick <strong>Drift Correction</strong> next to BlackHole 2ch. Double-click the new device's name and call it <code>Radio + speakers</code>.</li>
           <li>In the receiver program, choose <code>Radio + speakers</code> as the output. A web receiver plays through the Mac's own output, so for one of those choose <code>Radio + speakers</code> under <strong>System Settings → Sound → Output</strong>. The volume keys do not work on this device, so set the volume in the receiver program.</li>
           <li>In fldigi, open <strong>Configure → Config Dialog → Soundcard → Devices</strong> and set <strong>Capture</strong> to <code>BlackHole 2ch</code>.</li>
-          <li>In Claude, click <strong>Configure</strong> next to fldigi-mcp and type <code>BlackHole</code> in <strong>Audio input device for signal hunting</strong>.</li>
+          <li>In Claude, click <strong>Configure</strong> next to fldigi (Amateur Radio) and type <code>BlackHole</code> in <strong>Audio input device for signal hunting</strong>.</li>
         </ol>
         <p>On Windows, the free <a href="https://vb-audio.com/Cable/">VB-Audio Virtual Cable</a> does the same job. Set the receiver program's output to <code>CABLE Input</code>. Set fldigi's Capture and Claude's audio input device to <code>CABLE Output</code>. To keep listening, open the Windows <strong>Sound</strong> control panel, open <strong>CABLE Output</strong> on the <strong>Recording</strong> tab, and tick <strong>Listen to this device</strong> on the <strong>Listen</strong> tab.</p>
 
@@ -379,20 +379,20 @@
           </tbody>
         </table>
         </div>
-        <p>This part needs a terminal. Claude Desktop runs extensions in a sandbox that can only reach <code>127.0.0.1</code>, the computer Claude is on. <a href="products/mcp-host-bridge.html">mcp-host-bridge</a> carries that connection to the other computer. Its page shows how to install it, with no Python needed.</p>
+        <p>This part needs a terminal. Claude Desktop runs connectors in a sandbox that can only reach <code>127.0.0.1</code>, the computer Claude is on. <a href="products/mcp-host-bridge.html">mcp-host-bridge</a> carries that connection to the other computer. Its page shows how to install it, with no Python needed.</p>
         <ol class="steps">
           <li>Find the Windows computer's address. In Windows, open Command Prompt, type <code>ipconfig</code>, and note the <strong>IPv4 Address</strong>, for example 192.168.1.50.</li>
           <li>On the Mac, install mcp-host-bridge and run the command below, with that address in place of 192.168.1.50. It keeps running after a restart.
             <pre><code>mcp-host-bridge install n3fjp --to 192.168.1.50</code></pre></li>
           <li>Leave the n3fjp-mcp host set to <code>127.0.0.1</code>.</li>
-          <li>Let fldigi set band and mode in N3FJP. In N3FJP, open <strong>Settings → Rig Interface</strong> (Ctrl+R), choose <strong>N3FJP API</strong> under <strong>Select Rig</strong>, enter the Windows computer's name and port 1100 under <strong>Command to Read Frequency</strong> (for example <code>MYPC:1100</code>), leave <strong>Mode Determined By</strong> at <strong>Rig</strong>, and click <strong>Save Settings</strong>. N3FJP then takes its band and mode from its API on port 1100, the same port n3fjp-mcp uses. Then, in fldigi on the Mac, open <strong>Configure → Config Dialog → Logging → N3FJP logs</strong>, enter the Windows address (192.168.1.50 in the example) and port 1100, and tick <strong>Connect to the N3FJP log server</strong>. fldigi is an ordinary program, not a sandboxed extension, so it reaches N3FJP directly without the bridge. If macOS asks whether fldigi may find devices on your local network, allow it.</li>
+          <li>Let fldigi set band and mode in N3FJP. In N3FJP, open <strong>Settings → Rig Interface</strong> (Ctrl+R), choose <strong>N3FJP API</strong> under <strong>Select Rig</strong>, enter the Windows computer's name and port 1100 under <strong>Command to Read Frequency</strong> (for example <code>MYPC:1100</code>), leave <strong>Mode Determined By</strong> at <strong>Rig</strong>, and click <strong>Save Settings</strong>. N3FJP then takes its band and mode from its API on port 1100, the same port n3fjp-mcp uses. Then, in fldigi on the Mac, open <strong>Configure → Config Dialog → Logging → N3FJP logs</strong>, enter the Windows address (192.168.1.50 in the example) and port 1100, and tick <strong>Connect to the N3FJP log server</strong>. fldigi is an ordinary program, not a sandboxed connector, so it reaches N3FJP directly without the bridge. If macOS asks whether fldigi may find devices on your local network, allow it.</li>
         </ol>
         <p>The same bridge command works with <code>fldigi</code> or <code>wsjtx</code> in place of <code>n3fjp</code>, for a station where that program runs on a different computer from Claude. fldigi on another computer must then accept connections from the network: set its XML-RPC address to <code>0.0.0.0</code> under <strong>Configure → Config Dialog → Misc → TCP-IP sessions</strong>. Keep these links on a trusted LAN. They are not encrypted, and fldigi's XML-RPC interface does not ask for any login.</p>
 
         <h2 id="other-clients">Other AI assistants (advanced)</h2>
         <div class="callout">
           <span class="label">Not needed for Claude Desktop</span>
-          <p>If you use the Claude Desktop app, skip this part. The extensions and skills from step 3 are all it needs. Cowork in the app uses the same extensions and skills.</p>
+          <p>If you use the Claude Desktop app, skip this part. The connectors and skills from step 3 are all it needs. Cowork in the app uses the same connectors and skills.</p>
         </div>
         <p>This part is for advanced users. The MCP servers and their skills are not tied to Claude. MCP is an open standard, so in principle any AI assistant or agent harness that speaks it can use them, for example an agentic harness such as OpenClaw, which would make an interesting environment for a station.</p>
         <div class="callout">

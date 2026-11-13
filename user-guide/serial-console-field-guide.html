@@ -113,16 +113,16 @@
 
         <h2 id="install">B · Installing</h2>
         <p>The server runs on your own computer, started by Claude Desktop, so it can see <code>/dev/cu.*</code>, <code>COM4</code> or <code>/dev/ttyUSB0</code>.</p>
-        <h3>As a desktop extension (recommended)</h3>
+        <h3>As a desktop connector (recommended)</h3>
         <ol class="steps">
           <li><strong>Download the bundle.</strong> Get <code>serial-console-mcp.mcpb</code> from <a href="../downloads.html#serial-console-mcp">Downloads</a>. The same file works on Mac, Windows and Linux.</li>
-          <li><strong>Install it.</strong> In Claude Desktop, go to <strong>Settings → Extensions → Advanced settings → Install Extension</strong> and choose the file. You do not need a terminal or a Python install.</li>
+          <li><strong>Install it.</strong> In Claude, open <strong>Settings → Desktop app</strong>, click <strong>Manage</strong> next to <strong>Extensions</strong>, and drag <code>serial-console-mcp.mcpb</code> onto that page. If dragging does not work, click <strong>Advanced settings</strong>, then <strong>Install extension</strong>, and choose the file. The new connector then shows under <strong>Settings → Customize → Connectors</strong>. You do not need a terminal or a Python install.</li>
           <li><strong>Settings, if you want them.</strong> The form offers read-only mode and a timeout that closes a forgotten port. Both are off unless you turn them on.</li>
-          <li><strong>Download the skills.</strong> The extension does not install them. On <a href="../downloads.html#serial-console-mcp">Downloads</a>, under serial-console-mcp, click <code>serial-console.skill</code>, <code>junos-operating.skill</code> and <code>ios-operating.skill</code>.</li>
+          <li><strong>Download the skills.</strong> The connector does not install them. On <a href="../downloads.html#serial-console-mcp">Downloads</a>, under serial-console-mcp, click <code>serial-console.skill</code>, <code>junos-operating.skill</code> and <code>ios-operating.skill</code>.</li>
           <li><strong>Add the skills.</strong> In Claude, open <strong>Customize → Skills</strong>. Click <strong>Add</strong>, then <strong>Upload skill</strong>, and choose <code>serial-console.skill</code>, <code>junos-operating.skill</code> and <code>ios-operating.skill</code> all at once (hold ⌘ on a Mac or Ctrl on Windows to select several). Click <strong>Upload</strong>.</li>
         </ol>
         <h3>From PyPI (uv or pipx), for advanced users</h3>
-        <p>This is for advanced users. If you use Claude Desktop, the extension and skills above are all you need.</p>
+        <p>This is for advanced users. If you use Claude Desktop, the connector and skills above are all you need.</p>
         <pre><code>uvx serial-console-mcp configure --command uvx --arg serial-console-mcp
 # or
 pipx install serial-console-mcp
@@ -334,7 +334,7 @@ serial-console-mcp configure --command "$(which serial-console-mcp)"</code></pre
           </tbody>
         </table>
         </div>
-        <p>Choose the mode with <code>connect(terminal=…)</code>, or let the preset choose it. The capture file and the screen model always keep the raw bytes. Only what the read tools return is cleaned. The screen model needs the <code>[screen]</code> extra (<code>pip install 'serial-console-mcp[screen]'</code>). The desktop extension includes it. Without it, xterm falls back to ansi and tells you so.</p>
+        <p>Choose the mode with <code>connect(terminal=…)</code>, or let the preset choose it. The capture file and the screen model always keep the raw bytes. Only what the read tools return is cleaned. The screen model needs the <code>[screen]</code> extra (<code>pip install 'serial-console-mcp[screen]'</code>). The desktop connector includes it. Without it, xterm falls back to ansi and tells you so.</p>
         <h3>Prompts on a redrawn line</h3>
         <p>If you ask Junos for help with <code>show system ?</code>, or clear the line with Ctrl-U, it does not print a fresh prompt. Instead it sends a carriage return, retypes the line, pads it with spaces and backs up over them. So the bytes end in <code>show system&nbsp;&nbsp;&nbsp;\b\b\b</code> rather than in <code>&gt; </code>. In ansi, vt100 and xterm mode, read_until_prompt and expect also try the pattern on the last line as the screen shows it, up to the cursor. After Ctrl-U, the preset's <code>[#&gt;%] ?$</code> finds <code>root@sw&gt; </code>. After <code>?</code>, the pattern <code>&gt; show system $</code> finds the retyped words. A line that has ended, or that a carriage return has just rewound, is never taken for a prompt. dumb mode matches the bytes as they are, backspaces and all. Tab completion does not cause this problem. On Junos 15.1 it only adds the rest of the word in place, so it needs no special handling.</p>
         <h3>Keys by name</h3>
@@ -586,7 +586,7 @@ READ  query_text("C") → +0045 → azimuth 45°
           <thead><tr><th scope="col">Resource</th><th scope="col">Where</th></tr></thead>
           <tbody>
             <tr><td>serial-console-mcp</td><td><a href="https://github.com/sbrunner-atx/serial-console-mcp">github.com/sbrunner-atx/serial-console-mcp</a></td></tr>
-            <tr><td>Desktop extension</td><td><code>serial-console-mcp.mcpb</code> on GitHub Releases, listed on <a href="../downloads.html#serial-console-mcp">Downloads</a></td></tr>
+            <tr><td>Desktop connector</td><td><code>serial-console-mcp.mcpb</code> on GitHub Releases, listed on <a href="../downloads.html#serial-console-mcp">Downloads</a></td></tr>
             <tr><td>PyPI</td><td><a href="https://pypi.org/project/serial-console-mcp/">pypi.org/project/serial-console-mcp</a> · <code>uvx serial-console-mcp</code></td></tr>
             <tr><td>Server and tests</td><td><code>src/serial_console_mcp/</code> (server, presets, terminal, cat, civ, rotator) · <code>tests/test_serial_console.py</code></td></tr>
             <tr><td>Operating skills</td><td><code>skills/serial-console</code> · <code>skills/junos-operating</code> · <code>skills/ios-operating</code> (<code>SKILL.md</code> each)</td></tr>

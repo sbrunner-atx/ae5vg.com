@@ -108,7 +108,7 @@
             <tr><td>Read-only mode</td><td>With <code>SERIAL_CONSOLE_READ_ONLY=1</code>, the server refuses all writes except read-style commands, and refuses control-line changes. Named keys are allowed. Literal text is refused.</td></tr>
             <tr><td>Idle auto-close</td><td><code>SERIAL_CONSOLE_IDLE_MINUTES</code> closes a port that has sat idle, so a connection you forgot about does not keep blocking WSJT-X. It is off by default.</td></tr>
             <tr><td>Bounded memory</td><td>The receive buffer is capped at 4 MB per port. If a device streams for hours and nothing reads it, the oldest bytes are dropped and status says how many.</td></tr>
-            <tr><td>Desktop extension</td><td>A single <code>.mcpb</code> file installs in Claude Desktop like the other connectors. It has a settings form for read-only mode and the idle timeout. If you install from PyPI, <code>serial-console-mcp configure</code> writes the Claude Desktop entry instead, and <code>--remove</code> undoes it.</td></tr>
+            <tr><td>Desktop connector</td><td>A single <code>.mcpb</code> file installs in Claude Desktop like the other connectors. It has a settings form for read-only mode and the idle timeout. If you install from PyPI, <code>serial-console-mcp configure</code> writes the Claude Desktop entry instead, and <code>--remove</code> undoes it.</td></tr>
             <tr><td>Three skills</td><td><code>serial-console</code>, <code>junos-operating</code> and <code>ios-operating</code> teach the discipline, the modes and the everyday commands.</td></tr>
           </tbody>
         </table>
@@ -180,10 +180,10 @@
         </div>
 
         <h2 id="install">Install</h2>
-        <p>You need the Claude desktop app. The extension connects Claude to the program. The skills teach Claude how to operate it. The extension does not install the skills, so you add them as well.</p>
+        <p>You need the Claude desktop app. The connector links Claude to the program. The skills teach Claude how to operate it. The connector does not install the skills, so you add them as well.</p>
         <ol class="steps">
           <li>On <a href="../downloads.html#serial-console-mcp">Downloads</a>, click <code>serial-console-mcp.mcpb</code>, <code>serial-console.skill</code>, <code>junos-operating.skill</code> and <code>ios-operating.skill</code>. Your browser saves them in your Downloads folder.</li>
-          <li>In Claude, open <strong>Settings → Extensions → Advanced settings → Install Extension</strong> and choose <code>serial-console-mcp.mcpb</code>.</li>
+          <li>In Claude, open <strong>Settings → Desktop app</strong>, click <strong>Manage</strong> next to <strong>Extensions</strong>, and drag <code>serial-console-mcp.mcpb</code> onto that page. If dragging does not work, click <strong>Advanced settings</strong>, then <strong>Install extension</strong>, and choose the file. The new connector then shows under <strong>Settings → Customize → Connectors</strong>.</li>
           <li>Claude shows the settings. You can leave them as they are.</li>
           <li>In Claude, open <strong>Customize → Skills</strong>, click <strong>Add</strong>, then <strong>Upload skill</strong>, and choose <code>serial-console.skill</code>, <code>junos-operating.skill</code> and <code>ios-operating.skill</code> all at once (hold ⌘ on a Mac or Ctrl on Windows to select several). Click <strong>Upload</strong>.</li>
         </ol>
