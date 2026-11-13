@@ -118,17 +118,19 @@
           <li><strong>Download the bundle.</strong> Get <code>serial-console-mcp.mcpb</code> from <a href="../downloads.html#serial-console-mcp">Downloads</a>. The same file works on Mac, Windows and Linux.</li>
           <li><strong>Install it.</strong> In Claude Desktop, go to <strong>Settings → Extensions → Advanced settings → Install Extension</strong> and choose the file. You do not need a terminal or a Python install.</li>
           <li><strong>Settings, if you want them.</strong> The form offers read-only mode and a timeout that closes a forgotten port. Both are off unless you turn them on.</li>
+          <li><strong>Download the skills.</strong> The extension does not install them. On <a href="../downloads.html#serial-console-mcp">Downloads</a>, under serial-console-mcp, click <code>serial-console.skill</code>, <code>junos-operating.skill</code> and <code>ios-operating.skill</code>.</li>
+          <li><strong>Add the skills.</strong> In Claude, open <strong>Customize → Skills</strong>. Click <strong>Add</strong>, then <strong>Upload skill</strong>, and choose <code>serial-console.skill</code>. Do the same with <code>junos-operating.skill</code> and <code>ios-operating.skill</code>.</li>
         </ol>
         <h3>From PyPI (uv or pipx), for advanced users</h3>
-        <p>This is for advanced users. If you use Claude Desktop, the extension above is all you need.</p>
+        <p>This is for advanced users. If you use Claude Desktop, the extension and skills above are all you need.</p>
         <pre><code>uvx serial-console-mcp configure --command uvx --arg serial-console-mcp
 # or
 pipx install serial-console-mcp
 serial-console-mcp configure --command "$(which serial-console-mcp)"</code></pre>
-        <p>This needs Python 3.10 or newer. <code>configure</code> writes the Claude Desktop entry. It keeps the servers already listed there and backs up the old file. <code>serial-console-mcp configure --remove</code> undoes it. Any MCP client can launch the same command over stdio. Developers: <code>git clone</code>, <code>uv sync</code>, <code>uv run pytest</code>.</p>
+        <p>This needs Python 3.10 or newer. <code>configure</code> writes the Claude Desktop entry. It keeps the servers already listed there and backs up the old file. <code>serial-console-mcp configure --remove</code> undoes it. Any MCP client can launch the same command over stdio. Copy the skill directories from <code>skills/</code> into the client's skills folder, for Claude Code <code>~/.claude/skills/</code>. Developers: <code>git clone</code>, <code>uv sync</code>, <code>uv run pytest</code>.</p>
         <div class="callout">
           <span class="label">Untested outside Claude</span>
-          <p>MCP is an open standard, so other assistants and agentic harnesses such as OpenClaw should work too. They have not been tested, and there are no ready-made configurations for them yet.</p>
+          <p>MCP is an open standard, so other assistants and agentic harnesses such as OpenClaw should work too. They have not been tested yet.</p>
         </div>
         <h3>Check that it works (thirty seconds)</h3>
         <ol class="steps">
@@ -349,7 +351,7 @@ serial-console-mcp configure --command "$(which serial-console-mcp)"</code></pre
         <p>In read-only mode, named keys are allowed, because interrupting and navigating never change configuration by themselves. Single characters and <code>text:</code> runs are refused, since those count as typing.</p>
 
         <h2 id="netskills">06 · Junos and IOS, the basics</h2>
-        <p>The server deals with bytes and prompts. Two skills teach the agent what the prompts mean on the two console families it will meet most. They cover how to tell which mode it is in, how to move from one mode to another, how to change something without cutting off its own connection, and which show commands answer the everyday questions. Both live in <code>skills/</code> and load the way the fldigi skills do.</p>
+        <p>The server deals with bytes and prompts. Two skills teach the agent what the prompts mean on the two console families it will meet most. They cover how to tell which mode it is in, how to move from one mode to another, how to change something without cutting off its own connection, and which show commands answer the everyday questions. Both are downloads of their own, <code>junos-operating.skill</code> and <code>ios-operating.skill</code>, and you add them in Claude under <strong>Customize → Skills</strong>, as in <a href="#install">chapter B</a>.</p>
         <h3>junos-operating</h3>
         <div class="table-scroll">
         <table>

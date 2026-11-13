@@ -191,14 +191,14 @@
         <p>A tenth tool, <code>diagnostics</code>, is read-only and does not connect to N3FJP. It reports the resolved host and port, this process's hostname and Python, and the host's network interfaces.</p>
 
         <h2 id="install">Install</h2>
-        <p>n3fjp-mcp comes in the Amateur Radio plugin, together with the other station servers and three operating skills. The plugin needs <a href="https://docs.astral.sh/uv/">uv</a>.</p>
-        <p><strong>Claude Code</strong></p>
-<pre><code>/plugin marketplace add sbrunner-atx/ae5vg-plugins
-/plugin install amateur-radio@ae5vg</code></pre>
-        <p><strong>Claude and Cowork.</strong> In Customize, Plugins, choose Add, then Add marketplace, and enter <code>sbrunner-atx/ae5vg-plugins</code>. Or download the plugin from <a href="../downloads.html#plugins">Downloads</a> and choose Upload plugin. The server runs in Cowork and Claude Code. In plain chat only the skills load.</p>
-        <p><strong>Codex</strong></p>
-<pre><code>codex plugin marketplace add sbrunner-atx/ae5vg-plugins</code></pre>
-        <p>Then install Amateur Radio from the Plugins Directory in the ChatGPT desktop app. Without GitHub, download <code>amateur-radio-chatgpt-plugin.zip</code> from <a href="../downloads.html#plugins">Downloads</a>, unzip it into your home folder and add that folder instead: <code>codex plugin marketplace add ~/amateur-radio-chatgpt-plugin</code>. The plugin needs the desktop app, because its servers run on your computer.</p>
+        <p>You need the Claude desktop app. The extension connects Claude to the program. The skills teach Claude how to operate it. The extension does not install the skills, so you add them as well.</p>
+        <ol class="steps">
+          <li>On <a href="../downloads.html#n3fjp-mcp">Downloads</a>, click <code>n3fjp-mcp.mcpb</code> and <code>contest-operating.skill</code>. Your browser saves them in your Downloads folder.</li>
+          <li>In Claude, open <strong>Settings → Extensions → Advanced settings → Install Extension</strong> and choose <code>n3fjp-mcp.mcpb</code>.</li>
+          <li>Claude shows the settings. There is nothing to type. If N3FJP runs in a virtual machine or on another PC, also set up the bridge described in <a href="../getting-started.html#remote">Where everything runs</a>.</li>
+          <li>In Claude, open <strong>Customize → Skills</strong>, click <strong>Add</strong>, then <strong>Upload skill</strong>, and choose <code>contest-operating.skill</code>.</li>
+        </ol>
+        <p><a href="../getting-started.html">Getting Started</a> walks through the whole station setup, step by step.</p>
 
         <h2 id="settings">Settings</h2>
         <div class="table-scroll">

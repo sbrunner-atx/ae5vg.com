@@ -179,14 +179,13 @@
         </div>
 
         <h2 id="install">Install</h2>
-        <p>wsjtx-mcp comes in the Amateur Radio plugin, together with the other station servers and three operating skills. The plugin needs <a href="https://docs.astral.sh/uv/">uv</a>.</p>
-        <p><strong>Claude Code</strong></p>
-<pre><code>/plugin marketplace add sbrunner-atx/ae5vg-plugins
-/plugin install amateur-radio@ae5vg</code></pre>
-        <p><strong>Claude and Cowork.</strong> In Customize, Plugins, choose Add, then Add marketplace, and enter <code>sbrunner-atx/ae5vg-plugins</code>. Or download the plugin from <a href="../downloads.html#plugins">Downloads</a> and choose Upload plugin. The server runs in Cowork and Claude Code. In plain chat only the skills load.</p>
-        <p><strong>Codex</strong></p>
-<pre><code>codex plugin marketplace add sbrunner-atx/ae5vg-plugins</code></pre>
-        <p>Then install Amateur Radio from the Plugins Directory in the ChatGPT desktop app. Without GitHub, download <code>amateur-radio-chatgpt-plugin.zip</code> from <a href="../downloads.html#plugins">Downloads</a>, unzip it into your home folder and add that folder instead: <code>codex plugin marketplace add ~/amateur-radio-chatgpt-plugin</code>. The plugin needs the desktop app, because its servers run on your computer.</p>
+        <p>You need the Claude desktop app.</p>
+        <ol class="steps">
+          <li>On <a href="../downloads.html#wsjtx-mcp">Downloads</a>, click <code>wsjtx-mcp.mcpb</code>. Your browser saves it in your Downloads folder.</li>
+          <li>In Claude, open <strong>Settings → Extensions → Advanced settings → Install Extension</strong> and choose <code>wsjtx-mcp.mcpb</code>.</li>
+          <li>Claude shows the settings. Type your callsign in <strong>Operator callsign</strong> to allow transmitting, or leave it blank to only listen. Leave everything else as it is.</li>
+        </ol>
+        <p>In WSJT-X, also turn on the UDP Server, as the <a href="../user-guide/wsjtx-mcp.html#install">installation guide</a> shows.</p>
 
         <h2 id="settings">Settings</h2>
         <div class="table-scroll">

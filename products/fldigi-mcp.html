@@ -104,7 +104,7 @@
             <tr><td>Signal Browser over the API (proposed patch)</td><td>On a patched fldigi, the assistant can read every station in fldigi's decoder bank, up to 30 PSK, RTTY or CW stations at once, with the decoded text for each.</td></tr>
             <tr><td>RSID hits over the API (proposed patch)</td><td>On a patched fldigi, with RxID set to notify-only, fldigi names the modes on the band from their RSID bursts without switching the modem. This separates Olivia from Contestia and THOR from DominoEX.</td></tr>
             <tr><td>Band guidance</td><td>Suggests watering holes and warns when a frequency is outside its band segment, using the band plan for your IARU region, from 160 m to 70 cm. It is advisory only. It is experimental and off by default.</td></tr>
-            <tr><td>Operating skills</td><td><code>fldigi-operating</code> and <code>signal-hunting</code> come with the repository and the bundle. Both were written from live on-air use.</td></tr>
+            <tr><td>Operating skills</td><td><code>fldigi-operating</code> and <code>signal-hunting</code> are separate downloads next to the extension, added in Claude under Customize → Skills. Both were written from live on-air use.</td></tr>
             <tr><td>Free API reference</td><td>A reference to fldigi's XML-RPC API, with every method checked against a running fldigi build. You can use it free whether or not you use this server. It comes as a <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-api.pdf">PDF</a>, <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-api.md">Markdown</a>, and a <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-api-spec.md">machine-readable catalog</a> of all 174 methods.</td></tr>
           </tbody>
         </table>
@@ -196,14 +196,14 @@ patch -p1 &lt; /path/to/fldigi-mcp/patches/fldigi-4.2.13-browser-xmlrpc.patch
         <p>To list every method the running fldigi supports, use <code>application → list_methods</code>. On 4.2.13, every method is already in one of the groups. <code>fldigi_call</code> is for methods a newer fldigi may add before this server is updated to match.</p>
 
         <h2 id="install">Install</h2>
-        <p>fldigi-mcp comes in the Amateur Radio plugin, together with the other station servers and three operating skills. The plugin needs <a href="https://docs.astral.sh/uv/">uv</a>.</p>
-        <p><strong>Claude Code</strong></p>
-<pre><code>/plugin marketplace add sbrunner-atx/ae5vg-plugins
-/plugin install amateur-radio@ae5vg</code></pre>
-        <p><strong>Claude and Cowork.</strong> In Customize, Plugins, choose Add, then Add marketplace, and enter <code>sbrunner-atx/ae5vg-plugins</code>. Or download the plugin from <a href="../downloads.html#plugins">Downloads</a> and choose Upload plugin. The server runs in Cowork and Claude Code. In plain chat only the skills load.</p>
-        <p><strong>Codex</strong></p>
-<pre><code>codex plugin marketplace add sbrunner-atx/ae5vg-plugins</code></pre>
-        <p>Then install Amateur Radio from the Plugins Directory in the ChatGPT desktop app. Without GitHub, download <code>amateur-radio-chatgpt-plugin.zip</code> from <a href="../downloads.html#plugins">Downloads</a>, unzip it into your home folder and add that folder instead: <code>codex plugin marketplace add ~/amateur-radio-chatgpt-plugin</code>. The plugin needs the desktop app, because its servers run on your computer.</p>
+        <p>You need the Claude desktop app. The extension connects Claude to the program. The skills teach Claude how to operate it. The extension does not install the skills, so you add them as well.</p>
+        <ol class="steps">
+          <li>On <a href="../downloads.html#fldigi-mcp">Downloads</a>, click <code>fldigi-mcp.mcpb</code>, <code>fldigi-operating.skill</code> and <code>signal-hunting.skill</code>. Your browser saves them in your Downloads folder.</li>
+          <li>In Claude, open <strong>Settings → Extensions → Advanced settings → Install Extension</strong> and choose <code>fldigi-mcp.mcpb</code>.</li>
+          <li>Claude shows the settings. Type your callsign in <strong>Callsign</strong> and leave everything else as it is. Without a callsign, Claude can listen but never transmits.</li>
+          <li>In Claude, open <strong>Customize → Skills</strong>, click <strong>Add</strong>, then <strong>Upload skill</strong>, and choose <code>fldigi-operating.skill</code>. Do the same with <code>signal-hunting.skill</code>.</li>
+        </ol>
+        <p><a href="../getting-started.html">Getting Started</a> walks through the whole station setup, step by step.</p>
 
         <h2 id="settings">Settings</h2>
         <div class="table-scroll">

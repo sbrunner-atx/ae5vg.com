@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The Operating Field Guide · AE5VG</title>
-<meta name="description" content="The operating skills bundled with fldigi-mcp and n3fjp-mcp: the standard, the special-case playbook, and worked examples from ARRL Field Day 2026.">
+<meta name="description" content="The operating skills for fldigi-mcp and n3fjp-mcp: the standard, the special-case playbook, and worked examples from ARRL Field Day 2026.">
 <link rel="canonical" href="https://ae5vg.com/user-guide/operating-field-guide.html">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../favicon-48.png" type="image/png" sizes="48x48">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AE5VG">
 <meta property="og:title" content="The Operating Field Guide · AE5VG">
-<meta property="og:description" content="The operating skills bundled with fldigi-mcp and n3fjp-mcp: the standard, the special-case playbook, and worked examples from ARRL Field Day 2026.">
+<meta property="og:description" content="The operating skills for fldigi-mcp and n3fjp-mcp: the standard, the special-case playbook, and worked examples from ARRL Field Day 2026.">
 <meta property="og:url" content="https://ae5vg.com/user-guide/operating-field-guide.html">
 <meta property="og:image" content="https://ae5vg.com/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -20,7 +20,7 @@
 <meta property="og:image:alt" content="AE5VG: An AI assistant that can work the bands with you. ae5vg.com">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="The Operating Field Guide · AE5VG">
-<meta name="twitter:description" content="The operating skills bundled with fldigi-mcp and n3fjp-mcp: the standard, the special-case playbook, and worked examples from ARRL Field Day 2026.">
+<meta name="twitter:description" content="The operating skills for fldigi-mcp and n3fjp-mcp: the standard, the special-case playbook, and worked examples from ARRL Field Day 2026.">
 <meta name="twitter:image" content="https://ae5vg.com/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -105,22 +105,24 @@
         </div>
 
         <h2 id="install">B · Installing the skills</h2>
-        <p>Each skill comes inside its MCP package. When you install the server, you get the skill with it. There is nothing to configure separately.</p>
-        <h3>In Claude Desktop (.mcpb bundle, recommended)</h3>
+        <p>The skills and the servers install separately. A desktop extension (<code>.mcpb</code>) installs only its server, so you add the skills yourself. You do this once.</p>
+        <h3>In the Claude desktop app</h3>
         <ol class="steps">
-          <li><strong>Install the bundles.</strong> Double-click <code>fldigi-mcp.mcpb</code> and <code>n3fjp-mcp.mcpb</code>, or add them under Settings → Extensions. Each bundle carries its skill at <code>skills/&lt;name&gt;/SKILL.md</code> plus this guide.</li>
-          <li><strong>Set the transmit gate.</strong> In the fldigi-mcp extension settings, enter your callsign. With no callsign set, the station is receive-only and nothing can key the radio.</li>
+          <li><strong>Download the files.</strong> On <a href="../downloads.html">Downloads</a>, under fldigi-mcp, click <code>fldigi-mcp.mcpb</code>, <code>fldigi-operating.skill</code> and <code>signal-hunting.skill</code>. Under n3fjp-mcp, click <code>n3fjp-mcp.mcpb</code> and <code>contest-operating.skill</code>.</li>
+          <li><strong>Install the extensions.</strong> In Claude, open <strong>Settings → Extensions → Advanced settings → Install Extension</strong> and choose <code>fldigi-mcp.mcpb</code>. Then do the same with <code>n3fjp-mcp.mcpb</code>.</li>
+          <li><strong>Set the transmit gate.</strong> In the fldigi-mcp settings, type your callsign in <strong>Callsign</strong>. With no callsign set, the station is receive-only and nothing can key the radio.</li>
+          <li><strong>Add the skills.</strong> In Claude, open <strong>Customize → Skills</strong>. Click <strong>Add</strong>, then <strong>Upload skill</strong>, and choose <code>fldigi-operating.skill</code>. Do the same with <code>signal-hunting.skill</code> and <code>contest-operating.skill</code>.</li>
         </ol>
-        <p>Cowork and Claude Code sessions inside the Claude Desktop app use these same extensions. Nothing else to install.</p>
+        <p>Cowork in the Claude desktop app uses the same extensions and skills. Nothing else to install.</p>
         <h3>For advanced users: Claude Code in a terminal, or another MCP client</h3>
         <ol class="steps">
-          <li><strong>Copy the skill directories</strong> from each repo into <code>~/.claude/skills/</code>, or a project's <code>.claude/skills/</code>: <code>skills/fldigi-operating/</code>, <code>skills/signal-hunting/</code> and <code>skills/contest-operating/</code>.</li>
+          <li><strong>Copy the skill directories</strong> from each repo into the client's skills folder, for Claude Code <code>~/.claude/skills/</code> or a project's <code>.claude/skills/</code>: <code>skills/fldigi-operating/</code>, <code>skills/signal-hunting/</code> and <code>skills/contest-operating/</code>.</li>
           <li><strong>Connect the MCP servers</strong> (<code>uvx fldigi-mcp</code>, <code>uvx n3fjp-mcp</code>, or from the repos) so the tools the skills reference are available.</li>
         </ol>
         <p>The MCP servers and skills are not tied to Claude. MCP is an open standard, so other assistants and agentic harnesses such as OpenClaw should work too.</p>
         <div class="callout">
           <span class="label">Untested outside Claude</span>
-          <p>Other assistants and harnesses have not been tested, and there are no ready-made configurations for them yet.</p>
+          <p>Other assistants and harnesses have not been tested yet.</p>
         </div>
         <h3>Check that it works (thirty seconds)</h3>
         <ol class="steps">
@@ -138,12 +140,13 @@
         <h2 id="first">C · Your first session with Claude</h2>
         <p>You do not need to know anything about AI to run this station. If you can install fldigi and type a sentence, you can operate it. This chapter covers everything you need to learn.</p>
         <h3>What you are installing</h3>
-        <p>Claude is an assistant made by Anthropic. It runs in an ordinary desktop program, the Claude Desktop app (Windows or Mac). The app looks like a messaging window. You type at the bottom and the answers appear above. Think of the two MCP servers in this project as rig-interface cables. One connects Claude to fldigi, the other connects it to N3FJP. You type plain English and Claude works the programs. Your fldigi and N3FJP setup does not change. Both programs run as they always have.</p>
+        <p>Claude is an assistant made by Anthropic. It runs in an ordinary desktop program, the Claude Desktop app (Windows or Mac). The app looks like a messaging window. You type at the bottom and the answers appear above. Think of the two MCP servers in this project as rig-interface cables. One connects Claude to fldigi, the other connects it to N3FJP. You type plain English and Claude works the programs. The skills are the operating procedure Claude follows: when to transmit, how an exchange runs and when to log. Your fldigi and N3FJP setup does not change. Both programs run as they always have.</p>
         <h3>Setup, once</h3>
         <ol class="steps">
           <li><strong>Install the Claude Desktop app.</strong> Download it from <code>claude.ai/download</code>, install it like any other program, and sign in (you can create the account on the same page). A paid plan is recommended, because the free tier can run out of messages in the middle of a QSO.</li>
           <li><strong>Run your shack software as usual.</strong> Start fldigi (its XML-RPC interface is on by default). If you want contest logging, start N3FJP and enable its TCP API (Settings → Application Program Interface → checked). fldigi must key the radio the usual way, under Configure → Config Dialog → Rig Control: Hardware PTT for an interface such as a RigBlaster, nothing for a VOX interface such as a SignaLink. If fldigi's T/R button keys the radio, Claude can too. The N3FJP loggers run only on Windows. On a Mac, run N3FJP in a Windows virtual machine or on a Windows PC, and connect it with mcp-host-bridge, as <a href="#where">Where everything runs</a> below shows.</li>
-          <li><strong>Add the two extensions.</strong> Double-click <code>fldigi-mcp.mcpb</code>, click Install when Claude Desktop opens, and enter your callsign when asked. That callsign is the transmit gate. Repeat with <code>n3fjp-mcp.mcpb</code>. You only do this once.</li>
+          <li><strong>Add the two extensions.</strong> Double-click <code>fldigi-mcp.mcpb</code>, click Install when Claude Desktop opens, and enter your callsign when asked. That callsign is the transmit gate. Repeat with <code>n3fjp-mcp.mcpb</code>.</li>
+          <li><strong>Add the three skills.</strong> Upload <code>fldigi-operating.skill</code>, <code>signal-hunting.skill</code> and <code>contest-operating.skill</code> under <strong>Customize → Skills</strong>, as in <a href="#install">chapter B</a>. You only do this once.</li>
           <li><strong>Say hello.</strong> Open a new chat and choose <strong>Sonnet</strong> with the effort set to <strong>Medium</strong> in the model menu under the box where you type. That is the recommended setting: it answers quickly enough to keep up with a QSO, and it uses less of your plan's usage, so a long session costs less. Then type: "What is the fldigi status?" If mode, frequency and T/R state come back, your station is connected.</li>
         </ol>
         <h3 id="where">Where everything runs</h3>
@@ -565,6 +568,7 @@ log → enter</code></pre>
             <tr><td>fldigi-mcp</td><td>github.com/sbrunner-atx/fldigi-mcp · PyPI: fldigi-mcp</td></tr>
             <tr><td>n3fjp-mcp</td><td>github.com/sbrunner-atx/n3fjp-mcp · PyPI: n3fjp-mcp</td></tr>
             <tr><td>Skill sources</td><td>&lt;repo&gt;/skills/&lt;name&gt;/SKILL.md</td></tr>
+            <tr><td>Skill downloads</td><td><a href="../downloads.html">Downloads</a>, one file per skill, under each server</td></tr>
             <tr><td>This guide's sources</td><td>&lt;repo&gt;/docs/brand/ (HTML and CSS, WeasyPrint)</td></tr>
             <tr><td>After-action report</td><td>n3fjp-mcp/docs/LESSONS-FIELD-DAY-2026.md</td></tr>
           </tbody>

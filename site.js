@@ -124,6 +124,7 @@
     if (/\.mcpb$/.test(n)) return "Claude Desktop";
     if (/-claude-plugin\.zip$/.test(n)) return "Claude";
     if (/-chatgpt-plugin\.zip$/.test(n)) return "ChatGPT, Codex and others";
+    if (/\.skill$/.test(n)) return "Claude skill";
     if (/\.pkg$/.test(n) || /-macos$|mac|darwin|osx/.test(n)) return "macOS";
     if (/\.exe$|\.msi$|win/.test(n)) return "Windows";
     if (/-linux$|linux|\.deb$|\.rpm$|appimage/.test(n)) return "Linux";
@@ -180,7 +181,7 @@
     release(repo).then(function (r) {
       var rows = "";
       (r.assets || []).forEach(function (a) {
-        rows += "<tr><td><a download href=\"" + esc(a.browser_download_url) + "\">" + esc(a.name) + "</a></td>" +
+        rows += "<tr><td><a download href=\"" + esc(a.browser_download_url) + "\">" + esc(a.name.replace(/\.zip$/i, "")) + "</a></td>" +
           "<td>" + platform(a.name) + "</td><td>" + fmtSize(a.size) + "</td><td>" + esc(r.tag_name) + "</td></tr>";
       });
       /* platforms this release does not cover: a .mcpb bundle covers all three */

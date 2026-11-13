@@ -82,7 +82,7 @@
       <div>
         <h2 id="what" style="margin-top:0">What it does</h2>
         <p>It is not tied to radio. On Juniper (Junos) and Cisco (IOS, IOS-XE) routers and switches, it uses the console and craft ports. There it can log in, read state, and change configuration with a safety net (<code>commit confirmed</code> on Junos, <code>reload in</code> on IOS). When it is done, it leaves the console the way it found it. It talks to Icom and Xiegu transceivers over CI-V, and to Kenwood, Yaesu and Elecraft over their text CAT protocols. On a rig it can identify the model and read and set frequency and mode. On antenna rotators it speaks Yaesu GS-232, which many other controllers also use, to read the heading, turn and stop. It also works with anything else that has a serial port: IoT gateways, alarm and access-control panels, UPS and PDU menus, lab instruments, industrial controllers, Linux and BIOS consoles, and microcontrollers.</p>
-        <p>You say what you want in plain language. The assistant drives the console through this server, and Claude Desktop asks you to approve each step. Operating skills that come with the server teach the assistant the Junos and IOS basics. They cover which mode a prompt means, how to get in and out of each mode, and which show commands answer everyday questions.</p>
+        <p>You say what you want in plain language. The assistant drives the console through this server, and Claude Desktop asks you to approve each step. Operating skills, downloaded next to the server, teach the assistant the Junos and IOS basics. They cover which mode a prompt means, how to get in and out of each mode, and which show commands answer everyday questions.</p>
         <div class="callout">
           <span class="label">Verified on this bench</span>
           <p>Juniper support is verified on a real EX2200 console. Cisco, CI-V, CAT and rotator support follows the vendors' protocol references, but I have not yet tested it on real hardware here. The other device types use the generic tools, not device-specific helpers.</p>
@@ -180,14 +180,14 @@
         </div>
 
         <h2 id="install">Install</h2>
-        <p>serial-console-mcp comes in the Serial Console plugin, together with its skills for Junos, IOS and serial devices in general. The plugin needs <a href="https://docs.astral.sh/uv/">uv</a>.</p>
-        <p><strong>Claude Code</strong></p>
-<pre><code>/plugin marketplace add sbrunner-atx/ae5vg-plugins
-/plugin install serial-console-mcp@ae5vg</code></pre>
-        <p><strong>Claude and Cowork.</strong> In Customize, Plugins, choose Add, then Add marketplace, and enter <code>sbrunner-atx/ae5vg-plugins</code>. Or download the plugin from <a href="../downloads.html#plugins">Downloads</a> and choose Upload plugin. The server runs in Cowork and Claude Code. In plain chat only the skills load.</p>
-        <p><strong>Codex</strong></p>
-<pre><code>codex plugin marketplace add sbrunner-atx/ae5vg-plugins</code></pre>
-        <p>Then install Serial Console from the Plugins Directory in the ChatGPT desktop app. Without GitHub, download <code>serial-console-chatgpt-plugin.zip</code> from <a href="../downloads.html#plugins">Downloads</a>, unzip it into your home folder and add that folder instead: <code>codex plugin marketplace add ~/serial-console-chatgpt-plugin</code>. The plugin needs the desktop app, because its servers run on your computer.</p>
+        <p>You need the Claude desktop app. The extension connects Claude to the program. The skills teach Claude how to operate it. The extension does not install the skills, so you add them as well.</p>
+        <ol class="steps">
+          <li>On <a href="../downloads.html#serial-console-mcp">Downloads</a>, click <code>serial-console-mcp.mcpb</code>, <code>serial-console.skill</code>, <code>junos-operating.skill</code> and <code>ios-operating.skill</code>. Your browser saves them in your Downloads folder.</li>
+          <li>In Claude, open <strong>Settings → Extensions → Advanced settings → Install Extension</strong> and choose <code>serial-console-mcp.mcpb</code>.</li>
+          <li>Claude shows the settings. You can leave them as they are.</li>
+          <li>In Claude, open <strong>Customize → Skills</strong>, click <strong>Add</strong>, then <strong>Upload skill</strong>, and choose <code>serial-console.skill</code>. Do the same with <code>junos-operating.skill</code> and <code>ios-operating.skill</code>.</li>
+        </ol>
+        <p>The <a href="../user-guide/serial-console-field-guide.html#install">Field Guide</a> has the details.</p>
 
         <h2 id="settings">Settings</h2>
         <div class="table-scroll">

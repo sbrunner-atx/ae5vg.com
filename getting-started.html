@@ -62,7 +62,7 @@
         <li><a href="#what">What you need</a></li>
         <li><a href="#install">1 · Install Claude</a></li>
         <li><a href="#prepare">2 · Prepare fldigi and N3FJP</a></li>
-        <li><a href="#load">3 · Add the radio extensions</a></li>
+        <li><a href="#load">3 · Add the extensions and skills</a></li>
         <li><a href="#session">4 · Check the connection</a></li>
         <li><a href="#qso">5 · Your first QSO</a></li>
         <li><a href="#help">If something does not work</a></li>
@@ -73,7 +73,7 @@
       </ul></nav>
       <div>
         <h2 id="what" style="margin-top:0">What you need</h2>
-        <p>Claude is an AI assistant. You type to it in plain English, the way you would write a text message, and it answers. Two small extensions let it work your station. Think of them as rig interface cables: one connects Claude to fldigi, the other connects it to N3FJP. Your fldigi and N3FJP setup does not change. The technical name for these extensions is MCP server. You will see that name on the Downloads page, and that is all you need to know about it.</p>
+        <p>Claude is an AI assistant. You type to it in plain English, the way you would write a text message, and it answers. Two small extensions let it work your station. Think of them as rig interface cables: one connects Claude to fldigi, the other connects it to N3FJP. Small skill files teach Claude the operating procedure: when to transmit, how an exchange runs and when to log. Your fldigi and N3FJP setup does not change. The technical name for these extensions is MCP server. You will see that name on the Downloads page, and that is all you need to know about it.</p>
         <ul>
           <li>A Mac or a Windows PC where fldigi already decodes and transmits on your radio. Step 2 shows how to check that.</li>
           <li>N3FJP, if you want Claude to log your contacts. Logging is optional. The N3FJP loggers run only on Windows. On a Mac, run it in a Windows virtual machine (for example Parallels, VMware Fusion or UTM) or on a Windows PC on your network, and see <a href="#remote">Where everything runs</a>.</li>
@@ -97,12 +97,15 @@
           <li>If you log with N3FJP, start it and open <strong>Settings → Application Program Interface</strong>. Tick <strong>TCP API Enabled</strong> and leave the port at 1100. If Windows asks whether N3FJP may use the network, allow it on private networks.</li>
         </ol>
 
-        <h2 id="load">3 · Add the radio extensions</h2>
+        <h2 id="load">3 · Add the extensions and skills</h2>
+        <p>The extensions connect Claude to fldigi and N3FJP. The skills teach Claude how to operate. The extensions do not install the skills, so you add both.</p>
         <ol class="steps">
-          <li>On the <a href="downloads.html">Downloads</a> page, click <code>fldigi-mcp.mcpb</code>, and <code>n3fjp-mcp.mcpb</code> if you log with N3FJP. Your browser saves them in your Downloads folder.</li>
+          <li>On the <a href="downloads.html">Downloads</a> page, under fldigi-mcp, click <code>fldigi-mcp.mcpb</code>, <code>fldigi-operating.skill</code> and <code>signal-hunting.skill</code>. If you log with N3FJP, also click <code>n3fjp-mcp.mcpb</code> and <code>contest-operating.skill</code> under n3fjp-mcp. Your browser saves the files in your Downloads folder.</li>
           <li>In Claude, open <strong>Settings → Extensions → Advanced settings → Install Extension</strong> and choose <code>fldigi-mcp.mcpb</code>.</li>
           <li>Claude then shows the extension's settings. If it does not, click <strong>Configure</strong> next to fldigi-mcp under <strong>Settings → Extensions</strong>. Type your callsign in <strong>Callsign</strong> and leave everything else as it is. Without a callsign, Claude can listen but it will never transmit.</li>
           <li>Do the same with <code>n3fjp-mcp.mcpb</code>. There is nothing to type for it. If N3FJP runs in a virtual machine or on another PC, which is always the case on a Mac, also set up the bridge described under <a href="#remote">Where everything runs</a>.</li>
+          <li>Now the skills. In Claude, open <strong>Customize → Skills</strong>. Click <strong>Add</strong>, then <strong>Upload skill</strong>, and choose <code>fldigi-operating.skill</code>.</li>
+          <li>Do the same with <code>signal-hunting.skill</code>, and with <code>contest-operating.skill</code> if you log with N3FJP. All of them now show under <strong>Customize → Skills</strong>, turned on.</li>
         </ol>
 
         <h2 id="session">4 · Check the connection</h2>
@@ -152,6 +155,7 @@
         <h2 id="help">If something does not work</h2>
         <p><strong>Claude says it cannot reach fldigi.</strong> Check that fldigi is running, then ask again. If it still fails, type <code>run the fldigi diagnostics</code>. Claude then tells you whether the problem is the connection or fldigi itself.</p>
         <p><strong>Claude does not seem to know about fldigi.</strong> Open <strong>Settings → Extensions</strong> and check that fldigi-mcp is turned on. Then start a new chat.</p>
+        <p><strong>Claude does not follow the operating procedure.</strong> The skills are missing or turned off. Open <strong>Customize → Skills</strong> and check that fldigi-operating, signal-hunting and contest-operating are there and turned on. If they are not, add them as in step 3. Then start a new chat.</p>
         <p><strong>Claude will not transmit.</strong> The Callsign setting is empty. Open <strong>Settings → Extensions</strong>, click <strong>Configure</strong> next to fldigi-mcp, and enter your callsign.</p>
         <p><strong>The contact is not in the N3FJP log.</strong> Check that N3FJP is running and that <strong>TCP API Enabled</strong> is ticked, as in step 2.</p>
         <p><strong>Claude says you reached a usage limit.</strong> Wait until the limit resets, or move to a paid plan.</p>
@@ -388,14 +392,14 @@
         <h2 id="other-clients">Other AI assistants (advanced)</h2>
         <div class="callout">
           <span class="label">Not needed for Claude Desktop</span>
-          <p>If you use the Claude Desktop app, skip this part. The two extensions from step 3 are all it needs. Cowork and Claude Code sessions in the app use the same extensions.</p>
+          <p>If you use the Claude Desktop app, skip this part. The extensions and skills from step 3 are all it needs. Cowork in the app uses the same extensions and skills.</p>
         </div>
         <p>This part is for advanced users. The MCP servers and their skills are not tied to Claude. MCP is an open standard, so in principle any AI assistant or agent harness that speaks it can use them, for example an agentic harness such as OpenClaw, which would make an interesting environment for a station.</p>
         <div class="callout">
           <span class="label">Untested outside Claude</span>
-          <p>Other assistants and harnesses should work, but they have not been tested, and there are no ready-made configurations for them yet. If you get one running, please share your configuration in an issue on the relevant repository.</p>
+          <p>Other assistants and harnesses should work, but they have not been tested. If you get one running, please share your configuration in an issue on the relevant repository.</p>
         </div>
-        <p>Other assistants that support MCP, such as Claude Code in a terminal or a third-party MCP client, cannot install a <code>.mcpb</code> file. They start each connector themselves from PyPI with <code>uvx</code>, which comes with <a href="https://docs.astral.sh/uv/">uv</a>. In Claude Code in a terminal, you run one command for each connector. Put your own callsign in place of <code>YOURCALL</code>.</p>
+        <p>Other MCP clients cannot install a <code>.mcpb</code> file. They start each connector themselves from PyPI with <code>uvx</code>, which comes with <a href="https://docs.astral.sh/uv/">uv</a>. In Claude Code in a terminal, you run one command for each connector. Put your own callsign in place of <code>YOURCALL</code>.</p>
         <pre><code>claude mcp add fldigi -e FLDIGI_CALLSIGN=YOURCALL -- uvx fldigi-mcp
 claude mcp add n3fjp -- uvx n3fjp-mcp</code></pre>
         <p>Other clients take the same information as a configuration block:</p>
@@ -412,7 +416,7 @@ claude mcp add n3fjp -- uvx n3fjp-mcp</code></pre>
     }
   }
 }</code></pre>
-        <p>Here the settings are environment variables. fldigi-mcp uses <code>FLDIGI_HOST</code>, <code>FLDIGI_PORT</code> and <code>FLDIGI_CALLSIGN</code>. n3fjp-mcp uses <code>N3FJP_HOST</code> and <code>N3FJP_PORT</code>. Leave <code>FLDIGI_CALLSIGN</code> out and the station can only receive. For Claude Code in a terminal, also copy the skill directories (<code>skills/&lt;name&gt;/</code>) from each repository into <code>~/.claude/skills/</code>, or into a project's <code>.claude/skills/</code>.</p>
+        <p>Here the settings are environment variables. fldigi-mcp uses <code>FLDIGI_HOST</code>, <code>FLDIGI_PORT</code> and <code>FLDIGI_CALLSIGN</code>. n3fjp-mcp uses <code>N3FJP_HOST</code> and <code>N3FJP_PORT</code>. Leave <code>FLDIGI_CALLSIGN</code> out and the station can only receive. The skills come separately here too: copy the skill directories (<code>skills/&lt;name&gt;/</code>) from each repository into your client's skills folder, for Claude Code <code>~/.claude/skills/</code> or a project's <code>.claude/skills/</code>.</p>
 
         <h2 id="next">Where to go next</h2>
         <p>The full operating standard is the <a href="https://github.com/sbrunner-atx/fldigi-mcp/raw/main/docs/fldigi-mcp%20Operating%20Field%20Guide.pdf">Operating Field Guide (PDF)</a>, which you can also <a href="user-guide/operating-field-guide.html">read online</a>. The <a href="user-guide/index.html">User Guide</a> has the other guides. The <a href="products/fldigi-mcp.html">fldigi-mcp page</a> lists the tools and the settings. <a href="downloads.html">Downloads</a> has every file. If you want to help with the software, start at <a href="development.html">Development</a>.</p>
