@@ -70,7 +70,7 @@ a.btn.ghost:hover,.btn.ghost:hover{border-color:var(--accent);color:var(--link);
 .card p{margin:0;font-size:15.5px}
 .card .label{margin-bottom:2px}
 .card a.more{font-family:var(--mono);font-size:13px;margin-top:auto;padding-top:10px}
-.card .btn-row{margin:10px 0 0}
+.card .btn-row{margin:auto 0 0;padding-top:10px}
 /* callouts */
 .callout{background:var(--callout);border-left:4px solid var(--accent);padding:14px 20px;margin:26px 0}
 .callout .label{display:block;margin-bottom:4px}
