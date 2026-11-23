@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Oscilloscope Field Guide · AE5VG</title>
+<meta name="description" content="The rs-scope-mcp Field Guide: an AI agent on a Rohde &amp; Schwarz RTB2 / RTB2000 oscilloscope. Installing, safety, capture and drill-down, measurements, spectra and Bode plots, bus decoding, pass/fail masks, the skills, demo mode and worked sessions.">
+<link rel="canonical" href="https://ae5vg.com/user-guide/rs-scope-field-guide.html">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon-48.png" type="image/png" sizes="48x48">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AE5VG">
+<meta property="og:title" content="The Oscilloscope Field Guide · AE5VG">
+<meta property="og:description" content="The rs-scope-mcp Field Guide: an AI agent on a Rohde &amp; Schwarz RTB2 / RTB2000 oscilloscope, from the first capture to bus decoding, Bode plots and pass/fail masks.">
+<meta property="og:url" content="https://ae5vg.com/user-guide/rs-scope-field-guide.html">
+<meta property="og:image" content="https://ae5vg.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="AE5VG: An AI assistant that can work the bands with you. ae5vg.com">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Oscilloscope Field Guide · AE5VG">
+<meta name="twitter:description" content="The rs-scope-mcp Field Guide: an AI agent on a Rohde &amp; Schwarz RTB2 / RTB2000 oscilloscope, from the first capture to bus decoding, Bode plots and pass/fail masks.">
+<meta name="twitter:image" content="https://ae5vg.com/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="badge" href="../index.html">AE5VG</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site" id="site-nav" aria-label="Site">
+      <a href="../index.html">Home</a>
+      <a href="../products/index.html">Products</a>
+      <a href="../downloads.html">Downloads</a>
+      <a href="../getting-started.html">Getting Started</a>
+      <a href="index.html" aria-current="page">User Guide</a>
+      <a href="../development.html">Development</a>
+      <a href="../references/index.html">References</a>
+      <a href="../about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="label">Field Guide · November 2026</p>
+    <h1>The Oscilloscope</h1>
+    <p class="lead">rs-scope-mcp puts an AI agent on a Rohde &amp; Schwarz RTB2 or RTB2000 oscilloscope. The agent sets up the scope, captures what it measures, keeps every capture with the setup that produced it, and answers with numbers: frequency and levels, decoded bus traffic, spectra, filter response, pass or fail. You talk to Claude as you would to a colleague at the bench. This guide is for the human at that bench.</p>
+    <div class="btn-row">
+      <a class="btn ghost" href="https://github.com/sbrunner-atx/rs-scope-mcp/raw/main/docs/rs-scope-mcp%20Field%20Guide.pdf">Download PDF</a>
+    </div>
+    <div class="strip">
+      <div><span class="label">Tools</span><strong>16</strong></div>
+      <div><span class="label">SCPI commands</span><strong>962 + 408</strong></div>
+      <div><span class="label">Skills</span><strong>4</strong></div>
+      <div><span class="label">Bench checks</span><strong>40 / 40</strong></div>
+    </div>
+  </div>
+</section>
+
+<main id="main">
+  <div class="wrap">
+    <div class="layout">
+      <nav aria-label="On this page"><ul class="toc">
+        <li><span class="label">On this page</span></li>
+        <li><a href="#glance">A · The tools at a glance</a></li>
+        <li><a href="#install">B · Installing</a></li>
+        <li><a href="#first">C · Your first session</a></li>
+        <li><a href="#how">D · How the system works</a></li>
+        <li><a href="#safety">01 · Safety at the bench</a></li>
+        <li><a href="#capture">02 · Capture and drill-down</a></li>
+        <li><a href="#measure">03 · Measurements, spectra, Bode</a></li>
+        <li><a href="#decode">04 · Buses and logic</a></li>
+        <li><a href="#mask">05 · Pass/fail and rare faults</a></li>
+        <li><a href="#skills">06 · The skills</a></li>
+        <li><a href="#demo">07 · Demo mode</a></li>
+        <li><a href="#examples">E · Worked sessions</a></li>
+        <li><a href="#trouble">F · When it does not answer</a></li>
+        <li><a href="#reference">G · Tool reference</a></li>
+        <li><a href="#commercial">H · Commercial use</a></li>
+        <li><a href="#about">I · About and provenance</a></li>
+      </ul></nav>
+      <div>
+        <h2 id="glance" style="margin-top:0">A · The tools at a glance</h2>
+        <p>One server provides sixteen tools. Ten of them work at the level of a task (capture, measure, decode, test). Six give the agent the complete command set of the instrument for anything the task tools do not cover. You never call a tool yourself: you say what you want, and the agent picks the tool.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Tools</th><th scope="col">What they do</th><th scope="col">When the agent reaches for them</th></tr></thead>
+          <tbody>
+            <tr><td>connection · session · setup</td><td>Connect and read the installed options. Group captures by task. Show, save and restore the complete instrument setup.</td><td>At the start and the end of every task.</td></tr>
+            <tr><td>capture</td><td>Take one acquisition and harvest analog channels in volts, logic pods and decoded buses in one call. Everything is stored locally; a summary comes back.</td><td>"What is on CH1?" · "Capture the I2C traffic."</td></tr>
+            <tr><td>data</td><td>Look into stored captures without touching the scope: a window of samples, edge times, decoded frames by filter, the envelope of a carrier, a guess of what unknown logic lines carry, read-only SQL.</td><td>Every follow-up question about a capture.</td></tr>
+            <tr><td>measure</td><td>Up to eight automatic measurements as numbers.</td><td>"Frequency, peak-to-peak and RMS on CH1."</td></tr>
+            <tr><td>spectrum</td><td>FFT between two frequencies. Returns the noise floor and the strongest peaks.</td><td>Harmonics, sidebands, key clicks, IMD.</td></tr>
+            <tr><td>bode</td><td>Sweep the generator through a filter and report -3 dB points, peak and shape. Needs your confirmation.</td><td>Filters, matching networks, amplifiers.</td></tr>
+            <tr><td>mask · history</td><td>Learn a tolerance envelope from a good signal, test thousands of acquisitions, keep only the failures in segmented memory, then walk them.</td><td>Intermittent faults, production checks.</td></tr>
+            <tr><td>screenshot · demo</td><td>The screen as an image. A looping show of what the scope can do.</td><td>"Show me." · Videos, demos, club nights.</td></tr>
+            <tr><td>scpi · scpi_search · scpi_describe · scpi_block</td><td>Any of the 962 documented and 408 undocumented commands, checked before they are sent. Search, describe, binary transfers.</td><td>Settings the task tools do not cover.</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="callout">
+          <span class="label">Verified on this bench</span>
+          <p>Everything in this guide was run on an RTB2004 with firmware 03.000 and every option installed. A 40-check acceptance test drives the installed connector through the same protocol Claude Desktop uses, and all 40 pass. Other RTB2 and RTB2000 models share the hardware and firmware; options you do not have simply are not offered.</p>
+        </div>
+
+        <h2 id="install">B · Installing</h2>
+        <p>The server runs on your own computer, started by Claude Desktop, and reaches the scope over your network.</p>
+        <h3>Put the scope on the network</h3>
+        <ol class="steps">
+          <li>Connect the LAN port on the back of the scope to your network.</li>
+          <li>On the scope: <strong>Menu, Setup, Interface, Ethernet, Parameter</strong>. Use DHCP (or a fixed address) and leave <strong>IP Port</strong> at 5025. Note the IP address.</li>
+          <li>Close the scope's web page in any browser. The RTB2 serves one remote client at a time.</li>
+        </ol>
+        <h3>As a desktop connector (recommended)</h3>
+        <ol class="steps">
+          <li><strong>Download the bundle.</strong> Get <code>rs-scope-mcp.mcpb</code> and the four <code>.skill</code> files from <a href="../downloads.html#rs-scope-mcp">Downloads</a>.</li>
+          <li><strong>Install the connector.</strong> In Claude, open <strong>Settings, Desktop app, Extensions</strong> and drag <code>rs-scope-mcp.mcpb</code> onto the page. Enter the scope address. Leave the port at 5025. The data folder defaults to <code>~/rs-scope-data</code> and is created on first use.</li>
+          <li><strong>Install the skills.</strong> In Claude, open <strong>Customize, Skills, Add, Upload skill</strong> and choose all four files at once: <code>scope-operating</code>, <code>ham-bench</code>, <code>bus-reverse-engineering</code>, <code>embedded-bringup</code>.</li>
+          <li><strong>Updates</strong> install over the old version: drag the new bundle onto the same page. Your settings stay.</li>
+        </ol>
+        <h3>Check that it works (thirty seconds)</h3>
+        <p>Ask: "Connect to the scope and tell me which options are installed." The answer names the model, the firmware and options such as B1 (logic probe), B6 (generator), K1 to K3 (serial decode), K15 (history) and K36 (Bode plot).</p>
+
+        <h2 id="first">C · Your first session</h2>
+        <h3>What the agent does first, every time</h3>
+        <p>It connects, starts a session with the goal you gave it, and saves the complete setup of the scope (<code>setup save</code>). At the end it restores that setup unless you ask to keep the new one. You get your scope back the way you left it, with the generators off.</p>
+        <h3>Operating is a conversation</h3>
+        <p>Say what you want to know, not which buttons to press: "What frequency is on CH1?", "Something is talking on the logic probe, what is it?", "Is this filter's -3 dB point where the datasheet says?". The agent sets channels, timebase and trigger, captures, and answers with values and the id of the capture they came from. Ask for a screenshot whenever you want to see the screen.</p>
+        <div class="callout warn">
+          <span class="label">Outputs need your word</span>
+          <p>The generator, the pattern generator, Bode sweeps and the demo drive signals into whatever is connected. The agent cannot switch them on without an explicit confirmation, and it should only ask after you have said what is connected. The same applies to resets, file deletion, network settings and restoring a saved setup.</p>
+        </div>
+
+        <h2 id="how">D · How the system works</h2>
+        <ol class="steps">
+          <li><strong>The complete command set.</strong> Every remote command the user manual documents (962 headers), plus 408 command families the firmware reports but the manual does not, plus corrections found on the bench. Every command is checked before it is sent: wrong headers, out-of-range suffixes and commands this firmware does not implement are refused with a reason.</li>
+          <li><strong>A careful session.</strong> The scope answers nothing at all to a command it rejects, so the server adds a sentinel to every query and reads the error queue after every write. Failures are reported in milliseconds, not after a timeout.</li>
+          <li><strong>Bench rules built in.</strong> FFT, Bode, XY and mask test are exclusive modes; decoders need the right bus type; full memory needs a stopped acquisition; the Bode application changes the memory mode and the generator load. The task tools handle all of this.</li>
+          <li><strong>A local store.</strong> Every capture lands in a catalog on your computer, with the samples, the decoded frames and the scope's own setup file. The agent sees a compact summary and asks for details only when your question needs them.</li>
+        </ol>
+
+        <h2 id="safety">01 · Safety at the bench</h2>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Rule</th><th scope="col">Why</th></tr></thead>
+          <tbody>
+            <tr><td>The inputs are 1 Mohm only. For 50 ohm systems use a feed-through terminator, and set the generator to a 50 ohm load.</td><td>The generator always has a 50 ohm source. Its load setting only tells it what to expect, so the amplitude you set appears at the load. Wrong setting, double or half the voltage.</td></tr>
+            <tr><td>Know what you probe. Mains, motor drives, switch-mode primaries and tube equipment need a differential probe.</td><td>The ground clip is connected to protective earth through the scope.</td></tr>
+            <tr><td>Never connect a transmitter directly. Use a dummy load with a sampler and attenuators sized for the power.</td><td>100 W into 50 ohm is 200 V peak to peak. The ham-bench skill has the attenuation table.</td></tr>
+            <tr><td>Logic probe: check levels on an analog channel first.</td><td>RS-232 swings to +/-12 V; RS-485 and CAN are differential.</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <h2 id="capture">02 · Capture and drill-down</h2>
+        <p>A capture takes one fresh acquisition at full memory and stores it. On the RTB2004 that is up to 15 million samples per channel, which the agent never reads into the conversation. It receives a summary instead: minimum, maximum, peak to peak, RMS, the frequency, clipping, and for logic lines the edge counts and pulse widths.</p>
+        <figure class="shot">
+          <img src="img/rs-scope/01-loopback-sine.png" alt="RTB2004 screen: a 1 kHz sine on CH1 with frequency, peak-to-peak and RMS measurements" loading="lazy">
+          <figcaption>Aux Out into CH1 through a 50 ohm terminator: 999.7 Hz, 1.03 Vpp, 344.1 mV RMS (theory 353.6 mV for 1 Vpp).</figcaption>
+        </figure>
+        <p>Follow-up questions are answered from the store. "Zoom into the first rising edge" becomes a window of the stored samples reduced to a few hundred rows; "list the frames with errors" becomes a filtered query. Nothing is measured twice unless the signal has changed.</p>
+
+        <h2 id="measure">03 · Measurements, spectra and Bode</h2>
+        <div class="shots">
+          <figure class="shot"><img src="img/rs-scope/02-square-edge.png" alt="Rising edge of a 100 kHz square wave with rise time and overshoot" loading="lazy"><figcaption>Edge quality: 13.6 ns rise time, 4.3 % overshoot.</figcaption></figure>
+          <figure class="shot"><img src="img/rs-scope/03-fft-harmonics.png" alt="FFT of a 10 kHz square wave showing odd harmonics" loading="lazy"><figcaption>FFT of a 10 kHz square wave: the odd harmonics, 1 kHz resolution.</figcaption></figure>
+          <figure class="shot"><img src="img/rs-scope/04-am-envelope.png" alt="AM envelope of a 100 kHz carrier with a 1 kHz tone" loading="lazy"><figcaption>AM, 100 kHz carrier, 1 kHz tone.</figcaption></figure>
+          <figure class="shot"><img src="img/rs-scope/05-am-sidebands.png" alt="Spectrum of the AM signal with carrier and two sidebands" loading="lazy"><figcaption>The same AM in the spectrum: carrier and sidebands at +/- 1 kHz, 50 Hz resolution.</figcaption></figure>
+        </div>
+        <p>The FFT on the RTB2 couples span, resolution bandwidth, window and timebase, and changes them in steps. The spectrum tool repeats the requested range until it settles, then reports the resolution it got. For a modulated or keyed carrier, the agent computes the envelope from the stored samples: AM depth, rise and fall time of the keying, crest factor.</p>
+        <figure class="shot">
+          <img src="img/rs-scope/08-bode-plot.png" alt="Bode plot application showing a flat loopback response" loading="lazy">
+          <figcaption>Bode plot (option K36) of the loopback, used to check the setup before a filter goes in: 0 dB and 0 degrees from 100 Hz to 1 MHz.</figcaption>
+        </figure>
+        <p>The Bode application changes the memory mode, the channel scale and coupling, and the generator load, and keeps those changes. The server saves the setup before every sweep and restores it when the scope leaves Bode mode.</p>
+
+        <h2 id="decode">04 · Buses and logic</h2>
+        <p>With the logic probe and the decode options, the agent reads serial buses as data: every frame with its time, status, address and bytes. Given lines it does not know, it first identifies them from the edges alone, then confirms with the decoder.</p>
+        <div class="shots">
+          <figure class="shot"><img src="img/rs-scope/09-i2c-decode.png" alt="I2C decoded on D0 and D1" loading="lazy"><figcaption>I2C on D0/D1: address 20, then "*idn?" and the read-back.</figcaption></figure>
+          <figure class="shot"><img src="img/rs-scope/10-spi-decode.png" alt="SPI with clock, MOSI, MISO and chip select decoded" loading="lazy"><figcaption>SPI on D0..D3: clock, MOSI, MISO, chip select.</figcaption></figure>
+          <figure class="shot"><img src="img/rs-scope/11-uart-logic.png" alt="UART decoded at 115200 baud" loading="lazy"><figcaption>UART on D0 at 115200 Bd, measured from the bit time.</figcaption></figure>
+          <figure class="shot"><img src="img/rs-scope/12-logic-counter.png" alt="Four-bit counter decoded as a parallel bus" loading="lazy"><figcaption>A 4-bit counter on D0..D3 as a parallel bus.</figcaption></figure>
+        </div>
+        <p><strong>Identification</strong> works on the stored logic capture. A line with pulses at multiples of one bit time is a UART, and the agent reports the measured and the nearest standard baud rate and whether the line is inverted. A bursting clock with one data line, both idle high, is I2C. A clock with data lines and a line that holds its level while the clock runs is SPI, and that line is the chip select. A steady periodic line is a clock or PWM, flagged when it looks like a servo or ESC signal. On the bench, all four pattern-generator buses and a 50 Hz servo pulse were identified correctly, including from short records that started in the middle of a transfer.</p>
+        <div class="callout">
+          <span class="label">Frames at the edge of the window</span>
+          <p>A capture window cuts the first and the last transfer. The scope marks those frames incomplete, which is correct. When everything looks incomplete, widen the timebase before concluding that the bus is broken.</p>
+        </div>
+
+        <h2 id="mask">05 · Pass/fail and rare faults</h2>
+        <div class="shots">
+          <figure class="shot"><img src="img/rs-scope/demo-mask.png" alt="Mask test with the pass and fail counters" loading="lazy"><figcaption>Mask test: learned from a clean sine, then noise arrives and the failure counter climbs.</figcaption></figure>
+          <figure class="shot"><img src="img/rs-scope/07-history-segments.png" alt="Segmented memory with the segment table" loading="lazy"><figcaption>Segmented memory with timestamps per acquisition.</figcaption></figure>
+        </div>
+        <ol class="steps">
+          <li><strong>Show the good signal and learn the mask</strong> with margins in divisions. The tool checks the new mask against the signal it was learned from and warns when it does not fit.</li>
+          <li><strong>Test.</strong> Thousands of acquisitions at about 16 per second; the result is tested, failed and the failure rate. With "keep failures", only failing acquisitions stay in segmented memory.</li>
+          <li><strong>Look at the failures.</strong> The history tool walks the stored segments and returns one row per segment: levels, frequency, decoded frames and their status.</li>
+        </ol>
+        <p>The tool never learns a mask from the signal it is about to judge: a bad signal would define its own tolerance.</p>
+
+        <h2 id="skills">06 · The skills</h2>
+        <p>The skills teach Claude how to work the bench with these tools. They are plain text you can read in the repository.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Skill</th><th scope="col">What it brings</th></tr></thead>
+          <tbody>
+            <tr><td>scope-operating</td><td>The discipline for every session: leave the scope as you found it, safety, capture then analyze, sample rate and trigger rules, what each error means, reporting with numbers.</td></tr>
+            <tr><td>ham-bench</td><td>Transmitter checks through attenuators (with the attenuation table from 5 W to 1500 W), AM depth, CW keying shape and key clicks, SSB two-tone and IMD, harmonics, filter Bode sweeps, audio levels for digital modes.</td></tr>
+            <tr><td>bus-reverse-engineering</td><td>Unknown pins: levels and threshold, survey, identify, confirm with the decoder, census of addresses and commands, recognizing common traffic (IMU and barometer addresses, SPI flash commands, NMEA, MAVLink, SBUS, CRSF, DShot).</td></tr>
+            <tr><td>embedded-bringup</td><td>Rails and ripple under load, power-up sequence and reset, clocks, PWM, servos and ESCs, sensor buses and I2C rise times, GPS, telemetry and RC links, intermittent faults, comparing board revisions.</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <h2 id="demo">07 · Demo mode</h2>
+        <p>The oscilloscope from the background of every science-fiction lab scene. Demo mode loops through scenes made by the scope's own generators, then restores your setup.</p>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Level</th><th scope="col">Wiring</th><th scope="col">Scenes</th></tr></thead>
+          <tbody>
+            <tr><td>Analog</td><td>Aux Out, 50 ohm feed-through terminator, CH1</td><td>Heartbeat monitor, signal in the noise, radar ping, AM, FM spectrum, harmonics, burst with zoom, pass/fail mask</td></tr>
+            <tr><td>Full</td><td>Analog wiring, plus pattern generator P0..P3 to logic probe D0..D3 (probe ground to the pattern generator's ground contact)</td><td>All of the above, plus I2C decoded to text, the SPI link, and a logic-analyzer counter</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="shots">
+          <figure class="shot"><img src="img/rs-scope/demo-heartbeat.png" alt="Heartbeat waveform played from the generator" loading="lazy"><figcaption>Vital signs: a heartbeat at 72 bpm from the arbitrary generator.</figcaption></figure>
+          <figure class="shot"><img src="img/rs-scope/demo-glow.png" alt="Noisy sine with intensity grading" loading="lazy"><figcaption>Signal in the noise, intensity-graded.</figcaption></figure>
+          <figure class="shot"><img src="img/rs-scope/demo-fm-spectrum.png" alt="FM spectrum with Bessel sidebands" loading="lazy"><figcaption>FM spectrum: the Bessel sidebands.</figcaption></figure>
+          <figure class="shot"><img src="img/rs-scope/demo-bus-i2c.png" alt="I2C decode next to a carrier" loading="lazy"><figcaption>Bus traffic next to a carrier on CH1.</figcaption></figure>
+        </div>
+        <p>Say "Run the full demo, 15 seconds per scene", and "Stop the demo" to end it. From a terminal: <code>rs-scope --host &lt;ip&gt; demo --level analog --loops 0 --yes</code>.</p>
+        <div class="callout warn">
+          <span class="label">The demo drives the outputs</span>
+          <p>It switches on the generator and, in the full demo, the pattern generator. It needs your confirmation and the wiring above. While it runs, other scope tools wait, because the scope serves one client at a time.</p>
+        </div>
+
+        <h2 id="examples">E · Worked sessions</h2>
+        <p>These are the tool calls the agent makes and what came back, recorded on the RTB2004 during the acceptance run of version 0.1.2. Long results are shortened.</p>
+
+        <h3>1 · "Something is talking on the logic probe. What is it?"</h3>
+        <p class="meta">logic probe on D0..D3 · capture · data identify · decode</p>
+        <div class="exchange" role="figure" aria-label="Session 1 transcript">
+    <span class="note">You: "Something is talking on the logic probe. Find out what it is and what it says."</span>
+<span class="tx">TOOL  connection(action="connect")</span>
+      → RTB2004, firmware 03.000, options K1 K2 K3 K15 B1 B6 B243 K36
+<span class="tx">TOOL  setup(action="save", note="before the bus hunt")</span>
+<span class="tx">TOOL  scpi(["LOG1:STAT ON", "LOG1:THR USER", "LOG1:THR:UDL 0.5", "TIM:SCAL 1e-4",</span>
+<span class="tx">            "TRIG:A:SOUR D0", "TRIG:A:EDGE:SLOP NEG", "TRIG:A:MODE NORM"])</span>
+<span class="tx">TOOL  capture(sources=["POD1"], note="survey")</span>
+      → active D0 (575 edges, 1.66 us pulses), D1 (138 edges); D2..D7 idle
+<span class="tx">TOOL  data(action="identify", source="D0-D7")</span>
+      → I2C, clock 301 kHz on D0, data on D1
+<span class="tx">TOOL  scpi(["BUS1:TYPE I2C", "BUS1:I2C:CLOC:SOUR D0", "BUS1:I2C:DATA:SOUR D1", "BUS1:FORM ASC"])</span>
+<span class="tx">TOOL  capture(sources=["BUS1"], note="confirm I2C")</span>
+      → 2 frames, status OK; address 0x40 (write) "*idn?", 0x41 (read) "Rohde&amp;Schwarz - RTB2004"
+    <span class="note">Agent: "It is I2C at about 300 kHz. A controller writes *idn? to the device at 7-bit address 0x20 and reads back Rohde&amp;Schwarz - RTB2004."</span>
+        </div>
+        <p><strong>Why it worked.</strong> The survey showed two active lines. Identification needed nothing but their edges. The decoder confirmed the guess with frames that decode cleanly.</p>
+
+        <h3>2 · "Measure the 1 kHz sine on CH1"</h3>
+        <p class="meta">generator into a 50 ohm terminator · guarded output · measure · capture</p>
+        <div class="exchange" role="figure" aria-label="Session 2 transcript">
+    <span class="note">You: "Put a 1 kHz, 1 Vpp sine on the generator and measure it. CH1 has a 50 ohm terminator."</span>
+<span class="tx">TOOL  scpi([..., "WGEN:OUTP:LOAD R50", "WGEN:FUNC SIN", "WGEN:FREQ 1000", "WGEN:VOLT 1", "WGEN:OUTP ON"])</span>
+      → guarded: nothing was sent; WGEN:OUTP ON drives the generator output into the circuit
+    <span class="note">The agent asks you to confirm the wiring, then sends the same batch with confirm=true.</span>
+<span class="tx">TOOL  measure(source="CH1", types=["FREQ", "PEAK", "RMS"])</span>
+      → FREQ 1000.3 Hz, PEAK 1.032 V, RMS 0.351 V
+<span class="tx">TOOL  capture(sources=["CH1"], note="sine")</span>
+      → 15,000,070 samples; 1000.0 Hz, 1.045 Vpp, 0.351 V RMS
+        </div>
+        <p><strong>Why it worked.</strong> The load setting matched the terminator, so the amplitude is what was asked for. The measurement and the stored capture agree.</p>
+
+        <h3>3 · "What is the modulation depth?"</h3>
+        <p class="meta">AM on CH1 · capture · data envelope</p>
+        <div class="exchange" role="figure" aria-label="Session 3 transcript">
+    <span class="note">You: "Generate 80 % AM on a 100 kHz carrier and tell me the real modulation depth."</span>
+<span class="tx">TOOL  scpi(["WGEN:FREQ 100000", "WGEN:MOD:TYPE AM", "WGEN:MOD:AM:FREQ 1000",</span>
+<span class="tx">            "WGEN:MOD:AM:DEPT 80", "WGEN:MOD ON", "TIM:SCAL 1e-3"])</span>
+<span class="tx">TOOL  capture(sources=["CH1"], note="AM 80 %")</span>
+<span class="tx">TOOL  data(action="envelope", source="CH1")</span>
+      → carrier 100.0 kHz, envelope 0.069 V to 0.464 V, AM depth 0.743
+    <span class="note">Agent: "The generator is set to 80 %, the signal has 74 %. The method gives the same value for every window size, so this is the generator, not the measurement."</span>
+        </div>
+
+        <h3>4 · "Does this signal stay inside its tolerance?"</h3>
+        <p class="meta">mask create · mask test · history</p>
+        <div class="exchange" role="figure" aria-label="Session 4 transcript">
+    <span class="note">You: "Learn a mask from this clean 2 kHz sine, test it, then tell me what happens with noise."</span>
+<span class="tx">TOOL  mask(action="create", source="CH1", x_margin_div=0.02, y_margin_div=0.15)</span>
+      → self-check: 0 of 34 acquisitions of the reference fail
+<span class="tx">TOOL  mask(action="test", acquisitions=300)</span>
+      → tested 309, failed 0
+<span class="tx">TOOL  scpi("WGEN:NOIS:REL 9")</span>
+<span class="tx">TOOL  mask(action="test", acquisitions=300)</span>
+      → tested 316, failed 316; 40 failures kept in segmented memory
+<span class="tx">TOOL  history(action="harvest", sources=["CH1"], max_segments=5)</span>
+      → 5 segments, one row each with peak-to-peak and frequency
+        </div>
+
+        <h3>5 · "Check the Bode setup before the filter goes in"</h3>
+        <p class="meta">K36 · guarded sweep · restore afterwards</p>
+        <div class="exchange" role="figure" aria-label="Session 5 transcript">
+    <span class="note">You: "Sweep from 100 Hz to 1 MHz with input and output on CH1, just to check the setup."</span>
+<span class="tx">TOOL  bode(start_hz=100, stop_hz=1e6, points_per_decade=10, input_channel="CH1",</span>
+<span class="tx">          output_channel="CH1", confirm=true)</span>
+      → 41 points in 7.2 s; flat within 6 dB, peak 0.0 dB; generator load R50
+    <span class="note">With a filter, the same call reports the -3 dB and -6 dB points, the phase there and the shape.</span>
+        </div>
+
+        <h2 id="trouble">F · When it does not answer</h2>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Symptom</th><th scope="col">Likely cause and fix</th></tr></thead>
+          <tbody>
+            <tr><td>The connector fails to start</td><td>Claude Desktop shows the error under Settings, Extensions. The log is <code>~/Library/Logs/Claude/mcp-server-R&amp;S Oscilloscope (RTB2, RTB2000).log</code>.</td></tr>
+            <tr><td>Connection times out</td><td>Another client holds the scope: its web page in a browser, a script, a running demo. Close it. Check the address on the scope's Ethernet page.</td></tr>
+            <tr><td>"validation" error</td><td>A wrong command or suffix. The agent searches the command set and tries the right one.</td></tr>
+            <tr><td>-113 Undefined header</td><td>The command does not exist in this firmware; the description says so where it is known.</td></tr>
+            <tr><td>-200 on a decode query</td><td>The bus is set to a different protocol.</td></tr>
+            <tr><td>-221 Settings conflict</td><td>Another application (FFT, Bode, XY, mask) is active. The task tools switch back on their own.</td></tr>
+            <tr><td>A measurement returns no value</td><td>Nothing to measure on this screen: check scale, timebase and trigger.</td></tr>
+            <tr><td>Everything decodes as incomplete</td><td>The window cuts the transfers: widen the timebase.</td></tr>
+            <tr><td>The mask warns after it was learned</td><td>The trigger or timebase is not stable. With noise on the signal, the trigger's high-frequency reject helps.</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <h2 id="reference">G · Tool reference</h2>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Tool</th><th scope="col">Main arguments</th></tr></thead>
+          <tbody>
+            <tr><td>connection</td><td>action: status, connect, disconnect · host, port</td></tr>
+            <tr><td>session</td><td>action: start (with goal), current, list</td></tr>
+            <tr><td>setup</td><td>action: show, save, restore (guarded) · capture_id, note</td></tr>
+            <tr><td>capture</td><td>sources: CH1..CH4, POD1, POD2, BUS1, BUS2 · acquire: single, stop, current · points: MAX, DMAX, DEF · note · screenshot</td></tr>
+            <tr><td>data</td><td>action: sessions, captures, capture, series, edges, envelope, identify, frames, sql · capture_id, source, t_start, t_end, max_points, bus, status, address, contains, segment, offset, limit</td></tr>
+            <tr><td>measure</td><td>source · types (up to 8: FREQ, PER, PEAK, UPE, LPE, AMPL, MEAN, RMS, RTIM, FTIM, PDCY, NDCY, PPW, NPW, POV, NOV, DEL, PHAS and more)</td></tr>
+            <tr><td>spectrum</td><td>source · start_hz, stop_hz · window</td></tr>
+            <tr><td>bode</td><td>start_hz, stop_hz, points_per_decade, input_channel, output_channel · confirm</td></tr>
+            <tr><td>mask</td><td>action: create, test, status, off · source, x_margin_div, y_margin_div, acquisitions, keep_failed, stop_on_failures</td></tr>
+            <tr><td>history</td><td>action: info, harvest · sources, max_segments</td></tr>
+            <tr><td>demo</td><td>action: scenes, start, stop, status · level: analog, full · dwell_s, loops · confirm</td></tr>
+            <tr><td>screenshot</td><td>note</td></tr>
+            <tr><td>scpi</td><td>commands (one or a list) · confirm · wait</td></tr>
+            <tr><td>scpi_search · scpi_describe · scpi_block</td><td>query, limit · header, verbose · query, save_as</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>The full command reference, with the bench notes for every command, is the <a href="https://github.com/sbrunner-atx/rs-scope-mcp/raw/main/docs/rs-scope-api.pdf">RTB2 / RTB2000 SCPI API reference (PDF)</a>.</p>
+
+        <h2 id="commercial">H · Commercial use</h2>
+        <p><strong>Free for hobbyists.</strong> Personal use, amateur radio, education and nonprofit use are free under the PolyForm Noncommercial License 1.0.0.</p>
+        <p><strong>Commercial use needs a license.</strong> Any use by or for a business, including internal use on a company test bench, needs a commercial license. Support for more instruments, test procedures written as skills for your products, integration with your test setup, and support plans are available too. Contact <a href="https://westlakeprofessionals.com">Westlake Professionals</a>.</p>
+
+        <h2 id="about">I · About and provenance</h2>
+        <div class="table-scroll">
+        <table>
+          <tbody>
+            <tr><td>rs-scope-mcp</td><td><a href="https://github.com/sbrunner-atx/rs-scope-mcp">github.com/sbrunner-atx/rs-scope-mcp</a></td></tr>
+            <tr><td>Desktop connector</td><td><code>rs-scope-mcp.mcpb</code> on GitHub Releases, listed on <a href="../downloads.html#rs-scope-mcp">Downloads</a></td></tr>
+            <tr><td>Skills</td><td><code>skills/scope-operating</code> · <code>skills/ham-bench</code> · <code>skills/bus-reverse-engineering</code> · <code>skills/embedded-bringup</code></td></tr>
+            <tr><td>Bench record</td><td><code>docs/BENCH-NOTES.md</code> (six rounds on the RTB2004) · <code>scripts/acceptance_test.py</code> (40 checks)</td></tr>
+            <tr><td>Command reference</td><td><code>docs/rs-scope-api.md</code> and PDF</td></tr>
+            <tr><td>Sibling servers</td><td><a href="../products/serial-console-mcp.html">serial-console-mcp</a> · <a href="../products/fldigi-mcp.html">fldigi-mcp</a> · <a href="../products/wsjtx-mcp.html">wsjtx-mcp</a> · <a href="../products/n3fjp-mcp.html">n3fjp-mcp</a></td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>Corrections and additions are welcome. Open an issue on the <a href="https://github.com/sbrunner-atx/rs-scope-mcp">repository</a>.</p>
+        <div class="callout">
+          <span class="label">73</span>
+          <p>This is private, personal work by Stefan Brunner, AE5VG. It is an independent project, not affiliated with or endorsed by Rohde &amp; Schwarz; R&amp;S and RTB2000 are trademarks of Rohde &amp; Schwarz GmbH &amp; Co. KG. GL es 73 de AE5VG sk.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <p class="label">AE5VG · Austin, TX</p>
+      <p>Site text CC BY 4.0; software under the license named in each repository.</p>
+      <p class="sk">GL es 73 de AE5VG sk</p>
+    </div>
+    <div>
+      <p class="label">Contact</p>
+      <p>Software: open an issue on the relevant repository at <a href="https://github.com/sbrunner-atx">github.com/sbrunner-atx</a>.</p>
+      <p>LinkedIn: <a href="https://www.linkedin.com/in/stefanbrunner/">Stefan Brunner</a>.</p>
+      <p>Email: <span class="email-here">stefan at this domain</span></p>
+    </div>
+  </div>
+</footer>
+<script src="../site.js"></script>
+</body>
+</html>
