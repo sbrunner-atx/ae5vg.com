@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>rs-scope-mcp · AE5VG</title>
+<meta name="description" content="An MCP server that puts an AI agent on a Rohde &amp; Schwarz RTB2 / RTB2000 oscilloscope: capture, measure, decode buses, FFT, Bode plots and pass/fail masks, with every capture stored locally.">
+<link rel="canonical" href="https://ae5vg.com/products/rs-scope-mcp.html">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../favicon-48.png" type="image/png" sizes="48x48">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AE5VG">
+<meta property="og:title" content="rs-scope-mcp · AE5VG">
+<meta property="og:description" content="An MCP server that puts an AI agent on a Rohde &amp; Schwarz RTB2 / RTB2000 oscilloscope: capture, measure, decode buses, FFT, Bode plots and pass/fail masks, with every capture stored locally.">
+<meta property="og:url" content="https://ae5vg.com/products/rs-scope-mcp.html">
+<meta property="og:image" content="https://ae5vg.com/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="AE5VG: An AI assistant that can work the bands with you. ae5vg.com">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="rs-scope-mcp · AE5VG">
+<meta name="twitter:description" content="An MCP server that puts an AI agent on a Rohde &amp; Schwarz RTB2 / RTB2000 oscilloscope: capture, measure, decode buses, FFT, Bode plots and pass/fail masks, with every capture stored locally.">
+<meta name="twitter:image" content="https://ae5vg.com/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a class="badge" href="../index.html">AE5VG</a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="site-nav">Menu</button>
+    <nav class="site" id="site-nav" aria-label="Site">
+      <a href="../index.html">Home</a>
+      <a href="index.html" aria-current="page">Products</a>
+      <a href="../downloads.html">Downloads</a>
+      <a href="../getting-started.html">Getting Started</a>
+      <a href="../user-guide/index.html">User Guide</a>
+      <a href="../development.html">Development</a>
+      <a href="../references/index.html">References</a>
+      <a href="../about.html">About</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <p class="label">Product · PolyForm Noncommercial</p>
+    <h1>rs-scope-mcp</h1>
+    <p class="lead">rs-scope-mcp puts an AI agent on a Rohde &amp; Schwarz RTB2 or RTB2000 oscilloscope. Claude sets up the scope, captures what it measures, keeps every capture on your computer with the setup that produced it, and answers with numbers: frequency and levels, decoded bus traffic, spectra, filter response, pass or fail. You do not need to know any programming or remote commands. You talk to Claude as you would to a colleague at the bench.</p>
+    <div class="btn-row">
+      <a class="btn" href="../downloads.html#rs-scope-mcp">Download</a>
+      <a class="btn ghost" href="https://github.com/sbrunner-atx/rs-scope-mcp">GitHub</a>
+    </div>
+    <div class="strip" data-release="rs-scope-mcp">
+      <div><span class="label">Version</span><strong class="fill-version">…</strong></div>
+      <div><span class="label">Released</span><strong class="fill-released">…</strong></div>
+      <div><span class="label">License</span><strong>PolyForm NC</strong></div>
+      <div><span class="label">Ships as</span><strong>.mcpb bundle · 4 skills</strong></div>
+    </div>
+  </div>
+</section>
+
+<main id="main">
+  <div class="wrap">
+    <div class="layout">
+      <nav aria-label="On this page"><ul class="toc">
+        <li><span class="label">On this page</span></li>
+        <li><a href="#what">What it does</a></li>
+        <li><a href="#features">Features and benefits</a></li>
+        <li><a href="#how">How it works</a></li>
+        <li><a href="#ask">Ask it</a></li>
+        <li><a href="#tools">Tools</a></li>
+        <li><a href="#install">Install</a></li>
+        <li><a href="#safety">Safety</a></li>
+        <li><a href="#license">License and commercial use</a></li>
+        <li><a href="#docs">Documents</a></li>
+      </ul></nav>
+      <div>
+        <h2 id="what" style="margin-top:0">What it does</h2>
+        <p>An oscilloscope has two jobs: control and measurement. rs-scope-mcp does both. It gives Claude the complete remote command set of the RTB2, checked before anything is sent, and task tools that turn a question into the right sequence of settings. Then it harvests what the scope measured: samples in volts, logic levels, decoded frames, measurement results and screenshots. All of it lands in a local store. Claude sees a short summary and asks for detail only when your question needs it.</p>
+        <p>It was built for three kinds of bench work. On the <strong>ham-radio bench</strong>: transmitter checks through attenuators, AM depth, CW keying shape, harmonics, and filter sweeps. For <strong>hardware reverse engineering</strong>: find out what unknown pins carry, identify the bus and its rate, and build a census of addresses and commands. For <strong>microcontroller and drone development</strong>: rails and ripple, power-up sequence, PWM, servos and ESCs, sensor buses, and intermittent faults caught with a mask test and segmented memory.</p>
+        <figure class="shot">
+          <img src="img/rs-scope/06-uart-decode.png" alt="RTB2004 screen with a UART decoded from the logic probe" loading="lazy">
+          <figcaption>A UART decoded from the logic probe. Claude gets the frames as data, with time, status and bytes.</figcaption>
+        </figure>
+        <div class="callout">
+          <span class="label">Verified on this bench</span>
+          <p>Every feature was run on an RTB2004 with firmware 03.000 and every option installed. A 40-check acceptance test drives the installed connector through the same protocol Claude Desktop uses, and all 40 pass. The RTB2 is the rebranded RTB2000, with the same hardware and firmware, so both work. Options your scope does not have are simply not offered.</p>
+        </div>
+
+        <h2 id="features">Features and benefits</h2>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Feature</th><th scope="col">What it gives you</th></tr></thead>
+          <tbody>
+            <tr><td>The complete command set</td><td>All 962 remote commands the user manual documents, plus 408 command families the firmware reports but the manual does not. Each command is checked before it is sent: a wrong header, an out-of-range value or a command this firmware lacks is refused with a reason.</td></tr>
+            <tr><td>Bench rules built in</td><td>FFT, Bode, XY and mask test are exclusive modes; decoders need the right bus type; full memory needs a stopped acquisition. The task tools handle this, so a request does not fail on a rule nobody wrote down.</td></tr>
+            <tr><td>Capture once, ask many times</td><td>One call acquires and stores analog channels in volts, logic pods and decoded buses, with the scope's own setup file. Follow-up questions are answered from the store: a window of samples, edge times, frames by filter, read-only SQL across captures.</td></tr>
+            <tr><td>Bus identification</td><td>Given unknown logic lines, it tells I2C, SPI (with the chip select), UART (with the baud rate and polarity) and servo PWM apart from the edges alone, then sets up the decoder to confirm.</td></tr>
+            <tr><td>Measurements, spectra, Bode</td><td>Up to eight automatic measurements as numbers; an FFT that settles the scope's coupled span and resolution and reports the peaks; Bode sweeps with the -3 dB points; the envelope of a modulated carrier.</td></tr>
+            <tr><td>Pass/fail and rare faults</td><td>Learn a tolerance mask from a good signal, check it, run thousands of acquisitions, keep only the failures in segmented memory, and walk them one row per failure.</td></tr>
+            <tr><td>Leaves the scope as it was</td><td>The setup is saved at the start of a task and restored at the end, generators off.</td></tr>
+            <tr><td>Demo mode</td><td>The scope from the background of every science-fiction lab scene: a heartbeat, a radar ping, FM sidebands, bus traffic decoded to text. Analog-only with one cable, or the full show with the logic probe.</td></tr>
+            <tr><td>Four skills</td><td><code>scope-operating</code>, <code>ham-bench</code>, <code>bus-reverse-engineering</code> and <code>embedded-bringup</code> teach Claude the discipline and the procedures for each kind of bench work.</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <h2 id="how">How it works</h2>
+        <figure class="diagram">
+          <svg viewBox="0 0 720 150" role="img" aria-label="Diagram: Claude Desktop talks to rs-scope-mcp over MCP; rs-scope-mcp talks to the oscilloscope over SCPI on the LAN and keeps captures in a local store; Claude receives summaries." font-family="JetBrains Mono,monospace">
+            <rect x="20" y="55" width="140" height="40" fill="#f6f8fa" stroke="#d0d7de"/>
+            <text x="90" y="79" fill="#1f2328" font-size="12" text-anchor="middle">Claude Desktop</text>
+            <rect x="270" y="55" width="160" height="40" fill="#ffffff" stroke="#0969da"/>
+            <text x="350" y="79" fill="#0550ae" font-size="12" text-anchor="middle">rs-scope-mcp</text>
+            <rect x="270" y="110" width="160" height="32" fill="#ffffff" stroke="#0969da"/>
+            <text x="350" y="130" fill="#0550ae" font-size="11" text-anchor="middle">local store</text>
+            <rect x="550" y="55" width="150" height="40" fill="#0969da"/>
+            <text x="625" y="79" fill="#ffffff" font-size="12" text-anchor="middle" font-weight="700">RTB2 scope</text>
+            <g fill="none" stroke="#0969da" stroke-width="1">
+              <line x1="160" y1="75" x2="270" y2="75"/>
+              <line x1="430" y1="75" x2="550" y2="75"/>
+              <line x1="350" y1="95" x2="350" y2="110"/>
+            </g>
+            <text x="215" y="66" fill="#57606a" font-size="10" text-anchor="middle">MCP · summaries</text>
+            <text x="490" y="66" fill="#57606a" font-size="10" text-anchor="middle">SCPI · LAN 5025</text>
+          </svg>
+          <figcaption>The server runs on your computer, reaches the scope over your network, and keeps the full captures. Claude receives compact summaries.</figcaption>
+        </figure>
+        <p>The scope answers nothing at all to a command it rejects, which leaves an ordinary client waiting for a timeout. rs-scope-mcp adds a check to every query and reads the error queue after every write, so a failure comes back in milliseconds with the scope's own reason. A capture at full memory holds up to 15 million samples per channel. They stay in the local store; Claude reads a summary of a few hundred tokens and drills into the stored data when it needs more.</p>
+        <div class="shots">
+          <figure class="shot"><img src="img/rs-scope/05-am-sidebands.png" alt="FFT of an AM signal with carrier and sidebands" loading="lazy"><figcaption>AM in the spectrum: carrier and sidebands at +/- 1 kHz.</figcaption></figure>
+          <figure class="shot"><img src="img/rs-scope/08-bode-plot.png" alt="Bode plot application" loading="lazy"><figcaption>Bode plot, 100 Hz to 1 MHz.</figcaption></figure>
+        </div>
+
+        <h2 id="ask">Ask it</h2>
+        <div class="exchange" role="figure" aria-label="Example requests and what happens">
+<span class="tx">Connect to the scope and tell me which options are installed.</span>
+    <span class="note">connection: model, firmware, options such as logic probe, decoders, Bode</span>
+<span class="tx">What is the frequency and level on CH1?</span>
+    <span class="note">measure: FREQ, PEAK, RMS as numbers</span>
+<span class="tx">Something is talking on the logic probe. What is it?</span>
+    <span class="note">capture the pod, identify the lines, set up the decoder, read the frames</span>
+<span class="tx">Where is this filter's -3 dB point?</span>
+    <span class="note">bode, after you confirm what the generator is connected to</span>
+<span class="tx">This board resets once an hour. Catch it.</span>
+    <span class="note">mask from the good signal, test, keep failures, walk them with history</span>
+        </div>
+
+        <h2 id="tools">Tools</h2>
+        <div class="table-scroll">
+        <table>
+          <thead><tr><th scope="col">Tool</th><th scope="col">What it does</th></tr></thead>
+          <tbody>
+            <tr><td><code>connection</code> / <code>session</code> / <code>setup</code></td><td>Connect and list options; group captures by task; show, save and restore the complete setup</td></tr>
+            <tr><td><code>capture</code></td><td>One acquisition, harvested and stored: analog channels in volts, logic pods, decoded buses, optionally a screenshot</td></tr>
+            <tr><td><code>data</code></td><td>Drill into stored captures: series, edges, envelope, identify, frames, read-only SQL</td></tr>
+            <tr><td><code>measure</code> / <code>spectrum</code> / <code>bode</code></td><td>Automatic measurements; FFT with peaks and noise floor; Bode sweep with -3 dB points</td></tr>
+            <tr><td><code>mask</code> / <code>history</code></td><td>Learn and run pass/fail tests; walk segmented memory one row per acquisition</td></tr>
+            <tr><td><code>screenshot</code> / <code>demo</code></td><td>The screen as an image; the looping demo show</td></tr>
+            <tr><td><code>scpi</code> / <code>scpi_search</code> / <code>scpi_describe</code> / <code>scpi_block</code></td><td>Any command of the full set, validated; search and describe with bench notes; binary transfers</td></tr>
+          </tbody>
+        </table>
+        </div>
+
+        <h2 id="install">Install</h2>
+        <p>You need the Claude desktop app and the scope on your network (the scope's LAN port, IP Port 5025). The connector links Claude to the scope. The skills teach Claude how to work the bench. The connector does not install the skills, so you add them as well.</p>
+        <ol class="steps">
+          <li>On <a href="../downloads.html#rs-scope-mcp">Downloads</a>, click <code>rs-scope-mcp.mcpb</code> and the four skill files. Your browser saves them in your Downloads folder.</li>
+          <li>In Claude, open <strong>Settings → Desktop app</strong>, click <strong>Manage</strong> next to <strong>Extensions</strong>, and drag <code>rs-scope-mcp.mcpb</code> onto that page. If dragging does not work, click <strong>Advanced settings</strong>, then <strong>Install extension</strong>, and choose the file.</li>
+          <li>Claude shows the settings. Enter the scope's IP address. Leave the port at 5025 and the data folder as it is.</li>
+          <li>In Claude, open <strong>Customize → Skills</strong>, click <strong>Add</strong>, then <strong>Upload skill</strong>, and choose <code>scope-operating.skill</code>, <code>ham-bench.skill</code>, <code>bus-reverse-engineering.skill</code> and <code>embedded-bringup.skill</code> all at once. Click <strong>Upload</strong>.</li>
+        </ol>
+        <p>The <a href="../user-guide/rs-scope-field-guide.html#install">Field Guide</a> has the details, including the scope's network settings.</p>
+
+        <h2 id="safety">Safety</h2>
+        <div class="callout warn">
+          <span class="label">The generators drive real signals</span>
+          <p>The waveform generator, the pattern generator, Bode sweeps and the demo put signals into whatever is connected. The connector refuses to switch them on without an explicit confirmation, and the skills tell Claude to ask only after you have said what is connected. The same applies to resets, file deletion, network settings and setup restores. The inputs are 1 Mohm only; for 50 ohm systems use a feed-through terminator. Never connect a transmitter directly: use a dummy load and attenuators.</p>
+        </div>
+
+        <h2 id="license">License and commercial use</h2>
+        <p><strong>Free for hobbyists.</strong> Personal use, amateur radio, education and nonprofit use are free under the PolyForm Noncommercial License 1.0.0.</p>
+        <p><strong>Commercial use needs a license.</strong> Any use by or for a business, including internal use on a company test bench, needs a commercial license. Support for more instruments, test procedures written as skills for your products, integration with your test setup, and support plans are available too. Tell us about your bench at <a href="https://westlakeprofessionals.com">Westlake Professionals</a>.</p>
+
+        <h2 id="docs">Documents</h2>
+        <ul>
+          <li><a href="https://github.com/sbrunner-atx/rs-scope-mcp/raw/main/docs/rs-scope-mcp%20Field%20Guide.pdf">rs-scope-mcp Field Guide (PDF)</a> · <a href="../user-guide/rs-scope-field-guide.html">read it online</a></li>
+          <li><a href="https://github.com/sbrunner-atx/rs-scope-mcp/raw/main/docs/rs-scope-api.pdf">RTB2 / RTB2000 SCPI API reference (PDF)</a></li>
+          <li><a href="https://github.com/sbrunner-atx/rs-scope-mcp/raw/main/README.md">README</a> · <a href="https://github.com/sbrunner-atx/rs-scope-mcp/raw/main/CHANGELOG.md">CHANGELOG</a></li>
+          <li><a href="https://github.com/sbrunner-atx/rs-scope-mcp">GitHub repository</a></li>
+        </ul>
+        <p class="meta">An independent project, not affiliated with or endorsed by Rohde &amp; Schwarz. R&amp;S and RTB2000 are trademarks of Rohde &amp; Schwarz GmbH &amp; Co. KG.</p>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div>
+      <p class="label">AE5VG · Austin, TX</p>
+      <p>Site text CC BY 4.0; software under the license named in each repository.</p>
+      <p class="sk">GL es 73 de AE5VG sk</p>
+    </div>
+    <div>
+      <p class="label">Contact</p>
+      <p>Software: open an issue on the relevant repository at <a href="https://github.com/sbrunner-atx">github.com/sbrunner-atx</a>.</p>
+      <p>LinkedIn: <a href="https://www.linkedin.com/in/stefanbrunner/">Stefan Brunner</a>.</p>
+      <p>Email: <span class="email-here">stefan at this domain</span></p>
+    </div>
+  </div>
+</footer>
+<script src="../site.js"></script>
+</body>
+</html>
