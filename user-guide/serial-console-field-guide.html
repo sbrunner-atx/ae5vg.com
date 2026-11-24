@@ -48,7 +48,7 @@
 
 <section class="hero">
   <div class="wrap">
-    <p class="label">Field Guide · September 2026</p>
+    <p class="label">Field Guide · November 2026</p>
     <h1>The Serial Console</h1>
     <p class="lead">serial-console-mcp lets an AI agent configure telecommunication equipment through the console port the equipment already has. That covers Juniper and Cisco routers and switches, Icom CI-V transceivers, Kenwood, Yaesu and Elecraft CAT transceivers, and GS-232 antenna rotators. It also talks to any other serial device in raw, ANSI or VT100, from IoT gateways to alarm and control panels. This guide shows how the agent reads the prompt instead of guessing, changes configuration with a safety net, and hands the port back cleanly. It covers what a terminal program does, written for the operator who would rather ask.</p>
     <div class="btn-row">
@@ -631,7 +631,7 @@ READ  query_text("C") → +0045 → azimuth 45°
         </ul>
 
         <h2 id="about">H · About and provenance</h2>
-        <p>Release 0.3.2 was run against real hardware on 15 September 2026. This guide claims only what has been verified.</p>
+        <p>Release 0.3.2 was run against real hardware on 15 September 2026. Release 0.4.0 added network consoles, and its SSH and telnet logins with the password dialog were run against a Raspberry Pi 5 on 23 November 2026. This guide claims only what has been verified.</p>
         <p>serial-console-mcp began as a generic console tool for network craft ports and radio gear. For this release it was rewritten around the background-reader model described in chapter D. The 0.3.2 code is verified three ways. An 83-case test suite drives a simulated serial port. Continuous integration runs on Linux, macOS and Windows. And a live session ran on 15 September 2026. In that session the PyPI package, launched by uvx the same way Claude Desktop launches it, drove a Juniper EX2200-C (Junos 15.1R6.7) over a Prolific USB-serial adapter at 9600 8N1 with the juniper-craft preset. One expect call entered the CLI from the shell, turned off paging, and ran show version, show chassis hardware and show system uptime. Every prompt matched on the regex, and the call returned to the shell. An annotated capture recorded the session. The worked sessions in chapter E are still representative walk-throughs. The Juniper one now matches what the real switch printed.</p>
         <div class="table-scroll">
         <table>
