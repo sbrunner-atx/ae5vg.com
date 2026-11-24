@@ -103,7 +103,7 @@
           <li>On the <a href="downloads.html">Downloads</a> page, under fldigi-mcp, click <code>fldigi-mcp.mcpb</code>, <code>fldigi-operating.skill</code> and <code>signal-hunting.skill</code>. If you log with N3FJP, also click <code>n3fjp-mcp.mcpb</code> and <code>contest-operating.skill</code> under n3fjp-mcp. Your browser saves the files in your Downloads folder.</li>
           <li>In Claude, open <strong>Settings → Desktop app</strong>, click <strong>Manage</strong> next to <strong>Extensions</strong>, and drag <code>fldigi-mcp.mcpb</code> onto that page. If dragging does not work, click <strong>Advanced settings</strong>, then <strong>Install extension</strong>, and choose the file. The new connector then shows under <strong>Settings → Customize → Connectors</strong>.</li>
           <li>Claude then shows the connector's settings. If it does not, click <strong>Configure</strong> next to fldigi (Amateur Radio) under <strong>Settings → Desktop app → Extensions</strong> (click <strong>Manage</strong>). Type your callsign in <strong>Callsign</strong> and leave everything else as it is. Without a callsign, Claude can listen but it will never transmit.</li>
-          <li>Do the same with <code>n3fjp-mcp.mcpb</code>. There is nothing to type for it. If N3FJP runs in a virtual machine or on another PC, which is always the case on a Mac, also set up the bridge described under <a href="#remote">Where everything runs</a>.</li>
+          <li>Do the same with <code>n3fjp-mcp.mcpb</code>. If N3FJP runs on the same Windows PC, there is nothing to type for it. If N3FJP runs in a virtual machine or on another PC, which is always the case on a Mac, enter that computer's address as <strong>N3FJP host</strong>, as described under <a href="#remote">Where everything runs</a>.</li>
           <li>Now the skills. In Claude, open <strong>Customize → Skills</strong>. Click <strong>Add</strong>, then <strong>Upload skill</strong>.</li>
           <li>Choose <code>fldigi-operating.skill</code>, <code>signal-hunting.skill</code> and, if you log with N3FJP, <code>contest-operating.skill</code>, all at once. Hold <strong>⌘</strong> on a Mac or <strong>Ctrl</strong> on Windows to select more than one file. Click <strong>Upload</strong>. The skills now show under <strong>Customize → Skills</strong>, turned on.</li>
         </ol>
@@ -236,20 +236,12 @@
         <p>The N3FJP loggers run only on Windows. fldigi runs on Mac, Windows and Linux. That gives two common stations, shown below with example addresses.</p>
 
         <h3 id="all-windows">All on one Windows PC</h3>
-        <p>This is the simplest station. Claude, fldigi, N3FJP and the radio are all on one Windows PC. Every connection stays on <code>127.0.0.1</code>, so no bridge is needed and nothing is open to the network.</p>
+        <p>This is the simplest station. Claude, fldigi, N3FJP and the radio are all on one Windows PC. Every connection stays on <code>127.0.0.1</code>, so nothing is open to the network.</p>
         <figure class="diagram">
-          <svg viewBox="0 0 550 356" style="max-width:596px" role="img" aria-label="Diagram, with example addresses. One Windows PC at 192.168.1.50 runs Claude Desktop, fldigi-mcp, n3fjp-mcp, fldigi and N3FJP. Each MCP server runs in its own sandbox that can only reach 127.0.0.1. fldigi-mcp talks to fldigi at 127.0.0.1 port 7362. n3fjp-mcp talks to N3FJP at 127.0.0.1 port 1100. fldigi connects to N3FJP at 127.0.0.1 port 1100 to set band and mode automatically. fldigi runs the radio over USB, or through a RigBlaster and a USB audio adapter. No bridge is needed." font-family="JetBrains Mono,monospace">
+          <svg viewBox="0 0 550 356" style="max-width:596px" role="img" aria-label="Diagram, with example addresses. One Windows PC at 192.168.1.50 runs Claude Desktop, fldigi-mcp, n3fjp-mcp, fldigi and N3FJP. fldigi-mcp talks to fldigi at 127.0.0.1 port 7362. n3fjp-mcp talks to N3FJP at 127.0.0.1 port 1100. fldigi connects to N3FJP at 127.0.0.1 port 1100 to set band and mode automatically. fldigi runs the radio over USB, or through a RigBlaster and a USB audio adapter." font-family="JetBrains Mono,monospace">
             <defs><marker id="w-arrow" viewBox="0 0 6 6" refX="6" refY="3" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#0969da"/></marker></defs>
             <rect x="15" y="28" width="520" height="242" fill="none" stroke="#d0d7de" stroke-dasharray="5 4"/>
             <text x="25" y="20" fill="#57606a" font-size="10">WINDOWS PC · 192.168.1.50</text>
-            <g fill="none" stroke="#9a6700" stroke-width="1" stroke-dasharray="3 3">
-              <rect x="28" y="104" width="105" height="62"/>
-              <rect x="138" y="104" width="105" height="62"/>
-            </g>
-            <g font-size="9" fill="#9a6700">
-              <text x="33" y="114">sandbox</text>
-              <text x="143" y="114">sandbox</text>
-            </g>
             <g fill="none" stroke="#0969da" stroke-width="1">
               <line x1="80" y1="79" x2="80" y2="120"/>
               <line x1="190" y1="79" x2="190" y2="120"/>
@@ -292,14 +284,14 @@
               <text x="88" y="282">PTT and audio</text>
             </g>
           </svg>
-          <figcaption>Example address. Everything talks over 127.0.0.1 on one PC. Each MCP server still runs in its sandbox, and fldigi sends band and mode to N3FJP.</figcaption>
+          <figcaption>Example address. Everything talks over 127.0.0.1 on one PC, and fldigi sends band and mode to N3FJP.</figcaption>
         </figure>
         <div class="table-scroll">
         <table>
           <thead><tr><th scope="col">Socket</th><th scope="col">Computer</th><th scope="col">Listening</th><th scope="col">Who connects</th></tr></thead>
           <tbody>
-            <tr><td>127.0.0.1:7362</td><td>Windows</td><td>fldigi XML-RPC</td><td>fldigi-mcp, from inside its sandbox</td></tr>
-            <tr><td>127.0.0.1:1100</td><td>Windows</td><td>N3FJP TCP API</td><td>n3fjp-mcp, from inside its sandbox; fldigi, to set band and mode</td></tr>
+            <tr><td>127.0.0.1:7362</td><td>Windows</td><td>fldigi XML-RPC</td><td>fldigi-mcp</td></tr>
+            <tr><td>127.0.0.1:1100</td><td>Windows</td><td>N3FJP TCP API</td><td>n3fjp-mcp; fldigi, to set band and mode</td></tr>
           </tbody>
         </table>
         </div>
@@ -308,26 +300,17 @@
         <h3 id="mac">Claude and fldigi on a Mac, N3FJP on Windows</h3>
         <p>On a Mac, the usual station keeps Claude, fldigi and the radio on the Mac. The radio connects by USB, or through a RigBlaster and a USB audio adapter. N3FJP runs in a Windows virtual machine on the same Mac, or on a Windows PC on your network. No radio is connected to the Windows side: fldigi sends the band and mode to N3FJP over the network, so that they are set automatically. A virtual machine counts as another computer here, because it has its own network address. In the example, the Mac is 192.168.1.20 and Windows is 192.168.1.50.</p>
         <figure class="diagram">
-          <svg viewBox="0 0 720 356" role="img" aria-label="Diagram, with example addresses. The Mac at 192.168.1.20 runs Claude Desktop, fldigi-mcp and n3fjp-mcp. Each MCP server runs in its own sandbox that can only reach 127.0.0.1. fldigi-mcp talks to fldigi at 127.0.0.1 port 7362. fldigi runs the radio over USB, or through a RigBlaster and a USB audio adapter. n3fjp-mcp talks to mcp-host-bridge at 127.0.0.1 port 1100. There are two network connections: mcp-host-bridge forwards over the LAN to N3FJP on the Windows PC or virtual machine at 192.168.1.50 port 1100, and fldigi connects over the LAN to the same N3FJP API, 192.168.1.50 port 1100, to set band and mode automatically. No radio is attached to N3FJP." font-family="JetBrains Mono,monospace">
+          <svg viewBox="0 0 720 356" role="img" aria-label="Diagram, with example addresses. The Mac at 192.168.1.20 runs Claude Desktop, fldigi-mcp and n3fjp-mcp. fldigi-mcp talks to fldigi at 127.0.0.1 port 7362. fldigi runs the radio over USB, or through a RigBlaster and a USB audio adapter. There are two network connections: n3fjp-mcp connects over the LAN to N3FJP on the Windows PC or virtual machine at 192.168.1.50 port 1100, and fldigi connects over the LAN to the same N3FJP API, 192.168.1.50 port 1100, to set band and mode automatically. No radio is attached to N3FJP." font-family="JetBrains Mono,monospace">
             <defs><marker id="n3-arrow" viewBox="0 0 6 6" refX="6" refY="3" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L6,3 L0,6 z" fill="#0969da"/></marker></defs>
             <rect x="15" y="28" width="450" height="242" fill="none" stroke="#d0d7de" stroke-dasharray="5 4"/>
             <text x="25" y="20" fill="#57606a" font-size="10">MAC · 192.168.1.20</text>
             <rect x="510" y="78" width="195" height="130" fill="none" stroke="#d0d7de" stroke-dasharray="5 4"/>
             <text x="515" y="70" fill="#57606a" font-size="10">WINDOWS PC OR VM · 192.168.1.50</text>
-            <g fill="none" stroke="#9a6700" stroke-width="1" stroke-dasharray="3 3">
-              <rect x="28" y="104" width="105" height="62"/>
-              <rect x="138" y="104" width="105" height="62"/>
-            </g>
-            <g font-size="9" fill="#9a6700">
-              <text x="33" y="114">sandbox</text>
-              <text x="143" y="114">sandbox</text>
-            </g>
             <g fill="none" stroke="#0969da" stroke-width="1">
               <line x1="80" y1="79" x2="80" y2="120"/>
               <line x1="190" y1="79" x2="190" y2="120"/>
               <line x1="80" y1="154" x2="80" y2="211"/>
-              <line x1="232" y1="137" x2="275" y2="137"/>
-              <line x1="460" y1="137" x2="530" y2="137"/>
+              <line x1="232" y1="137" x2="530" y2="137"/>
               <line x1="80" y1="255" x2="80" y2="298"/>
               <line x1="225" y1="320" x2="265" y2="320"/>
             </g>
@@ -335,14 +318,12 @@
             <rect x="35" y="45" width="200" height="34" fill="#f6f8fa" stroke="#d0d7de"/>
             <rect x="38" y="120" width="84" height="34" fill="#ffffff" stroke="#0969da"/>
             <rect x="148" y="120" width="84" height="34" fill="#ffffff" stroke="#0969da"/>
-            <rect x="275" y="115" width="185" height="44" fill="#ffffff" stroke="#0969da"/>
             <rect x="35" y="211" width="120" height="44" fill="#f6f8fa" stroke="#d0d7de"/>
             <rect x="530" y="115" width="155" height="44" fill="#f6f8fa" stroke="#d0d7de"/>
             <rect x="35" y="298" width="190" height="44" fill="#f6f8fa" stroke="#d0d7de"/>
             <rect x="265" y="302" width="70" height="36" fill="#0969da"/>
             <g font-size="12" text-anchor="middle">
               <text x="135" y="67" fill="#1f2328">Claude Desktop</text>
-              <text x="367" y="133" fill="#0550ae">mcp-host-bridge</text>
               <text x="95" y="230" fill="#1f2328">fldigi</text>
               <text x="607" y="133" fill="#1f2328">N3FJP</text>
               <text x="130" y="317" fill="#1f2328">RigBlaster + USB audio</text>
@@ -355,9 +336,8 @@
             <g font-size="10" fill="#57606a" text-anchor="middle">
               <text x="135" y="96">MCP</text>
               <text x="95" y="246" font-size="9">listens 127.0.0.1:7362</text>
-              <text x="367" y="150" font-size="9">127.0.0.1:1100 → 192.168.1.50:1100</text>
               <text x="607" y="150">API 192.168.1.50:1100</text>
-              <text x="495" y="129">LAN</text>
+              <text x="381" y="129">LAN → 192.168.1.50:1100</text>
               <text x="625" y="190">no radio attached</text>
               <text x="330" y="226" font-size="9">LAN: fldigi → 192.168.1.50:1100, band and mode</text>
               <text x="130" y="333">or the radio's own USB</text>
@@ -367,27 +347,27 @@
               <text x="88" y="282">PTT and audio</text>
             </g>
           </svg>
-          <figcaption>Example addresses. Each MCP server runs in a sandbox that reaches only 127.0.0.1. Two connections cross the network, both to N3FJP's API on port 1100: one from mcp-host-bridge, and one from fldigi for band and mode. No radio is attached to N3FJP.</figcaption>
+          <figcaption>Example addresses. Two connections cross the network, both to N3FJP's API on port 1100: one from n3fjp-mcp, and one from fldigi for band and mode. No radio is attached to N3FJP.</figcaption>
         </figure>
         <div class="table-scroll">
         <table>
           <thead><tr><th scope="col">Socket</th><th scope="col">Computer</th><th scope="col">Listening</th><th scope="col">Who connects</th></tr></thead>
           <tbody>
-            <tr><td>127.0.0.1:7362</td><td>Mac</td><td>fldigi XML-RPC</td><td>fldigi-mcp, from inside its sandbox</td></tr>
-                        <tr><td>127.0.0.1:1100</td><td>Mac</td><td>mcp-host-bridge</td><td>n3fjp-mcp, from inside its sandbox</td></tr>
-            <tr><td>192.168.1.50:1100</td><td>Windows</td><td>N3FJP TCP API</td><td>mcp-host-bridge, over the LAN; fldigi, over the LAN, to set band and mode</td></tr>
+            <tr><td>127.0.0.1:7362</td><td>Mac</td><td>fldigi XML-RPC</td><td>fldigi-mcp</td></tr>
+            <tr><td>192.168.1.50:1100</td><td>Windows</td><td>N3FJP TCP API</td><td>n3fjp-mcp, over the LAN; fldigi, over the LAN, to set band and mode</td></tr>
           </tbody>
         </table>
         </div>
-        <p>This part needs a terminal. Claude Desktop runs connectors in a sandbox that can only reach <code>127.0.0.1</code>, the computer Claude is on. <a href="products/mcp-host-bridge.html">mcp-host-bridge</a> carries that connection to the other computer. Its page shows how to install it, with no Python needed.</p>
+        <p>Claude Desktop connects to the Windows computer by its address. No terminal and no extra program are needed.</p>
         <ol class="steps">
           <li>Find the Windows computer's address. In Windows, open Command Prompt, type <code>ipconfig</code>, and note the <strong>IPv4 Address</strong>, for example 192.168.1.50.</li>
-          <li>On the Mac, install mcp-host-bridge and run the command below, with that address in place of 192.168.1.50. It keeps running after a restart.
-            <pre><code>mcp-host-bridge install n3fjp --to 192.168.1.50</code></pre></li>
-          <li>Leave the n3fjp-mcp host set to <code>127.0.0.1</code>.</li>
-          <li>Let fldigi set band and mode in N3FJP. In N3FJP, open <strong>Settings → Rig Interface</strong> (Ctrl+R), choose <strong>N3FJP API</strong> under <strong>Select Rig</strong>, enter the Windows computer's name and port 1100 under <strong>Command to Read Frequency</strong> (for example <code>MYPC:1100</code>), leave <strong>Mode Determined By</strong> at <strong>Rig</strong>, and click <strong>Save Settings</strong>. N3FJP then takes its band and mode from its API on port 1100, the same port n3fjp-mcp uses. Then, in fldigi on the Mac, open <strong>Configure → Config Dialog → Logging → N3FJP logs</strong>, enter the Windows address (192.168.1.50 in the example) and port 1100, and tick <strong>Connect to the N3FJP log server</strong>. fldigi is an ordinary program, not a sandboxed connector, so it reaches N3FJP directly without the bridge. If macOS asks whether fldigi may find devices on your local network, allow it.</li>
+          <li>In Claude, open <strong>Settings → Desktop app → Extensions</strong> (click <strong>Manage</strong>), click <strong>Configure</strong> next to n3fjp-mcp, enter that address as <strong>N3FJP host</strong>, and save.</li>
+          <li>Ask Claude for N3FJP's status. The very first time, macOS checks whether Claude may reach devices on your local network, and that first try can fail with &ldquo;No route to host.&rdquo; Ask again. The second try connects.</li>
+          <li>If it keeps failing, open <strong>System Settings → Privacy &amp; Security → Local Network</strong> on the Mac and turn Claude on. Then check that the Windows firewall lets port 1100 in.</li>
+          <li>Let fldigi set band and mode in N3FJP. In N3FJP, open <strong>Settings → Rig Interface</strong> (Ctrl+R), choose <strong>N3FJP API</strong> under <strong>Select Rig</strong>, enter the Windows computer's name and port 1100 under <strong>Command to Read Frequency</strong> (for example <code>MYPC:1100</code>), leave <strong>Mode Determined By</strong> at <strong>Rig</strong>, and click <strong>Save Settings</strong>. N3FJP then takes its band and mode from its API on port 1100, the same port n3fjp-mcp uses. Then, in fldigi on the Mac, open <strong>Configure → Config Dialog → Logging → N3FJP logs</strong>, enter the Windows address (192.168.1.50 in the example) and port 1100, and tick <strong>Connect to the N3FJP log server</strong>. If macOS asks whether fldigi may find devices on your local network, allow it.</li>
         </ol>
-        <p>The same bridge command works with <code>fldigi</code> or <code>wsjtx</code> in place of <code>n3fjp</code>, for a station where that program runs on a different computer from Claude. fldigi on another computer must then accept connections from the network: set its XML-RPC address to <code>0.0.0.0</code> under <strong>Configure → Config Dialog → Misc → TCP-IP sessions</strong>. Keep these links on a trusted LAN. They are not encrypted, and fldigi's XML-RPC interface does not ask for any login.</p>
+        <p>For fldigi on another computer, enter that computer's address as <strong>fldigi host</strong> in the fldigi-mcp settings. fldigi must then accept connections from the network. Set its XML-RPC address to <code>0.0.0.0</code> under <strong>Configure → Config Dialog → Misc → TCP-IP sessions</strong>. WSJT-X is the exception for now. It sends to the connector over UDP, and that direct path has not been tested yet. Until it has, wsjtx-mcp uses <a href="products/mcp-host-bridge.html">mcp-host-bridge</a> for a WSJT-X on another computer, as the <a href="user-guide/wsjtx-mcp.html">wsjtx-mcp guide</a> shows. Keep these links on a trusted LAN. They are not encrypted, and fldigi's XML-RPC interface does not ask for any login.</p>
+        <p><strong>If Claude cannot reach the address at all.</strong> An older Claude Desktop or macOS, or another AI assistant that runs connectors in a sandbox, may reach only <code>127.0.0.1</code>. Then install <a href="products/mcp-host-bridge.html">mcp-host-bridge</a> on the Mac, run <code>mcp-host-bridge install n3fjp --to 192.168.1.50</code> in a terminal, and leave the n3fjp-mcp host at <code>127.0.0.1</code>. The same command works with <code>fldigi</code> in place of <code>n3fjp</code>.</p>
 
         <h2 id="other-clients">Other AI assistants (advanced)</h2>
         <div class="callout">
