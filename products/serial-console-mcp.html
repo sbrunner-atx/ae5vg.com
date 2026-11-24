@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>serial-console-mcp · AE5VG</title>
-<meta name="description" content="An MCP server that connects an AI assistant to the serial console of routers, switches, transceivers, rotators and anything else with a serial port.">
+<meta name="description" content="An MCP server that connects an AI assistant to the console of routers, switches, transceivers, rotators and anything else with a serial port, on a cable or over telnet and SSH.">
 <link rel="canonical" href="https://ae5vg.com/products/serial-console-mcp.html">
 <link rel="icon" href="../favicon.svg" type="image/svg+xml">
 <link rel="icon" href="../favicon-48.png" type="image/png" sizes="48x48">
@@ -12,7 +12,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="AE5VG">
 <meta property="og:title" content="serial-console-mcp · AE5VG">
-<meta property="og:description" content="An MCP server that connects an AI assistant to the serial console of routers, switches, transceivers, rotators and anything else with a serial port.">
+<meta property="og:description" content="An MCP server that connects an AI assistant to the console of routers, switches, transceivers, rotators and anything else with a serial port, on a cable or over telnet and SSH.">
 <meta property="og:url" content="https://ae5vg.com/products/serial-console-mcp.html">
 <meta property="og:image" content="https://ae5vg.com/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -20,7 +20,7 @@
 <meta property="og:image:alt" content="AE5VG: An AI assistant that can work the bands with you. ae5vg.com">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="serial-console-mcp · AE5VG">
-<meta name="twitter:description" content="An MCP server that connects an AI assistant to the serial console of routers, switches, transceivers, rotators and anything else with a serial port.">
+<meta name="twitter:description" content="An MCP server that connects an AI assistant to the console of routers, switches, transceivers, rotators and anything else with a serial port, on a cable or over telnet and SSH.">
 <meta name="twitter:image" content="https://ae5vg.com/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -50,7 +50,7 @@
   <div class="wrap">
     <p class="label">Product · MIT</p>
     <h1>serial-console-mcp</h1>
-    <p class="lead">serial-console-mcp lets an assistant such as Claude configure telecommunication equipment through the console port the equipment already has. It connects to the serial console of the equipment that runs networks and radio stations, and of anything else with a serial port. You do not need to know any programming. Once it is installed, you talk to Claude normally.</p>
+    <p class="lead">serial-console-mcp lets an assistant such as Claude configure telecommunication equipment through the console port the equipment already has. It connects to the serial console of the equipment that runs networks and radio stations, and of anything else with a serial port. It can also reach the same console over the network, through telnet or SSH. You do not need to know any programming. Once it is installed, you talk to Claude normally.</p>
     <div class="btn-row">
       <a class="btn" href="../downloads.html#serial-console-mcp">Download</a>
       <a class="btn ghost" href="https://github.com/sbrunner-atx/serial-console-mcp">GitHub</a>
@@ -70,6 +70,7 @@
       <nav aria-label="On this page"><ul class="toc">
         <li><span class="label">On this page</span></li>
         <li><a href="#what">What it does</a></li>
+        <li><a href="#network">Over the network</a></li>
         <li><a href="#features">Features and benefits</a></li>
         <li><a href="#how">How it works</a></li>
         <li><a href="#ask">Ask it</a></li>
@@ -88,12 +89,27 @@
           <p>Juniper support is verified on a real EX2200 console. Cisco, CI-V, CAT and rotator support follows the vendors' protocol references, but I have not yet tested it on real hardware here. The other device types use the generic tools, not device-specific helpers.</p>
         </div>
 
+        <h2 id="network">Over the network</h2>
+        <div class="callout">
+          <span class="label">Coming in the next release</span>
+          <p>Network consoles and password dialogs are finished and tested, but they are not in the version shown above yet. They arrive with the next release. Until then, the connector works on a local cable only.</p>
+        </div>
+        <p>Many devices answer the same command line three ways: on the console or craft port, over telnet, and over SSH. A Juniper router is a good example. serial-console-mcp reaches all three, and every tool works the same way on each. It also reaches a console cable that ends somewhere else on the bench: a console server (Opengear, Cisco, Lantronix, Digi, Avocent), or ser2net and other device servers over raw TCP or RFC 2217. With RFC 2217, you also set the far serial port's baud rate, DTR, RTS and BREAK.</p>
+        <p>A session to the device's own address reaches the running system. The boot loader, ROMMON and password recovery appear only on the console port, so for those jobs you still use the cable, or a console server in front of it.</p>
+        <p><strong>Passwords never pass through the chat.</strong> For a one-off login, say that you will type the password. A dialog on your own screen asks for it, and for the user name if needed. What you type goes straight to serial-console-mcp, is used for that connection only, and is never shown to Claude or saved. Over SSH, your keys and <code>~/.ssh/config</code> are tried first. The first time you reach a new device, a dialog shows its host key fingerprint, and the key is saved only if you click Trust. A key that has changed is always refused. For devices you use every day, store a password once under a name with a terminal command, in a private file or the Keychain. Claude then refers to it by that name.</p>
+        <div class="callout">
+          <span class="label">Verified on this bench</span>
+          <p>I tested SSH and telnet logins with the password dialog on a Raspberry Pi 5. Console servers, ser2net with RFC 2217, and a router over SSH are coded to the protocol references and pass the automated tests, but I have not yet tried them on real hardware here. The dialogs are tested on macOS. The Windows and Linux versions are written but not yet tested.</p>
+        </div>
+
         <h2 id="features">Features and benefits</h2>
         <div class="table-scroll">
         <table>
           <thead><tr><th scope="col">Feature</th><th scope="col">What it gives you</th></tr></thead>
           <tbody>
             <tr><td>Background reader, read until prompt</td><td>As soon as a port is open, a reader drains it into a buffer. Sending only writes. Reading until a prompt then captures the whole reply without cutting it off. For streaming output, you read whatever is waiting. minicom and expect work the same way.</td></tr>
+            <tr><td>Network consoles</td><td>Telnet or SSH straight to the device, a console server's ports, ser2net and RFC 2217 device servers, and raw TCP. Every tool works the same as on a cable. Next release.</td></tr>
+            <tr><td>Passwords without the chat</td><td>A dialog on your screen for a one-off login, or a password stored under a name for everyday use. Claude never sees the password, and captures show only that something hidden was sent. Next release.</td></tr>
             <tr><td>Several ports at once</td><td>Ports are opened by name ("rig", "rotator"). Tools default to the most recently used port. status shows every open port and the state of its control lines.</td></tr>
             <tr><td>Remembered connections</td><td>reconnect_last reopens a port with the settings it had last time, by name, across sessions.</td></tr>
             <tr><td>Presets per device family</td><td>Twelve presets load the usual baud, framing, flow control, line ending and prompt: Cisco, Juniper and Linux consoles, Kenwood, Elecraft and Yaesu CAT, Icom and Xiegu CI-V, the Yaesu rotator, Arduino, NMEA GPS, and a full-screen console. Anything you say explicitly overrides the preset.</td></tr>
@@ -148,6 +164,8 @@
     <span class="note">connect; defaults 9600 8N1, or load a preset</span>
 <span class="tx">Log in as admin and run show interfaces terse, then show me all of it.</span>
     <span class="note">one expect call: return, login, password, command, read until prompt</span>
+<span class="tx">SSH to the router at 192.0.2.1 as admin. I will type the password.</span>
+    <span class="note">connect over SSH; a dialog on your screen asks for the password (next release)</span>
 <span class="tx">What is the TS-590 tuned to?</span>
     <span class="note">query_text("FA;"), then cat_parse</span>
 <span class="tx">Turn the rotator to 45 degrees and confirm.</span>
@@ -161,7 +179,7 @@
           <tbody>
             <tr><td><code>list_serial_ports</code></td><td>Enumerate ports with description and USB hardware id; marks ones open here</td></tr>
             <tr><td><code>list_presets</code></td><td>Usual settings per device family: Cisco/Juniper/Linux consoles, Kenwood/Elecraft/Yaesu CAT, Icom CI-V, rotators, Arduino, NMEA GPS</td></tr>
-            <tr><td><code>connect</code> / <code>reconnect_last</code> / <code>disconnect</code></td><td>Open a port by name. Defaults 9600 8N1, no flow control; baud, data bits, parity, stop bits, RTS/CTS, XON/XOFF, line ending and prompt are all settable, or loaded from a preset. Several ports at once</td></tr>
+            <tr><td><code>connect</code> / <code>reconnect_last</code> / <code>disconnect</code></td><td>Open a port by name. Defaults 9600 8N1, no flow control; baud, data bits, parity, stop bits, RTS/CTS, XON/XOFF, line ending and prompt are all settable, or loaded from a preset. Several ports at once. In the next release, also telnet, SSH, raw TCP and RFC 2217</td></tr>
             <tr><td><code>send_keys</code> / <code>screen</code></td><td>Press Ctrl-C, Esc, Tab, arrows, F-keys by name; view the VT100/xterm screen of a full-screen console (BIOS, BMC, menu switches, vi)</td></tr>
             <tr><td><code>send_text</code> / <code>send_hex</code></td><td>Write an ASCII line (CR / LF / CRLF / none) or raw hex bytes. Write-only</td></tr>
             <tr><td><code>read_until_prompt</code></td><td>Return buffered output up to a literal or regex prompt, leaving the rest; <code>auto_reply</code> pages through <code>--More--</code></td></tr>
@@ -197,6 +215,8 @@
             <tr><td><code>SERIAL_CONSOLE_READ_ONLY=1</code></td><td>Refuse writes except read-style commands (<code>show</code>, <code>ID;</code>, CI-V reads) and refuse control-line changes</td></tr>
             <tr><td><code>SERIAL_CONSOLE_ALLOW=&lt;regex&gt;</code></td><td>Override the read-only allowlist</td></tr>
             <tr><td><code>SERIAL_CONSOLE_IDLE_MINUTES=15</code></td><td>Auto-close a port idle that long (default: never)</td></tr>
+            <tr><td><code>SERIAL_CONSOLE_NETWORK_HOSTS</code></td><td>Next release. Limit network consoles to these hosts, such as <code>10.20.0.0/16, *.bench.lan</code>. Empty, the default, allows any host; <code>none</code> turns network consoles off. The connector's settings form has it too.</td></tr>
+            <tr><td><code>SERIAL_CONSOLE_PASSWORD_&lt;NAME&gt;</code></td><td>Next release. A stored password for <code>credential="&lt;name&gt;"</code>, with an optional <code>SERIAL_CONSOLE_USERNAME_&lt;NAME&gt;</code>. Anyone who can read the config can read it.</td></tr>
           </tbody>
         </table>
         </div>
