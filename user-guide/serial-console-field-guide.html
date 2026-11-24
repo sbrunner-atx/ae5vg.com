@@ -92,7 +92,7 @@
           <thead><tr><th scope="col">Tools</th><th scope="col">What they do</th><th scope="col">When the agent reaches for them</th></tr></thead>
           <tbody>
             <tr><td>list_serial_ports · list_presets</td><td>Every port the computer sees, marked if it is open here. The usual settings for each device family.</td><td>First, whenever a port or its settings are unknown.</td></tr>
-            <tr><td>connect · reconnect_last · disconnect</td><td>Open a port by name with baud, framing, flow control, line ending and prompt, or from a preset. Several at once. Remembered across sessions. Next release: telnet, SSH, raw TCP and RFC 2217 too (chapter 07).</td><td>"Connect the Kenwood as rig and the rotator on the other port."</td></tr>
+            <tr><td>connect · reconnect_last · disconnect</td><td>Open a port by name with baud, framing, flow control, line ending and prompt, or from a preset. Several at once. Remembered across sessions. Also telnet, SSH, raw TCP and RFC 2217 (chapter 07).</td><td>"Connect the Kenwood as rig and the rotator on the other port."</td></tr>
             <tr><td>send_text · send_hex</td><td>Write an ASCII line or raw bytes. These only write, and never read.</td><td>Any command, login, bare return, CI-V frame.</td></tr>
             <tr><td>read_until_prompt · read_available · query_text</td><td>Return buffered output up to a prompt (leaving the rest), or whatever has arrived. query_text clears, sends and reads in one step.</td><td>Every reply.</td></tr>
             <tr><td>expect</td><td>A scripted list of send-and-wait steps in one call, with automatic replies to pagers.</td><td>Logins, multi-step command sequences.</td></tr>
@@ -317,7 +317,7 @@ serial-console-mcp configure --command "$(which serial-console-mcp)"</code></pre
   {"ask_password": true,     "expect": "&gt; "},
   {"send": "show version", "expect": "&gt; ", "clear_first": true}
 ])</code></pre>
-        <p>The password never appears in the chat. <code>ask_password</code> opens a dialog on your screen, and serial-console-mcp sends what you type there to the device. For a password you use every day, <code>send_credential</code> names one you stored yourself. Chapter 07 has the details. Both arrive with the next release.</p>
+        <p>The password never appears in the chat. <code>ask_password</code> opens a dialog on your screen, and serial-console-mcp sends what you type there to the device. For a password you use every day, <code>send_credential</code> names one you stored yourself. Chapter 07 has the details.</p>
         <h3>Capture and transcript</h3>
         <p>"Record this session" starts a capture. The raw format writes received bytes unchanged as they arrive, like a terminal log. The annotated format writes timestamped lines marked TX or RX, which is what you want when debugging a protocol. <code>capture_stop</code> reports the file. Separately from any capture, the last 256 KB received on every connection is kept as a transcript. So "show me what the router printed earlier" works even after a read has used up those bytes. MCP clients that browse resources see the same transcript as <code>serial://transcript/&lt;name&gt;</code>.</p>
         <h3>Read-only mode and idle auto-close</h3>
@@ -416,10 +416,6 @@ serial-console-mcp configure --command "$(which serial-console-mcp)"</code></pre
         </div>
 
         <h2 id="network">07 · Network consoles: telnet, SSH, ser2net</h2>
-        <div class="callout">
-          <span class="label">Coming in the next release</span>
-          <p>This chapter describes network consoles and password dialogs. They are finished and tested, but they arrive with the next release. Until then, the connector works on a local cable only.</p>
-        </div>
         <p>A Juniper router answers the same command line three ways: on its craft or console port, over telnet, and over SSH. So do most switches, BMCs and Linux computers. On a bench, the console cable may also end at a console server or at ser2net instead of at your computer. The same tools reach all of these. Once a network console is open, prompts, <code>expect</code>, keys, the screen, capture, the transcript, read-only mode and idle auto-close work exactly as on a local port.</p>
         <div class="table-scroll">
         <table>
@@ -471,7 +467,7 @@ serial-console-mcp configure --command "$(which serial-console-mcp)"</code></pre
 <span class="tx">TOOL  list_serial_ports → /dev/cu.SLAB_USBtoUART · CP2102N USB to UART Bridge</span>
 <span class="tx">TOOL  connect(port="/dev/cu.SLAB_USBtoUART", preset="juniper-craft", name="r1")</span>
       → Connected 'r1' … 9600 (8N1, flow control none). Line ending CR, prompt '[#&gt;%] ?$' regex.
-    <span class="note">The agent tells you a password dialog is coming (next release). You approve the expect call, which shows every step, and type the password into the dialog, not the chat.</span>
+    <span class="note">The agent tells you a password dialog is coming. You approve the expect call, which shows every step, and type the password into the dialog, not the chat.</span>
 <span class="tx">TOOL  expect(steps=[{send:"", expect:"login: "}, {send:"admin", expect:"Password:"},</span>
 <span class="tx">             {ask_password:true, expect:"&gt; "}, {send:"show version", expect:"&gt; ", clear_first:true}])</span>
 READ  Step 1: sent ''+CR; matched 'login: ' after 41 bytes: r1 (ttyd0) login:
@@ -550,7 +546,7 @@ READ  query_text("C") → +0045 → azimuth 45°
         <p><strong>Why it worked.</strong> Two ports were open at once, each with its own preset. The rotator's CR line ending and "\r" reply terminator came from its preset. A move is confirmed by reading the position back, never assumed.</p>
 
         <h2 id="trouble">F · When it does not answer</h2>
-        <p>Most silent ports come down to one of the causes below. The server's own messages point to many of them. The rows about network consoles and passwords apply from the next release.</p>
+        <p>Most silent ports come down to one of the causes below. The server's own messages point to many of them.</p>
         <div class="table-scroll">
         <table>
           <thead><tr><th scope="col">Symptom</th><th scope="col">Most likely cause</th><th scope="col">What to say</th></tr></thead>
@@ -591,7 +587,7 @@ READ  query_text("C") → +0045 → azimuth 45°
           <tbody>
             <tr><td>list_serial_ports</td><td>none</td><td>Ports with description, hardware id, open-here marker.</td></tr>
             <tr><td>list_presets</td><td>none</td><td>Each preset's settings and notes.</td></tr>
-            <tr><td>connect</td><td>port · preset · name · baud [9600] · bytesize [8] · parity N|E|O [N] · stopbits [1] · rtscts [off] · xonxoff [off] · line_ending [CR] · prompt · prompt_regex · terminal dumb|ansi|vt100|xterm [dumb] · cols [80] · rows [24] · transport serial|telnet|ssh|tcp|rfc2217 [serial] · host · tcp_port · username · credential (a name) · ask [false] (network and password parameters: next release)</td><td>Settings echoed back, preset notes, other open ports.</td></tr>
+            <tr><td>connect</td><td>port · preset · name · baud [9600] · bytesize [8] · parity N|E|O [N] · stopbits [1] · rtscts [off] · xonxoff [off] · line_ending [CR] · prompt · prompt_regex · terminal dumb|ansi|vt100|xterm [dumb] · cols [80] · rows [24] · transport serial|telnet|ssh|tcp|rfc2217 [serial] · host · tcp_port · username · credential (a name) · ask [false]</td><td>Settings echoed back, preset notes, other open ports.</td></tr>
             <tr><td>reconnect_last</td><td>name [most recent]</td><td>Same as connect, from the remembered settings.</td></tr>
             <tr><td>disconnect</td><td>connection · all_connections [false]</td><td>Confirmation; always releases the port.</td></tr>
             <tr><td>send_text</td><td>data · line_ending [connection's] · clear_buffer_first [false]</td><td>Byte count sent.</td></tr>
@@ -599,14 +595,14 @@ READ  query_text("C") → +0045 → azimuth 45°
             <tr><td>read_until_prompt</td><td>prompt [connection's, else ends-with # &gt; $ %] · timeout [10 s] · regex · auto_reply</td><td>Output through the prompt; on timeout, whatever arrived.</td></tr>
             <tr><td>read_available</td><td>read_timeout [1 s]</td><td>Bytes as text and hex, after the line goes quiet.</td></tr>
             <tr><td>query_text</td><td>data · line_ending · prompt [connection's; "" = idle] · read_timeout [5 s]</td><td>The reply.</td></tr>
-            <tr><td>expect</td><td>steps [{send, send_hex, send_credential, ask_password, line_ending, expect, regex, timeout, clear_first}] · auto_reply · stop_on_timeout [true] (send_credential and ask_password: next release)</td><td>Each step's result.</td></tr>
+            <tr><td>expect</td><td>steps [{send, send_hex, send_credential, ask_password, line_ending, expect, regex, timeout, clear_first}] · auto_reply · stop_on_timeout [true]</td><td>Each step's result.</td></tr>
             <tr><td>clear_buffer</td><td>none</td><td>Bytes discarded.</td></tr>
             <tr><td>send_keys</td><td>keys [ctrl-c, esc, tab, enter, up, f1, "x", text:…]</td><td>Confirmation of what was pressed.</td></tr>
             <tr><td>screen</td><td>reset [false]</td><td>The xterm/vt100 grid as text, with cursor position.</td></tr>
             <tr><td>status</td><td>none</td><td>Every open port: settings, reader, buffer, lines, capture; or what is remembered.</td></tr>
             <tr><td>set_lines</td><td>dtr · rts</td><td>Resulting DTR and RTS.</td></tr>
             <tr><td>pulse_line</td><td>line DTR|RTS · ms [100] · level [true]</td><td>Confirmation, line restored.</td></tr>
-            <tr><td>send_break</td><td>ms [250]</td><td>Confirmation. From the next release, over telnet, a console server sets the length, and a device's own server decides what it means.</td></tr>
+            <tr><td>send_break</td><td>ms [250]</td><td>Confirmation. Over telnet, a console server sets the length, and a device's own server decides what it means.</td></tr>
             <tr><td>capture_start</td><td>path [auto] · format raw|annotated [raw]</td><td>The file being written.</td></tr>
             <tr><td>capture_stop</td><td>none</td><td>File and bytes written.</td></tr>
             <tr><td>get_transcript</td><td>last_bytes [4000]</td><td>Tail of everything received (rolling 256 KB); also the resource serial://transcript/{name}.</td></tr>
@@ -629,8 +625,8 @@ READ  query_text("C") → +0045 → azimuth 45°
           <li>The write timeout is two seconds. The reader polls every tenth of a second. A read with no prompt returns after 150 ms of quiet. The receive buffer holds 4 MB per port, and the transcript holds 256 KB.</li>
           <li>Remembered connections live in <code>last_connection.json</code> under <code>~/Library/Application Support/serial-console-mcp/</code> (Mac), <code>%APPDATA%\serial-console-mcp\</code> (Windows), <code>~/.config/serial-console-mcp/</code> (Linux). Captures that are named automatically go in a <code>captures</code> folder beside it.</li>
           <li>Terminal modes change only what the read tools return. The capture file and the screen model always get the raw bytes. If an escape sequence is split across two reads, the stripper holds it until it is complete.</li>
-          <li>Next release: network consoles look like serial ports to everything above. Telnet negotiates only BINARY, SGA, ECHO, terminal type and window size, and refuses the rest. A CR goes out as CR NUL unless binary mode was agreed.</li>
-          <li>Next release: a password typed into a dialog stays in the server's memory for that connection only. Stored passwords come first from <code>SERIAL_CONSOLE_PASSWORD_&lt;NAME&gt;</code>, then from <code>credentials.json</code> (readable only by you), the keyring package's store, or the macOS Keychain under the service <code>serial-console-mcp</code>.</li>
+          <li>Network consoles look like serial ports to everything above. Telnet negotiates only BINARY, SGA, ECHO, terminal type and window size, and refuses the rest. A CR goes out as CR NUL unless binary mode was agreed.</li>
+          <li>A password typed into a dialog stays in the server's memory for that connection only. Stored passwords come first from <code>SERIAL_CONSOLE_PASSWORD_&lt;NAME&gt;</code>, then from <code>credentials.json</code> (readable only by you), the keyring package's store, or the macOS Keychain under the service <code>serial-console-mcp</code>.</li>
           <li>The operating skill in <code>skills/serial-console/SKILL.md</code> carries this guide's rules for the agent.</li>
         </ul>
 
