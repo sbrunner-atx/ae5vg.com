@@ -50,7 +50,7 @@
   <div class="wrap">
     <p class="label">Field Guide · November 2026</p>
     <h1>The Oscilloscope</h1>
-    <p class="lead">rs-scope-mcp puts an AI agent on a Rohde &amp; Schwarz RTB2 or RTB2000 oscilloscope. The agent sets up the scope, captures what it measures, keeps every capture with the setup that produced it, and answers with numbers: frequency and levels, decoded bus traffic, spectra, filter response, pass or fail. You talk to Claude as you would to a colleague at the bench. This guide is for the human at that bench.</p>
+    <p class="lead">rs-scope-mcp puts an AI agent on a Rohde &amp; Schwarz RTB2 or RTB2000 oscilloscope. The agent sets up the scope, captures what it measures, keeps every capture with the setup that produced it, and answers with numbers: frequency and levels, decoded bus traffic, spectra, filter response, pass or fail. You talk to Claude as you would to a colleague at the bench. This guide is for the person at that bench.</p>
     <div class="btn-row">
       <a class="btn ghost" href="https://github.com/sbrunner-atx/rs-scope-mcp/raw/main/docs/rs-scope-mcp%20Field%20Guide.pdf">Download PDF</a>
     </div>
@@ -87,18 +87,18 @@
       </ul></nav>
       <div>
         <h2 id="glance" style="margin-top:0">A · The tools at a glance</h2>
-        <p>One server provides sixteen tools. Ten of them work at the level of a task (capture, measure, decode, test). Six give the agent the complete command set of the instrument for anything the task tools do not cover. You never call a tool yourself: you say what you want, and the agent picks the tool.</p>
+        <p>One program, the rs-scope-mcp server, provides sixteen tools. Claude Desktop installs it as a connector. Ten tools work at the level of a task (capture, measure, decode, test). Six are the foundation: the connection, the screenshot, and four that give the agent the complete command set for anything the task tools do not cover. You never call a tool yourself. You say what you want, and the agent picks the tool.</p>
         <div class="table-scroll">
         <table>
           <thead><tr><th scope="col">Tools</th><th scope="col">What they do</th><th scope="col">When the agent reaches for them</th></tr></thead>
           <tbody>
             <tr><td>connection · session · setup</td><td>Connect and read the installed options. Group captures by task. Show, save and restore the complete instrument setup.</td><td>At the start and the end of every task.</td></tr>
-            <tr><td>capture</td><td>Take one acquisition and harvest analog channels in volts, logic pods and decoded buses in one call. Everything is stored locally; a summary comes back.</td><td>"What is on CH1?" · "Capture the I2C traffic."</td></tr>
+            <tr><td>capture</td><td>Take one acquisition and read analog channels in volts, the logic probe (pods POD1 and POD2) and decoded buses in one call. Everything is stored locally; a summary comes back.</td><td>"What is on CH1?" · "Capture the I2C traffic."</td></tr>
             <tr><td>data</td><td>Look into stored captures without touching the scope: a window of samples, edge times, decoded frames by filter, the envelope of a carrier, a guess of what unknown logic lines carry, read-only SQL.</td><td>Every follow-up question about a capture.</td></tr>
             <tr><td>measure</td><td>Up to eight automatic measurements as numbers.</td><td>"Frequency, peak-to-peak and RMS on CH1."</td></tr>
             <tr><td>spectrum</td><td>FFT between two frequencies. Returns the noise floor and the strongest peaks.</td><td>Harmonics, sidebands, key clicks, IMD.</td></tr>
             <tr><td>bode</td><td>Sweep the generator through a filter and report -3 dB points, peak and shape. Needs your confirmation.</td><td>Filters, matching networks, amplifiers.</td></tr>
-            <tr><td>mask · history</td><td>Learn a tolerance envelope from a good signal, test thousands of acquisitions, keep only the failures in segmented memory, then walk them.</td><td>Intermittent faults, production checks.</td></tr>
+            <tr><td>mask · history</td><td>Learn a tolerance envelope from a good signal, test thousands of acquisitions, keep only the failures in segmented memory (the scope's history of past acquisitions), then step through them.</td><td>Intermittent faults, production checks.</td></tr>
             <tr><td>screenshot · demo</td><td>The screen as an image. A looping show of what the scope can do.</td><td>"Show me." · Videos, demos, club nights.</td></tr>
             <tr><td>scpi · scpi_search · scpi_describe · scpi_block</td><td>Any of the 962 documented and 408 undocumented commands, checked before they are sent. Search, describe, binary transfers.</td><td>Settings the task tools do not cover.</td></tr>
           </tbody>
@@ -119,7 +119,7 @@
         </ol>
         <h3>As a desktop connector (recommended)</h3>
         <ol class="steps">
-          <li><strong>Download the bundle.</strong> Get <code>rs-scope-mcp.mcpb</code> and the four <code>.skill</code> files from <a href="../downloads.html#rs-scope-mcp">Downloads</a>.</li>
+          <li><strong>Download the bundle.</strong> Get <code>rs-scope-mcp.mcpb</code> and the four <code>.skill</code> files (Claude's bench instructions, see section 06) from the <a href="../downloads.html#rs-scope-mcp">Downloads page</a>.</li>
           <li><strong>Install the connector.</strong> In Claude, open <strong>Settings, Desktop app, Extensions</strong> and drag <code>rs-scope-mcp.mcpb</code> onto the page. Enter the scope address. Leave the port at 5025. The data folder defaults to <code>~/rs-scope-data</code> and is created on first use.</li>
           <li><strong>Install the skills.</strong> In Claude, open <strong>Customize, Skills, Add, Upload skill</strong> and choose all four files at once: <code>scope-operating</code>, <code>ham-bench</code>, <code>bus-reverse-engineering</code>, <code>embedded-bringup</code>.</li>
           <li><strong>Updates</strong> install over the old version: drag the new bundle onto the same page. Your settings stay.</li>
@@ -131,7 +131,7 @@
         <h3>What the agent does first, every time</h3>
         <p>It connects, starts a session with the goal you gave it, and saves the complete setup of the scope (<code>setup save</code>). At the end it restores that setup unless you ask to keep the new one. You get your scope back the way you left it, with the generators off.</p>
         <h3>Operating is a conversation</h3>
-        <p>Say what you want to know, not which buttons to press: "What frequency is on CH1?", "Something is talking on the logic probe, what is it?", "Is this filter's -3 dB point where the datasheet says?". The agent sets channels, timebase and trigger, captures, and answers with values and the id of the capture they came from. Ask for a screenshot whenever you want to see the screen.</p>
+        <p>Say what you want to know, not which buttons to press: "What frequency is on CH1?", "Something is talking on the logic probe, what is it?", "Is this filter's -3 dB point where the datasheet says?". The agent sets channels, timebase and trigger, captures the signal, and answers with values and the id of the capture they came from. Ask for a screenshot whenever you want to see the screen.</p>
         <div class="callout warn">
           <span class="label">Outputs need your word</span>
           <p>The generator, the pattern generator, Bode sweeps and the demo drive signals into whatever is connected. The agent cannot switch them on without an explicit confirmation, and it should only ask after you have said what is connected. The same applies to resets, file deletion, network settings and restoring a saved setup.</p>
@@ -139,8 +139,8 @@
 
         <h2 id="how">D · How the system works</h2>
         <ol class="steps">
-          <li><strong>The complete command set.</strong> Every remote command the user manual documents (962 headers), plus 408 command families the firmware reports but the manual does not, plus corrections found on the bench. Every command is checked before it is sent: wrong headers, out-of-range suffixes and commands this firmware does not implement are refused with a reason.</li>
-          <li><strong>A careful session.</strong> The scope answers nothing at all to a command it rejects, so the server adds a sentinel to every query and reads the error queue after every write. Failures are reported in milliseconds, not after a timeout.</li>
+          <li><strong>The complete command set.</strong> The server knows every remote (SCPI) command the user manual documents (962 headers), 408 command families the firmware reports but the manual omits, and corrections found on the bench. Every command is checked before it is sent. Wrong headers, out-of-range numeric suffixes (CHAN5 on a four-channel scope) and commands this firmware lacks are refused with a reason.</li>
+          <li><strong>A careful session.</strong> The scope answers nothing at all to a command it rejects, so the server appends a second query with a known answer to every query, and reads the error queue after every write. A failure is reported within milliseconds instead of after a timeout.</li>
           <li><strong>Bench rules built in.</strong> FFT, Bode, XY and mask test are exclusive modes; decoders need the right bus type; full memory needs a stopped acquisition; the Bode application changes the memory mode and the generator load. The task tools handle all of this.</li>
           <li><strong>A local store.</strong> Every capture lands in a catalog on your computer, with the samples, the decoded frames and the scope's own setup file. The agent sees a compact summary and asks for details only when your question needs them.</li>
         </ol>
@@ -150,7 +150,7 @@
         <table>
           <thead><tr><th scope="col">Rule</th><th scope="col">Why</th></tr></thead>
           <tbody>
-            <tr><td>The inputs are 1 Mohm only. For 50 ohm systems use a feed-through terminator, and set the generator to a 50 ohm load.</td><td>The generator always has a 50 ohm source. Its load setting only tells it what to expect, so the amplitude you set appears at the load. Wrong setting, double or half the voltage.</td></tr>
+            <tr><td>The inputs are 1 Mohm only. For 50 ohm systems use a feed-through terminator, and set the generator to a 50 ohm load.</td><td>The generator always has a 50 ohm source. Its load setting only tells it what load to expect, so the amplitude you set appears at a matching load. A wrong setting doubles or halves the voltage.</td></tr>
             <tr><td>Know what you probe. Mains, motor drives, switch-mode primaries and tube equipment need a differential probe.</td><td>The ground clip is connected to protective earth through the scope.</td></tr>
             <tr><td>Never connect a transmitter directly. Use a dummy load with a sampler and attenuators sized for the power.</td><td>100 W into 50 ohm is 200 V peak to peak. The ham-bench skill has the attenuation table.</td></tr>
             <tr><td>Logic probe: check levels on an analog channel first.</td><td>RS-232 swings to +/-12 V; RS-485 and CAN are differential.</td></tr>
@@ -173,7 +173,7 @@
           <figure class="shot"><img src="img/rs-scope/04-am-envelope.png" alt="AM envelope of a 100 kHz carrier with a 1 kHz tone" loading="lazy"><figcaption>AM, 100 kHz carrier, 1 kHz tone.</figcaption></figure>
           <figure class="shot"><img src="img/rs-scope/05-am-sidebands.png" alt="Spectrum of the AM signal with carrier and two sidebands" loading="lazy"><figcaption>The same AM in the spectrum: carrier and sidebands at +/- 1 kHz, 50 Hz resolution.</figcaption></figure>
         </div>
-        <p>The FFT on the RTB2 couples span, resolution bandwidth, window and timebase, and changes them in steps. The spectrum tool repeats the requested range until it settles, then reports the resolution it got. For a modulated or keyed carrier, the agent computes the envelope from the stored samples: AM depth, rise and fall time of the keying, crest factor.</p>
+        <p>The FFT on the RTB2 couples span, resolution bandwidth, window and timebase, and changes them in steps. The spectrum tool sends the requested range again until the scope settles on it, then reports the resolution it got. For a modulated or keyed carrier, the agent computes the envelope from the stored samples: AM depth, rise and fall time of the keying, crest factor.</p>
         <figure class="shot">
           <img src="img/rs-scope/08-bode-plot.png" alt="Bode plot application showing a flat loopback response" loading="lazy">
           <figcaption>Bode plot (option K36) of the loopback, used to check the setup before a filter goes in: 0 dB and 0 degrees from 100 Hz to 1 MHz.</figcaption>
@@ -183,12 +183,12 @@
         <h2 id="decode">04 · Buses and logic</h2>
         <p>With the logic probe and the decode options, the agent reads serial buses as data: every frame with its time, status, address and bytes. Given lines it does not know, it first identifies them from the edges alone, then confirms with the decoder.</p>
         <div class="shots">
-          <figure class="shot"><img src="img/rs-scope/09-i2c-decode.png" alt="I2C decoded on D0 and D1" loading="lazy"><figcaption>I2C on D0/D1: address 20, then "*idn?" and the read-back.</figcaption></figure>
+          <figure class="shot"><img src="img/rs-scope/09-i2c-decode.png" alt="I2C decoded on D0 and D1" loading="lazy"><figcaption>I2C on D0/D1: address 0x20, then "*idn?" and the read-back.</figcaption></figure>
           <figure class="shot"><img src="img/rs-scope/10-spi-decode.png" alt="SPI with clock, MOSI, MISO and chip select decoded" loading="lazy"><figcaption>SPI on D0..D3: clock, MOSI, MISO, chip select.</figcaption></figure>
           <figure class="shot"><img src="img/rs-scope/11-uart-logic.png" alt="UART decoded at 115200 baud" loading="lazy"><figcaption>UART on D0 at 115200 Bd, measured from the bit time.</figcaption></figure>
           <figure class="shot"><img src="img/rs-scope/12-logic-counter.png" alt="Four-bit counter decoded as a parallel bus" loading="lazy"><figcaption>A 4-bit counter on D0..D3 as a parallel bus.</figcaption></figure>
         </div>
-        <p><strong>Identification</strong> works on the stored logic capture. A line with pulses at multiples of one bit time is a UART, and the agent reports the measured and the nearest standard baud rate and whether the line is inverted. A bursting clock with one data line, both idle high, is I2C. A clock with data lines and a line that holds its level while the clock runs is SPI, and that line is the chip select. A steady periodic line is a clock or PWM, flagged when it looks like a servo or ESC signal. On the bench, all four pattern-generator buses and a 50 Hz servo pulse were identified correctly, including from short records that started in the middle of a transfer.</p>
+        <p><strong>Identification</strong> works on the stored logic capture. A line with pulses at multiples of one bit time is a UART. The agent reports the measured baud rate, the nearest standard one, and whether the line is inverted. A bursting clock with one data line, both idle high, is I2C. A clock with data lines and a line that holds its level while the clock runs is SPI, and that line is the chip select. A steady periodic line is a clock or PWM, flagged when it looks like a servo or speed-controller (ESC) signal. On the bench, all four pattern-generator buses and a 50 Hz servo pulse were identified correctly, including from short records that started in the middle of a transfer.</p>
         <div class="callout">
           <span class="label">Frames at the edge of the window</span>
           <p>A capture window cuts the first and the last transfer. The scope marks those frames incomplete, which is correct. When everything looks incomplete, widen the timebase before concluding that the bus is broken.</p>
@@ -201,8 +201,8 @@
         </div>
         <ol class="steps">
           <li><strong>Show the good signal and learn the mask</strong> with margins in divisions. The tool checks the new mask against the signal it was learned from and warns when it does not fit.</li>
-          <li><strong>Test.</strong> Thousands of acquisitions at about 16 per second; the result is tested, failed and the failure rate. With "keep failures", only failing acquisitions stay in segmented memory.</li>
-          <li><strong>Look at the failures.</strong> The history tool walks the stored segments and returns one row per segment: levels, frequency, decoded frames and their status.</li>
+          <li><strong>Test.</strong> Thousands of acquisitions at about 16 per second. The result gives the number tested, the number failed and the failure rate. Unless you turn it off, only failing acquisitions stay in segmented memory.</li>
+          <li><strong>Look at the failures.</strong> The history tool steps through the stored segments and returns one row per segment: levels, frequency, decoded frames and their status.</li>
         </ol>
         <p>The tool never learns a mask from the signal it is about to judge: a bad signal would define its own tolerance.</p>
 
@@ -221,7 +221,7 @@
         </div>
 
         <h2 id="demo">07 · Demo mode</h2>
-        <p>The oscilloscope from the background of every science-fiction lab scene. Demo mode loops through scenes made by the scope's own generators, then restores your setup.</p>
+        <p>Demo mode turns the scope into the one in the background of every science-fiction lab scene. It loops through scenes made by the scope's own generators (the waveform generator on Aux Out, and in the full demo also the pattern generator), then restores your setup.</p>
         <div class="table-scroll">
         <table>
           <thead><tr><th scope="col">Level</th><th scope="col">Wiring</th><th scope="col">Scenes</th></tr></thead>
@@ -237,7 +237,7 @@
           <figure class="shot"><img src="img/rs-scope/demo-fm-spectrum.png" alt="FM spectrum with Bessel sidebands" loading="lazy"><figcaption>FM spectrum: the Bessel sidebands.</figcaption></figure>
           <figure class="shot"><img src="img/rs-scope/demo-bus-i2c.png" alt="I2C decode next to a carrier" loading="lazy"><figcaption>Bus traffic next to a carrier on CH1.</figcaption></figure>
         </div>
-        <p>Say "Run the full demo, 15 seconds per scene", and "Stop the demo" to end it. From a terminal: <code>rs-scope --host &lt;ip&gt; demo --level analog --loops 0 --yes</code>.</p>
+        <p>"Run the full demo, 15 seconds per scene" starts it, and "Stop the demo" ends it. From a terminal, with the PyPI package installed: <code>rs-scope --host &lt;ip&gt; demo --level analog --loops 0 --yes</code>.</p>
         <div class="callout warn">
           <span class="label">The demo drives the outputs</span>
           <p>It switches on the generator and, in the full demo, the pattern generator. It needs your confirmation and the wiring above. While it runs, other scope tools wait, because the scope serves one client at a time.</p>
@@ -303,17 +303,19 @@
 <span class="tx">TOOL  scpi("WGEN:NOIS:REL 9")</span>
 <span class="tx">TOOL  mask(action="test", acquisitions=300)</span>
       → tested 316, failed 316; 40 failures kept in segmented memory
+    <span class="note">Failures are kept because keep_failed is on unless the call turns it off.</span>
 <span class="tx">TOOL  history(action="harvest", sources=["CH1"], max_segments=5)</span>
       → 5 segments, one row each with peak-to-peak and frequency
         </div>
 
         <h3>5 · "Check the Bode setup before the filter goes in"</h3>
-        <p class="meta">K36 · guarded sweep · restore afterwards</p>
+        <p class="meta">K36 · guarded sweep · restore afterward</p>
         <div class="exchange" role="figure" aria-label="Session 5 transcript">
     <span class="note">You: "Sweep from 100 Hz to 1 MHz with input and output on CH1, just to check the setup."</span>
 <span class="tx">TOOL  bode(start_hz=100, stop_hz=1e6, points_per_decade=10, input_channel="CH1",</span>
 <span class="tx">          output_channel="CH1", confirm=true)</span>
       → 41 points in 7.2 s; flat within 6 dB, peak 0.0 dB; generator load R50
+    <span class="note">"Flat within 6 dB" is the tool's shape label: the two ends of the sweep are within 6 dB of each other and nothing peaks above them. This loopback measured 0.0 dB throughout.</span>
     <span class="note">With a filter, the same call reports the -3 dB and -6 dB points, the phase there and the shape.</span>
         </div>
 
@@ -323,11 +325,12 @@
           <thead><tr><th scope="col">Symptom</th><th scope="col">Likely cause and fix</th></tr></thead>
           <tbody>
             <tr><td>The connector fails to start</td><td>Claude Desktop shows the error under Settings, Extensions. The log is <code>~/Library/Logs/Claude/mcp-server-R&amp;S Oscilloscope (RTB2, RTB2000).log</code>.</td></tr>
+            <tr><td>"No route to host" on the first try</td><td>macOS is checking whether Claude may use the local network. Ask again. If it keeps failing, allow Claude under System Settings, Privacy &amp; Security, Local Network.</td></tr>
             <tr><td>Connection times out</td><td>Another client holds the scope: its web page in a browser, a script, a running demo. Close it. Check the address on the scope's Ethernet page.</td></tr>
             <tr><td>"validation" error</td><td>A wrong command or suffix. The agent searches the command set and tries the right one.</td></tr>
-            <tr><td>-113 Undefined header</td><td>The command does not exist in this firmware; the description says so where it is known.</td></tr>
+            <tr><td>-113 Undefined header</td><td>The command does not exist in this firmware. Its description (scpi_describe) says so where this is known.</td></tr>
             <tr><td>-200 on a decode query</td><td>The bus is set to a different protocol.</td></tr>
-            <tr><td>-221 Settings conflict</td><td>Another application (FFT, Bode, XY, mask) is active. The task tools switch back on their own.</td></tr>
+            <tr><td>-221 Settings conflict</td><td>Another exclusive mode (FFT, Bode, XY, mask) is active. The task tools switch back on their own.</td></tr>
             <tr><td>A measurement returns no value</td><td>Nothing to measure on this screen: check scale, timebase and trigger.</td></tr>
             <tr><td>Everything decodes as incomplete</td><td>The window cuts the transfers: widen the timebase.</td></tr>
             <tr><td>The mask warns after it was learned</td><td>The trigger or timebase is not stable. With noise on the signal, the trigger's high-frequency reject helps.</td></tr>

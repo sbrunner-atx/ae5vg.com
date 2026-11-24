@@ -50,7 +50,7 @@
   <div class="wrap">
     <p class="label">Product · PolyForm Noncommercial</p>
     <h1>rs-scope-mcp</h1>
-    <p class="lead">rs-scope-mcp puts an AI agent on a Rohde &amp; Schwarz RTB2 or RTB2000 oscilloscope. Claude sets up the scope, captures what it measures, keeps every capture on your computer with the setup that produced it, and answers with numbers: frequency and levels, decoded bus traffic, spectra, filter response, pass or fail. You do not need to know any programming or remote commands. You talk to Claude as you would to a colleague at the bench.</p>
+    <p class="lead">rs-scope-mcp puts an AI agent on a Rohde &amp; Schwarz RTB2 or RTB2000 oscilloscope. Claude sets up the scope and captures what it measures. Every capture stays on your computer with the setup that produced it, and Claude answers in numbers: frequency and levels, decoded bus traffic, spectra, filter response, pass or fail. You do not need to know any programming or remote commands. You talk to Claude as you would to a colleague at the bench.</p>
     <div class="btn-row">
       <a class="btn" href="../downloads.html#rs-scope-mcp">Download</a>
       <a class="btn ghost" href="https://github.com/sbrunner-atx/rs-scope-mcp">GitHub</a>
@@ -81,7 +81,7 @@
       </ul></nav>
       <div>
         <h2 id="what" style="margin-top:0">What it does</h2>
-        <p>An oscilloscope has two jobs: control and measurement. rs-scope-mcp does both. It gives Claude the complete remote command set of the RTB2, checked before anything is sent, and task tools that turn a question into the right sequence of settings. Then it harvests what the scope measured: samples in volts, logic levels, decoded frames, measurement results and screenshots. All of it lands in a local store. Claude sees a short summary and asks for detail only when your question needs it.</p>
+        <p>rs-scope-mcp controls the scope and collects what it measures. It gives Claude the complete remote command set of the RTB2, checked before anything is sent, and task tools that turn a question into the right sequence of settings. Then it collects what the scope measured: samples in volts, logic levels, decoded frames, measurement results and screenshots. All of it lands in a local store. Claude sees a short summary and asks for detail only when your question needs it.</p>
         <p>It was built for three kinds of bench work. On the <strong>ham-radio bench</strong>: transmitter checks through attenuators, AM depth, CW keying shape, harmonics, and filter sweeps. For <strong>hardware reverse engineering</strong>: find out what unknown pins carry, identify the bus and its rate, and build a census of addresses and commands. For <strong>microcontroller and drone development</strong>: rails and ripple, power-up sequence, PWM, servos and ESCs, sensor buses, and intermittent faults caught with a mask test and segmented memory.</p>
         <figure class="shot">
           <img src="img/rs-scope/06-uart-decode.png" alt="RTB2004 screen with a UART decoded from the logic probe" loading="lazy">
@@ -89,7 +89,7 @@
         </figure>
         <div class="callout">
           <span class="label">Verified on this bench</span>
-          <p>Every feature was run on an RTB2004 with firmware 03.000 and every option installed. A 40-check acceptance test drives the installed connector through the same protocol Claude Desktop uses, and all 40 pass. The RTB2 is the rebranded RTB2000, with the same hardware and firmware, so both work. Options your scope does not have are simply not offered.</p>
+          <p>Every feature was run on an RTB2004 with firmware 03.000 and every option installed. A 40-check acceptance test drives the installed connector through the same protocol Claude Desktop uses, and all 40 pass. The RTB2 is the rebranded RTB2000, with the same hardware and firmware, so both work. Options your scope does not have are not offered.</p>
         </div>
 
         <h2 id="features">Features and benefits</h2>
@@ -98,13 +98,13 @@
           <thead><tr><th scope="col">Feature</th><th scope="col">What it gives you</th></tr></thead>
           <tbody>
             <tr><td>The complete command set</td><td>All 962 remote commands the user manual documents, plus 408 command families the firmware reports but the manual does not. Each command is checked before it is sent: a wrong header, an out-of-range value or a command this firmware lacks is refused with a reason.</td></tr>
-            <tr><td>Bench rules built in</td><td>FFT, Bode, XY and mask test are exclusive modes; decoders need the right bus type; full memory needs a stopped acquisition. The task tools handle this, so a request does not fail on a rule nobody wrote down.</td></tr>
+            <tr><td>Bench rules built in</td><td>FFT, Bode, XY and mask test are exclusive modes; decoders need the right bus type; full memory needs a stopped acquisition. The task tools handle this, so a request does not fail on one of these rules.</td></tr>
             <tr><td>Capture once, ask many times</td><td>One call acquires and stores analog channels in volts, logic pods and decoded buses, with the scope's own setup file. Follow-up questions are answered from the store: a window of samples, edge times, frames by filter, read-only SQL across captures.</td></tr>
-            <tr><td>Bus identification</td><td>Given unknown logic lines, it tells I2C, SPI (with the chip select), UART (with the baud rate and polarity) and servo PWM apart from the edges alone, then sets up the decoder to confirm.</td></tr>
-            <tr><td>Measurements, spectra, Bode</td><td>Up to eight automatic measurements as numbers; an FFT that settles the scope's coupled span and resolution and reports the peaks; Bode sweeps with the -3 dB points; the envelope of a modulated carrier.</td></tr>
-            <tr><td>Pass/fail and rare faults</td><td>Learn a tolerance mask from a good signal, check it, run thousands of acquisitions, keep only the failures in segmented memory, and walk them one row per failure.</td></tr>
-            <tr><td>Leaves the scope as it was</td><td>The setup is saved at the start of a task and restored at the end, generators off.</td></tr>
-            <tr><td>Demo mode</td><td>The scope from the background of every science-fiction lab scene: a heartbeat, a radar ping, FM sidebands, bus traffic decoded to text. Analog-only with one cable, or the full show with the logic probe.</td></tr>
+            <tr><td>Bus identification</td><td>From the edges of unknown logic lines alone, it tells apart I2C, SPI (with the chip select), UART (with the baud rate and polarity) and servo PWM, then sets up the decoder to confirm.</td></tr>
+            <tr><td>Measurements, spectra, Bode</td><td>Up to eight automatic measurements as numbers; an FFT that sets the scope's coupled span and resolution for the requested range and reports the peaks; Bode sweeps with the -3 dB points; the envelope of a modulated carrier.</td></tr>
+            <tr><td>Pass/fail and rare faults</td><td>Learn a tolerance mask from a good signal, check it, run thousands of acquisitions, keep only the failures in segmented memory, and step through them one row per failure.</td></tr>
+            <tr><td>Leaves the scope as it was</td><td>A task saves the setup first and restores it at the end, with the generators switched off.</td></tr>
+            <tr><td>Demo mode</td><td>The scope plays the screen from every science-fiction lab scene, using its own generators: a heartbeat, a radar ping, FM sidebands, bus traffic decoded to text. One cable runs the analog show; the logic probe adds the rest.</td></tr>
             <tr><td>Four skills</td><td><code>scope-operating</code>, <code>ham-bench</code>, <code>bus-reverse-engineering</code> and <code>embedded-bringup</code> teach Claude the discipline and the procedures for each kind of bench work.</td></tr>
           </tbody>
         </table>
@@ -148,7 +148,7 @@
 <span class="tx">Where is this filter's -3 dB point?</span>
     <span class="note">bode, after you confirm what the generator is connected to</span>
 <span class="tx">This board resets once an hour. Catch it.</span>
-    <span class="note">mask from the good signal, test, keep failures, walk them with history</span>
+    <span class="note">mask from the good signal, test, keep failures, step through them with history</span>
         </div>
 
         <h2 id="tools">Tools</h2>
@@ -160,7 +160,7 @@
             <tr><td><code>capture</code></td><td>One acquisition, harvested and stored: analog channels in volts, logic pods, decoded buses, optionally a screenshot</td></tr>
             <tr><td><code>data</code></td><td>Drill into stored captures: series, edges, envelope, identify, frames, read-only SQL</td></tr>
             <tr><td><code>measure</code> / <code>spectrum</code> / <code>bode</code></td><td>Automatic measurements; FFT with peaks and noise floor; Bode sweep with -3 dB points</td></tr>
-            <tr><td><code>mask</code> / <code>history</code></td><td>Learn and run pass/fail tests; walk segmented memory one row per acquisition</td></tr>
+            <tr><td><code>mask</code> / <code>history</code></td><td>Learn and run pass/fail tests; step through segmented memory one row per acquisition</td></tr>
             <tr><td><code>screenshot</code> / <code>demo</code></td><td>The screen as an image; the looping demo show</td></tr>
             <tr><td><code>scpi</code> / <code>scpi_search</code> / <code>scpi_describe</code> / <code>scpi_block</code></td><td>Any command of the full set, validated; search and describe with bench notes; binary transfers</td></tr>
           </tbody>
@@ -168,11 +168,11 @@
         </div>
 
         <h2 id="install">Install</h2>
-        <p>You need the Claude desktop app and the scope on your network (the scope's LAN port, IP Port 5025). The connector links Claude to the scope. The skills teach Claude how to work the bench. The connector does not install the skills, so you add them as well.</p>
+        <p>You need the Claude desktop app, and the scope connected to your network through its LAN port (IP Port 5025). The connector links Claude to the scope. The skills teach Claude how to work the bench. The connector does not install the skills, so you add them as well.</p>
         <ol class="steps">
           <li>On <a href="../downloads.html#rs-scope-mcp">Downloads</a>, click <code>rs-scope-mcp.mcpb</code> and the four skill files. Your browser saves them in your Downloads folder.</li>
           <li>In Claude, open <strong>Settings → Desktop app</strong>, click <strong>Manage</strong> next to <strong>Extensions</strong>, and drag <code>rs-scope-mcp.mcpb</code> onto that page. If dragging does not work, click <strong>Advanced settings</strong>, then <strong>Install extension</strong>, and choose the file.</li>
-          <li>Claude shows the settings. Enter the scope's IP address. Leave the port at 5025 and the data folder as it is.</li>
+          <li>Claude shows the connector's settings. Enter the scope's IP address. Leave the port at 5025 and the data folder as it is.</li>
           <li>In Claude, open <strong>Customize → Skills</strong>, click <strong>Add</strong>, then <strong>Upload skill</strong>, and choose <code>scope-operating.skill</code>, <code>ham-bench.skill</code>, <code>bus-reverse-engineering.skill</code> and <code>embedded-bringup.skill</code> all at once. Click <strong>Upload</strong>.</li>
         </ol>
         <p>The <a href="../user-guide/rs-scope-field-guide.html#install">Field Guide</a> has the details, including the scope's network settings.</p>
@@ -181,7 +181,7 @@
         <h2 id="safety">Safety</h2>
         <div class="callout warn">
           <span class="label">The generators drive real signals</span>
-          <p>The waveform generator, the pattern generator, Bode sweeps and the demo put signals into whatever is connected. The connector refuses to switch them on without an explicit confirmation, and the skills tell Claude to ask only after you have said what is connected. The same applies to resets, file deletion, network settings and setup restores. The inputs are 1 Mohm only; for 50 ohm systems use a feed-through terminator. Never connect a transmitter directly: use a dummy load and attenuators.</p>
+          <p>The waveform generator, the pattern generator, Bode sweeps and the demo put signals into whatever is connected. The connector refuses to switch them on without an explicit confirmation, and the skills tell Claude to ask for it only after you have said what is connected. The same applies to resets, file deletion, network settings and setup restores. The inputs are 1 Mohm only; for 50 ohm systems use a feed-through terminator. Never connect a transmitter directly: use a dummy load and attenuators.</p>
         </div>
 
         <h2 id="license">License and commercial use</h2>
