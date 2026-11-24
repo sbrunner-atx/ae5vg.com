@@ -82,6 +82,13 @@
       <div>
         <h2 id="what" style="margin-top:0">What it does</h2>
         <p>rs-scope-mcp controls the scope and collects what it measures. It gives Claude the complete remote command set of the RTB2, checked before anything is sent, and task tools that turn a question into the right sequence of settings. Then it collects what the scope measured: samples in volts, logic levels, decoded frames, measurement results and screenshots. All of it lands in a local store. Claude sees a short summary and asks for detail only when your question needs it.</p>
+        <figure class="video">
+          <video controls muted playsinline preload="metadata" width="720" height="900" poster="img/rs-scope/rs-scope-mcp-15s-poster.jpg" aria-describedby="rs-scope-video-caption">
+            <source src="img/rs-scope/rs-scope-mcp-15s.mp4" type="video/mp4">
+            <a href="img/rs-scope/rs-scope-mcp-15s.mp4">Watch the 15-second video (MP4)</a>
+          </video>
+          <figcaption id="rs-scope-video-caption">rs-scope-mcp in 15 seconds, no sound. The scope screens are real captures from the RTB2004. The chat card shows a real measurement: 1.20 Hz and 1.216 V peak to peak.</figcaption>
+        </figure>
         <p>It was built for three kinds of bench work. On the <strong>ham-radio bench</strong>: transmitter checks through attenuators, AM depth, CW keying shape, harmonics, and filter sweeps. For <strong>hardware reverse engineering</strong>: find out what unknown pins carry, identify the bus and its rate, and build a census of addresses and commands. For <strong>microcontroller and drone development</strong>: rails and ripple, power-up sequence, PWM, servos and ESCs, sensor buses, and intermittent faults caught with a mask test and segmented memory.</p>
         <figure class="shot">
           <img src="img/rs-scope/06-uart-decode.png" alt="RTB2004 screen with a UART decoded from the logic probe" loading="lazy">
