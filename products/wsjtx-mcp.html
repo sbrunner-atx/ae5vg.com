@@ -105,7 +105,7 @@
             <tr><td>Window and station control</td><td>Clear the Band Activity and Rx Frequency windows, color or clear a callsign, override the Maidenhead grid, switch to a named configuration, set a Fox/Hound annotation.</td></tr>
             <tr><td>Multicast coexistence</td><td>Set <code>WSJTX_MULTICAST</code> to join a multicast group, so JTAlert, GridTracker or N1MM can listen alongside this server.</td></tr>
             <tr><td>Instance targeting</td><td>When several copies of WSJT-X broadcast, <code>WSJTX_INSTANCE</code> picks one by its Id. Control replies go back to the address each datagram came from.</td></tr>
-            <tr><td>Remote host</td><td>Sandboxed MCP clients can only reach loopback addresses. <code>mcp-host-bridge install wsjtx --to &lt;rig-host&gt;</code> carries the connection across the LAN. Then set <code>WSJTX_PORT=2238</code>.</td></tr>
+            <tr><td>Remote host</td><td>Set the listen host to this computer's LAN address and point WSJT-X's UDP Server at it. For clients that reach only loopback, <code>mcp-host-bridge install wsjtx --to &lt;rig-host&gt;</code> carries the connection, with <code>WSJTX_PORT=2238</code>.</td></tr>
             <tr><td>Any message by name</td><td><code>wsjtx_call</code> builds and sends any message type by name. The transmit gate still applies.</td></tr>
             <tr><td>Standard-library codec</td><td>The protocol codec uses only Python's standard library and covers all 17 WSJT-X message types. Its unit tests run against fixed byte sequences, so they do not need a running WSJT-X.</td></tr>
           </tbody>
@@ -137,7 +137,7 @@
         </figure>
         <p>In WSJT-X, set Settings → Reporting → UDP Server to the host running this server, port 2237. To allow control, turn on Accept UDP requests. It is off by default. Reading decodes and status works without it.</p>
         <p>Normally only one program on a computer can listen on UDP port 2237. If JTAlert, GridTracker or N1MM already use it, you have three choices. Point WSJT-X's secondary UDP server at this server. Use a multicast group so several programs can listen at once. Or run this server on a different computer.</p>
-        <p>To reach WSJT-X on another computer, install <a href="mcp-host-bridge.html">mcp-host-bridge</a> on the computer that runs this server with <code>mcp-host-bridge install wsjtx --to &lt;rig-host&gt;</code>. Then set <code>WSJTX_PORT=2238</code>. Sandboxed MCP clients can only reach loopback addresses, so the bridge carries the connection across the LAN.</p>
+        <p>To reach WSJT-X on another computer, set the listen host (<code>WSJTX_HOST</code>) to the LAN address of the computer that runs this server, or to <code>0.0.0.0</code>. Then point WSJT-X's UDP Server at that address, port 2237. Claude Desktop lets its connectors talk to the LAN directly. WSJT-X sends UDP to the connector, and the connector answers the sender. With an older Claude Desktop or macOS, or a client that runs connectors in a sandbox, install <a href="mcp-host-bridge.html">mcp-host-bridge</a> on the computer that runs this server with <code>mcp-host-bridge install wsjtx --to &lt;rig-host&gt;</code>, and set <code>WSJTX_PORT=2238</code>.</p>
 
         <h2 id="ask">Ask it</h2>
         <div class="exchange" role="figure" aria-label="Example requests and what happens">

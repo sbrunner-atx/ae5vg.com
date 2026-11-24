@@ -107,7 +107,7 @@ RX  K6ABC QSL TU 73 de W7XYZ · GL es 73 · sk
       <div class="card">
         <span class="label">Utility · MIT</span>
         <h3>mcp-host-bridge</h3>
-        <p>AI agents run in a sandbox, isolated from the host. If fldigi, WSJT-X or N3FJP run on the same host as the AI, we control them via loopback; if they run on another host, we need to pinch a hole into the sandbox, which is what this tool does.</p>
+        <p>A relay for AI clients that run connectors in a sandbox, which reaches only the computer the AI runs on. It carries the connection to fldigi, WSJT-X or N3FJP on another computer. Current Claude Desktop talks to the LAN directly, so the bridge is now the fallback.</p>
         <a class="more" href="products/mcp-host-bridge.html">mcp-host-bridge →</a>
       </div>
     </div>
