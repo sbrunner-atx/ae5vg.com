@@ -405,7 +405,7 @@
         <pre><code>claude mcp add fldigi -e FLDIGI_CALLSIGN=YOURCALL -- uvx --from "fldigi-mcp[hunt]" fldigi-mcp
 claude mcp add n3fjp -- uvx n3fjp-mcp
 claude mcp add wsjtx -e WSJTX_CALLSIGN=YOURCALL -- uvx wsjtx-mcp
-claude mcp add serial-console -- uvx --from "serial-console-mcp[screen]" serial-console-mcp</code></pre>
+claude mcp add serial-console -- uvx --from "serial-console-mcp[screen,ssh]" serial-console-mcp</code></pre>
         <h3 id="codex">Codex</h3>
         <p>Add these entries to <code>~/.codex/config.toml</code>:</p>
         <pre><code>[mcp_servers.fldigi]
@@ -424,7 +424,7 @@ env = { WSJTX_CALLSIGN = "YOURCALL" }
 
 [mcp_servers.serial-console]
 command = "uvx"
-args = ["--from", "serial-console-mcp[screen]", "serial-console-mcp"]</code></pre>
+args = ["--from", "serial-console-mcp[screen,ssh]", "serial-console-mcp"]</code></pre>
         <h3 id="json-clients">Cursor and other clients</h3>
         <p>Most other clients take a JSON block, for Cursor in <code>~/.cursor/mcp.json</code>. VS Code uses the same block in its <code>mcp.json</code>, with <code>"servers"</code> in place of <code>"mcpServers"</code>.</p>
         <pre><code>{
@@ -445,7 +445,7 @@ args = ["--from", "serial-console-mcp[screen]", "serial-console-mcp"]</code></pr
     },
     "serial-console": {
       "command": "uvx",
-      "args": ["--from", "serial-console-mcp[screen]", "serial-console-mcp"]
+      "args": ["--from", "serial-console-mcp[screen,ssh]", "serial-console-mcp"]
     }
   }
 }</code></pre>
