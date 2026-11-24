@@ -176,13 +176,13 @@
           <tbody>
             <tr><td><code>list_serial_ports</code></td><td>Enumerate ports with description and USB hardware id; marks ones open here</td></tr>
             <tr><td><code>list_presets</code></td><td>Usual settings per device family: Cisco/Juniper/Linux consoles, Kenwood/Elecraft/Yaesu CAT, Icom CI-V, rotators, Arduino, NMEA GPS</td></tr>
-            <tr><td><code>connect</code> / <code>reconnect_last</code> / <code>disconnect</code></td><td>Open a port by name. Defaults 9600 8N1, no flow control; baud, data bits, parity, stop bits, RTS/CTS, XON/XOFF, line ending and prompt are all settable, or loaded from a preset. Several ports at once. Also telnet, SSH, raw TCP and RFC 2217</td></tr>
+            <tr><td><code>connect</code> / <code>reconnect_last</code> / <code>disconnect</code></td><td>Open a port by name. Defaults 9600 8N1, no flow control; baud, data bits, parity, stop bits, RTS/CTS, XON/XOFF, line ending and prompt are all settable, or loaded from a preset. Several ports at once. Over the network: <code>transport</code> (telnet, ssh, tcp, rfc2217), <code>host</code>, <code>tcp_port</code> and <code>username</code>; <code>credential</code> names a stored password, and <code>ask</code> opens a password dialog</td></tr>
             <tr><td><code>send_keys</code> / <code>screen</code></td><td>Press Ctrl-C, Esc, Tab, arrows, F-keys by name; view the VT100/xterm screen of a full-screen console (BIOS, BMC, menu switches, vi)</td></tr>
             <tr><td><code>send_text</code> / <code>send_hex</code></td><td>Write an ASCII line (CR / LF / CRLF / none) or raw hex bytes. Write-only</td></tr>
             <tr><td><code>read_until_prompt</code></td><td>Return buffered output up to a literal or regex prompt, leaving the rest; <code>auto_reply</code> pages through <code>--More--</code></td></tr>
             <tr><td><code>read_available</code></td><td>Return whatever has arrived, as text and hex</td></tr>
             <tr><td><code>query_text</code></td><td>Clear, send, then read until the prompt or until the line goes idle</td></tr>
-            <tr><td><code>expect</code></td><td>A scripted list of send-and-wait steps in one call: logins, command sequences</td></tr>
+            <tr><td><code>expect</code></td><td>A scripted list of send-and-wait steps in one call: logins, command sequences. A step can send a stored password (<code>send_credential</code>) or ask for one in a dialog (<code>ask_password</code>)</td></tr>
             <tr><td><code>set_lines</code> / <code>pulse_line</code> / <code>send_break</code></td><td>Drive DTR and RTS (PTT, Arduino reset), send BREAK</td></tr>
             <tr><td><code>capture_start</code> / <code>capture_stop</code> / <code>get_transcript</code></td><td>Log a session to a file (raw or timestamped TX/RX); re-read the rolling transcript</td></tr>
             <tr><td><code>port_in_use_by</code> / <code>detect_baud</code></td><td>Which program holds a port; which baud rate produces readable text</td></tr>
@@ -193,6 +193,7 @@
             </tbody>
         </table>
         </div>
+        <p>Passwords are stored with a command in a terminal, not with a tool, so they never pass through the chat: <code>serial-console-mcp credential set NAME --username USER</code> prompts for the password, <code>credential list</code> shows the names, and <code>credential remove NAME</code> deletes one. The <a href="../user-guide/serial-console-field-guide.html#reference">Field Guide</a> lists every tool's parameters.</p>
 
         <h2 id="install">Install</h2>
         <p>You need the Claude desktop app. The connector links Claude to the program. The skills teach Claude how to operate it. The connector does not install the skills, so you add them as well.</p>
